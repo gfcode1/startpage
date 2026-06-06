@@ -18,7 +18,7 @@
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   transition: transform 0.3s ease;
-  view-transition-name: gf-topbar;
+  overflow-anchor: none;
 }
 
 .gf-topbar--hidden {
@@ -150,6 +150,7 @@
   max-width: var(--gf-layout-max);
   width: 100%;
   margin: 0 auto;
+  overflow-anchor: none;
 }
 
 @media (min-width: 640px) {
