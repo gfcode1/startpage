@@ -5,7 +5,7 @@ import {
   IconHeadphones, IconRadio, IconGrid, IconChecklist,
   IconBird, IconRss, IconGlobe,
   IconGamepad, IconDocument, IconWeather,
-  IconSnake,
+  IconSnake, IconWave,
 } from './icons'
 import './Launcher.css'
 
@@ -28,6 +28,7 @@ const icons: Record<string, () => React.ReactNode> = {
   markdownnotes: IconDocument,
   weather: IconWeather,
   snake: IconSnake,
+  moodist: IconWave,
 }
 
 const categoryOrder: AppCategory[] = ['music', 'games', 'productivity', 'utilities']

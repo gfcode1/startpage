@@ -124,6 +124,16 @@ export const apps: AppDef[] = [
     category: 'games',
     component: lazy(() => import('../apps/Snake/SnakeApp')),
   },
+  {
+    id: 'moodist',
+    name: 'Moodist',
+    description: '84 ambient sounds — focus, relax, and sleep with layered soundscapes',
+    path: '/moodist',
+    color: '#06b6d4',
+    gradient: 'linear-gradient(135deg, #06b6d4, #7c3aed)',
+    category: 'music',
+    component: lazy(() => import('../apps/Moodist/MoodistApp')),
+  },
 ]
 
 export function getAppById(id: string): AppDef | undefined {

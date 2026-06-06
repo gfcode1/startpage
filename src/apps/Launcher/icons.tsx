@@ -116,6 +116,15 @@ export function IconWeather() {
   )
 }
 
+export function IconWave() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 12c2-4 4-6 6-6s4 2 6 6 4 6 6 6" />
+      <path d="M5 15c1-3 3-5 5-5s4 2 5 5 3 3 5 3" />
+    </svg>
+  )
+}
+
 export function IconSnake() {
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
