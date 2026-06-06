@@ -17,6 +17,12 @@
   border-bottom: 1px solid var(--gf-border);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  transition: transform 0.3s ease;
+  view-transition-name: gf-topbar;
+}
+
+.gf-topbar--hidden {
+  transform: translateY(-100%);
 }
 
 .gf-topbar__left,
@@ -49,9 +55,15 @@
   transition: all 0.2s ease;
 }
 
-.gf-topbar__home:hover {
-  color: var(--gf-accent);
-  background: var(--gf-bg-hover);
+@media (hover: hover) {
+  .gf-topbar__home:hover {
+    color: var(--gf-accent);
+    background: var(--gf-bg-hover);
+  }
+}
+
+.gf-topbar__home:active {
+  transform: scale(0.92);
 }
 
 .gf-topbar__close {
@@ -65,9 +77,15 @@
   transition: all 0.2s ease;
 }
 
-.gf-topbar__close:hover {
-  color: var(--gf-accent);
-  background: var(--gf-bg-hover);
+@media (hover: hover) {
+  .gf-topbar__close:hover {
+    color: var(--gf-accent);
+    background: var(--gf-bg-hover);
+  }
+}
+
+.gf-topbar__close:active {
+  transform: scale(0.92);
 }
 
 .gf-topbar__appname {
@@ -90,9 +108,15 @@
   transition: all 0.2s ease;
 }
 
-.gf-topbar__settings:hover {
-  color: var(--gf-accent);
-  background: var(--gf-bg-hover);
+@media (hover: hover) {
+  .gf-topbar__settings:hover {
+    color: var(--gf-accent);
+    background: var(--gf-bg-hover);
+  }
+}
+
+.gf-topbar__settings:active {
+  transform: scale(0.92);
 }
 
 .gf-theme-indicator {

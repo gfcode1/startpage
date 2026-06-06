@@ -18,8 +18,8 @@ async function apiRequest<T>(url: string, options?: RequestInit & { externalSign
       const direct = `${url}`
       const res = await fetch(direct, { ...options, headers, signal: timeoutSignal })
       if (res.ok) return res.json()
-    } catch {
-      // likely CORS — fall through to proxy
+    } catch (e) {
+      console.warn('RadioBrowser: direct fetch failed, falling back to proxy', e)
     }
     useProxy = true
   }
@@ -89,7 +89,8 @@ export async function searchStations(opts: {
 export async function clickStation(uuid: string, signal?: AbortSignal): Promise<ClickResponse | null> {
   try {
     return await apiRequest<ClickResponse>(`${API_BASE}/json/url/${uuid}`, { externalSignal: signal })
-  } catch {
+  } catch (e) {
+    console.warn('RadioBrowser: clickStation failed', e)
     return null
   }
 }

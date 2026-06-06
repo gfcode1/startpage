@@ -8,11 +8,11 @@ interface PlayerState {
   subtitle: string
   isPlaying: boolean
   isLoading: boolean
-  type: 'soma' | 'youtube' | 'radiobrowser' | null
+  type: string | null
 }
 
 interface PlayerActions {
-  play: (opts: { id: string; title: string; subtitle?: string; type: 'soma' | 'youtube' | 'radiobrowser' }) => void
+  play: (opts: { id: string; title: string; subtitle?: string; type: string }) => void
   setPlaying: (playing: boolean) => void
   setLoading: (loading: boolean) => void
   setPlayInfo: (title: string, subtitle?: string) => void
@@ -35,7 +35,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     type: null,
   })
 
-  const play = useCallback(({ id, title, subtitle, type }: { id: string; title: string; subtitle?: string; type: 'soma' | 'youtube' | 'radiobrowser' }) => {
+  const play = useCallback(({ id, title, subtitle, type }: { id: string; title: string; subtitle?: string; type: string }) => {
     setTransient(prev => ({ ...prev, playingId: id, playingTitle: title, subtitle: subtitle || '', type, isPlaying: true, isLoading: true }))
   }, [])
 

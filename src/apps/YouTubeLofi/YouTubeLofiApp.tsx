@@ -69,6 +69,7 @@ export default function YouTubeLofiApp() {
 
   useEffect(() => {
     return () => player.stop()
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- cleanup only, stop on unmount
   }, [])
 
   return (

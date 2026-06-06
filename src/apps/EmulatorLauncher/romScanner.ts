@@ -24,7 +24,8 @@ export async function scanBundledRoms(): Promise<ScannedGame[]> {
       fileName: entry.fileName,
       romUrl: `${base}emulator-roms/${entry.path}`,
     }))
-  } catch {
+  } catch (e) {
+    console.warn('romScanner: failed to scan bundled ROMs', e)
     return []
   }
 }

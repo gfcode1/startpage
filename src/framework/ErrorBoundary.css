@@ -38,7 +38,37 @@
   transition: all 0.2s ease;
 }
 
-.gf-error-boundary__retry:hover {
-  background: var(--gf-accent-hover);
-  box-shadow: var(--gf-shadow-glow);
+@media (hover: hover) {
+  .gf-error-boundary__retry:hover {
+    background: var(--gf-accent-hover);
+    box-shadow: var(--gf-shadow-glow);
+  }
+}
+
+.gf-error-boundary__retry:active {
+  transform: scale(0.97);
+}
+
+.gf-error-boundary__details {
+  margin-bottom: var(--gf-space-lg);
+  text-align: left;
+}
+
+.gf-error-boundary__details summary {
+  cursor: pointer;
+  color: var(--gf-text-muted);
+  font-size: var(--gf-size-small);
+  margin-bottom: var(--gf-space-sm);
+}
+
+.gf-error-boundary__stack {
+  font-size: 11px;
+  color: var(--gf-text-muted);
+  background: var(--gf-bg-elevated);
+  padding: var(--gf-space-sm);
+  border-radius: var(--gf-radius-sm);
+  max-height: 200px;
+  overflow: auto;
+  white-space: pre-wrap;
+  line-height: 1.4;
 }

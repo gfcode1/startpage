@@ -125,7 +125,7 @@ export default function MarkdownNotesApp() {
               onClick={handleBack}
               aria-label="Back to notes"
             >
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
                 <path d="M12 4l-6 5 6 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
@@ -145,7 +145,7 @@ export default function MarkdownNotesApp() {
                 aria-label="Delete note"
                 title="Delete note"
               >
-                <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
                   <path d="M3 4.5h9M5.5 4.5V3a.5.5 0 01.5-.5h3a.5.5 0 01.5.5v1.5M6 7v3.5M9 7v3.5M3.5 4.5l.7 8.4a.5.5 0 00.5.5h5.6a.5.5 0 00.5-.5l.7-8.4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </button>

@@ -93,7 +93,7 @@ export class SoundMixer {
 
   private ensureResumed(): void {
     if (this.ctx.state === 'suspended') {
-      this.ctx.resume().catch(() => {})
+      this.ctx.resume().catch((e) => console.warn('SoundMixer: resume failed', e))
     }
   }
 
@@ -115,7 +115,8 @@ export class SoundMixer {
     let audioBuffer: AudioBuffer
     try {
       audioBuffer = await this.ctx.decodeAudioData(arrayBuffer)
-    } catch {
+    } catch (e) {
+      console.warn('SoundMixer: decodeAudioData failed', e)
       throw new Error('Failed to decode audio')
     }
 
@@ -162,7 +163,7 @@ export class SoundMixer {
         const now = this.ctx.currentTime
         track.gain.gain.cancelScheduledValues(now)
         track.source.stop()
-      } catch {}
+      } catch (e) { console.warn('SoundMixer: removeTrack stop failed', e) }
     }
     track.gain.disconnect()
     track.panNode.disconnect()
@@ -355,7 +356,7 @@ export class SoundMixer {
           const now = this.ctx.currentTime
           track.gain.gain.cancelScheduledValues(now)
           track.source.stop()
-        } catch {}
+        } catch (e) { console.warn('SoundMixer: stopAllImmediate failed', e) }
       }
       track.isPlaying = false
       track.source = null

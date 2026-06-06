@@ -13,7 +13,7 @@ function TestHarness() {
       <p data-testid="is-playing">{String(isPlaying)}</p>
       <p data-testid="is-loading">{String(isLoading)}</p>
       <p data-testid="volume">{volume}</p>
-      <button data-testid="btn-play" onClick={() => play({ id: 'test-1', title: 'Test', type: 'soma' })}>Play</button>
+      <button data-testid="btn-play" onClick={() => play({ id: 'test-1', title: 'Test', type: 'test-source' })}>Play</button>
       <button data-testid="btn-stop" onClick={stop}>Stop</button>
       <button data-testid="btn-vol-up" onClick={() => setVolume(1)}>Vol max</button>
       <button data-testid="btn-info" onClick={() => setPlayInfo('Test Title', 'Test Sub')}>Set info</button>

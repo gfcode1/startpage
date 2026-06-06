@@ -1,9 +1,10 @@
-import { ReactNode, useState } from 'react'
+import { ReactNode, useState, useEffect, useRef, useCallback } from 'react'
 import { useGfTheme } from './ThemeProvider'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { getAppByPath } from './appRegistry'
 import { useScrollToTop } from './hooks/useScrollToTop'
 import { SettingsModal } from './components/SettingsModal'
+import { InstallPrompt } from './components/InstallPrompt'
 import './AppShell.css'
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -15,6 +16,31 @@ export function AppShell({ children }: { children: ReactNode }) {
   const app = getAppByPath(location.pathname)
   const isPopup = window.opener !== null || new URLSearchParams(window.location.search).has('popup')
   const [showSettings, setShowSettings] = useState(false)
+  const [topbarHidden, setTopbarHidden] = useState(() => window.scrollY > 56)
+  const lastScrollY = useRef(0)
+  const ticking = useRef(false)
+
+  const handleScroll = useCallback(() => {
+    const currentY = window.scrollY
+    if (currentY > 56 && currentY > lastScrollY.current) {
+      setTopbarHidden(true)
+    } else {
+      setTopbarHidden(false)
+    }
+    lastScrollY.current = currentY
+    ticking.current = false
+  }, [])
+
+  useEffect(() => {
+    const onScroll = () => {
+      if (!ticking.current) {
+        requestAnimationFrame(handleScroll)
+        ticking.current = true
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [handleScroll])
 
   return (
     <div className="gf-shell">
@@ -22,7 +48,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         Skip to content
       </a>
 
-      <header className="gf-topbar">
+      <header className={`gf-topbar${topbarHidden && !isHome ? ' gf-topbar--hidden' : ''}`}>
         <nav className="gf-topbar__left" aria-label="Navigation">
           {isPopup ? (
             <button className="gf-topbar__close" onClick={() => window.close()} aria-label="Close">
@@ -66,6 +92,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {children}
       </main>
 
+      <InstallPrompt />
       <SettingsModal open={showSettings} onClose={() => setShowSettings(false)} />
 
       <div aria-live="polite" aria-atomic="true" className="gf-sr-only">

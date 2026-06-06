@@ -120,7 +120,8 @@ export class FlappyBirdEngine extends GameEngine {
       if (this._gameOver) {
         this.callbacks?.onGameOver?.(this._score)
       }
-    } catch {
+    } catch (e) {
+      console.warn('FlappyBirdEngine: deserialize failed', e)
       this.newGame()
     }
   }
@@ -212,13 +213,13 @@ export class FlappyBirdEngine extends GameEngine {
             this._bestScore = this._score
             this.callbacks?.onBestScoreChange?.(this._bestScore)
           }
-          this.audio?.playMerge()
+          this.playScoreSound()
         }
       }
 
       if (this.checkCollision()) {
         this._gameOver = true
-        this.audio?.playGameOver()
+        this.playGameOverSound()
         this.callbacks?.onGameOver?.(this._score)
       }
     } else {
@@ -369,6 +370,14 @@ export class FlappyBirdEngine extends GameEngine {
     ctx.textBaseline = 'middle'
     ctx.fillStyle = this.textMuted
     ctx.fillText(msg, this.width / 2, this.height / 2 + BIRD_R + 40)
+  }
+
+  private playScoreSound(): void {
+    this.audio?.playTone(600, 'sine', 0.06, 0.12, 0.001)
+  }
+
+  private playGameOverSound(): void {
+    this.audio?.playSweep(400, 80, 'sawtooth', 0.4, 0.15)
   }
 
   protected onPause(): void {

@@ -52,8 +52,9 @@ export default function RadioBrowserApp() {
         if (abort.signal.aborted || id !== requestIdRef.current) return
         result = result.filter(s => !isHlsStream(s))
         setStations(result)
-      } catch {
+      } catch (err) {
         if (abort.signal.aborted || id !== requestIdRef.current) return
+        console.warn('RadioBrowser: load stations failed', err)
         setPlayError('Failed to load stations. Try again.')
       } finally {
         if (abort.signal.aborted || id !== requestIdRef.current) return
@@ -132,7 +133,8 @@ export default function RadioBrowserApp() {
       await audioRef.current.play()
       player.setPlaying(true)
       player.setLoading(false)
-    } catch {
+    } catch (err) {
+      console.warn('RadioBrowser: play stream failed', err)
       player.stop()
       setPlayError(`Unable to play "${station.name}". The stream may be offline.`)
     }
@@ -150,6 +152,7 @@ export default function RadioBrowserApp() {
         player.stop()
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- cleanup only, stop on unmount
   }, [])
 
   useEffect(() => {
@@ -188,6 +191,7 @@ export default function RadioBrowserApp() {
         <button
           className={`gf-radiobrowser__country-chip ${selectedCountry === 'all' ? 'gf-radiobrowser__country-chip--active' : ''}`}
           onClick={() => setSelectedCountry('all')}
+          aria-pressed={selectedCountry === 'all'}
         >
           All
         </button>
@@ -196,6 +200,7 @@ export default function RadioBrowserApp() {
             key={c.iso_3166_1!}
             className={`gf-radiobrowser__country-chip ${selectedCountry === c.iso_3166_1 ? 'gf-radiobrowser__country-chip--active' : ''}`}
             onClick={() => setSelectedCountry(c.iso_3166_1!)}
+            aria-pressed={selectedCountry === c.iso_3166_1}
           >
             {c.name}
           </button>

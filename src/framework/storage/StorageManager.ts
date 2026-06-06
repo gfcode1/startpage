@@ -14,7 +14,8 @@ export class StorageManager {
       const raw = localStorage.getItem(this.key(key))
       if (raw === null) return fallback
       return JSON.parse(raw) as T
-    } catch {
+    } catch (e) {
+      console.warn(`StorageManager[${this.namespace}]: get failed for "${key}"`, e)
       return fallback
     }
   }
@@ -23,7 +24,8 @@ export class StorageManager {
     try {
       localStorage.setItem(this.key(key), JSON.stringify(value))
       return true
-    } catch {
+    } catch (e) {
+      console.warn(`StorageManager[${this.namespace}]: set failed for "${key}"`, e)
       return false
     }
   }
@@ -31,8 +33,8 @@ export class StorageManager {
   remove(key: string): void {
     try {
       localStorage.removeItem(this.key(key))
-    } catch {
-      // silent
+    } catch (e) {
+      console.warn(`StorageManager[${this.namespace}]: remove failed for "${key}"`, e)
     }
   }
 

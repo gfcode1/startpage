@@ -64,6 +64,7 @@ export const SoundCard = memo(function SoundCard({
       <button
         className={`gf-moodist__sound-fav ${state.favorite ? 'gf-moodist__sound-fav--active' : ''}`}
         onClick={e => { e.stopPropagation(); onToggleFavorite() }}
+        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); onToggleFavorite() } }}
         aria-label={`Favorite ${sound.label}`}
       >
         {state.favorite ? '\u2764' : '\u2661'}

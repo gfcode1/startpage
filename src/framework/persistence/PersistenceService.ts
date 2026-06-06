@@ -63,8 +63,8 @@ export class PersistenceService {
           if (raw !== null) {
             appData[k] = JSON.parse(raw)
           }
-        } catch {
-          // skip corrupt entries
+        } catch (e) {
+          console.warn(`PersistenceService: corrupt entry for ${appId}:${k}`, e)
         }
       }
       if (Object.keys(appData).length > 0) {
@@ -98,7 +98,8 @@ export class PersistenceService {
           const serialized = JSON.stringify(value)
           totalBytes += serialized.length
           localStorage.setItem(fullKey, serialized)
-        } catch {
+        } catch (e) {
+          console.warn(`PersistenceService: cannot save ${fullKey}`, e)
           return { success: false, error: `Cannot save ${fullKey}: storage full?` }
         }
       }
@@ -129,7 +130,8 @@ export class PersistenceService {
         try {
           const backup = JSON.parse(reader.result as string) as BackupData
           resolve(this.importAll(backup))
-        } catch {
+        } catch (e) {
+          console.warn('PersistenceService: invalid backup JSON', e)
           resolve({ success: false, error: 'The file does not contain valid JSON' })
         }
       }
@@ -145,7 +147,8 @@ export class PersistenceService {
       return JSON.parse(
         document.querySelector('script[data-pkg]')?.getAttribute('data-pkg') ?? 'null'
       ) as { version?: string } | null
-    } catch {
+    } catch (e) {
+      console.warn('PersistenceService: failed to read package.json data', e)
       return null
     }
   }

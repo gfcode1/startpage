@@ -173,6 +173,29 @@
   height: 28px;
 }
 
+/* ── Badge count ── */
+
+.gf-launcher__card-badge-count {
+  position: absolute;
+  top: var(--gf-space-sm);
+  left: var(--gf-space-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: var(--gf-radius-full);
+  background: var(--gf-accent);
+  color: var(--gf-text-inverse);
+  font-family: var(--gf-font-ui);
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1;
+  z-index: 2;
+  animation: gf-fade-in-up 0.3s ease-out both;
+}
+
 /* ── Popup button ── */
 
 .gf-launcher__card-popup-btn {

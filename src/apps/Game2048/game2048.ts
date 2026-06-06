@@ -60,7 +60,8 @@ export function deserializeGrid(data: string): Grid | null {
       }
     }
     return grid
-  } catch {
+  } catch (e) {
+    console.warn('game2048: deserializeGrid failed', e)
     return null
   }
 }

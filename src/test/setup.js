@@ -15,3 +15,27 @@ Object.defineProperty(globalThis, 'localStorage', {
   writable: true,
   configurable: true,
 })
+
+if (!Element.prototype.animate) {
+  Element.prototype.animate = function () {
+    return {
+      finished: Promise.resolve(),
+      cancel: () => {},
+      play: () => {},
+      pause: () => {},
+      reverse: () => {},
+      currentTime: 0,
+      playbackRate: 1,
+      startTime: null,
+      timeline: null,
+      playState: 'finished',
+      onfinish: null,
+      oncancel: null,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => false,
+      effect: null,
+      persist: () => {},
+    }
+  }
+}

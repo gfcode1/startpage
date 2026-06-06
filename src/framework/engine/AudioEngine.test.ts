@@ -109,28 +109,11 @@ describe('AudioEngine', () => {
     expect(mockCtx.createOscillator).toHaveBeenCalled()
   })
 
-  it('playMerge creates oscillator', () => {
+  it('playTone creates oscillator', () => {
     engine.init()
-    engine.playMerge(2)
+    engine.playTone(440, 'sine', 0.1, 0.2, 0.001)
     expect(mockCtx.createOscillator).toHaveBeenCalled()
-  })
-
-  it('playNewTile creates oscillator', () => {
-    engine.init()
-    engine.playNewTile()
-    expect(mockCtx.createOscillator).toHaveBeenCalled()
-  })
-
-  it('playGameOver creates oscillator', () => {
-    engine.init()
-    engine.playGameOver()
-    expect(mockCtx.createOscillator).toHaveBeenCalled()
-  })
-
-  it('playVictory creates 4 oscillators for arpeggiated notes', () => {
-    engine.init()
-    engine.playVictory()
-    expect(mockCtx.createOscillator).toHaveBeenCalledTimes(4)
+    expect(mockCtx.createGain).toHaveBeenCalled()
   })
 
   it('play methods do not throw before init', () => {

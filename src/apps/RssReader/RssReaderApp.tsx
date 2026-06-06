@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from 'react'
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
 import { AppHeader } from '../../framework/components/AppHeader'
 import { GfBadge } from '../../framework/components/Badge'
@@ -110,14 +110,42 @@ export default function RssReaderApp() {
     setDrawerError(null)
   }, [])
 
+  const drawerRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
+    if (!drawerArticle) return
+
+    const focusableSelector = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
+
     function onKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') handleCloseDrawer()
+      if (e.key === 'Escape') {
+        handleCloseDrawer()
+        return
+      }
+
+      if (e.key !== 'Tab' || !drawerRef.current) return
+
+      const focusable = drawerRef.current.querySelectorAll<HTMLElement>(focusableSelector)
+      if (focusable.length === 0) return
+
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault()
+          last.focus()
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault()
+          first.focus()
+        }
+      }
     }
-    if (drawerArticle) {
-      document.addEventListener('keydown', onKeyDown)
-      return () => document.removeEventListener('keydown', onKeyDown)
-    }
+
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
   }, [drawerArticle, handleCloseDrawer])
 
   const openEditor = useCallback(() => {
@@ -177,14 +205,14 @@ export default function RssReaderApp() {
         </div>
         <div className="gf-rssreader__toolbar-right">
           <button className="gf-rssreader__btn" onClick={() => setRefreshKey(k => k + 1)} disabled={loading || feeds.length === 0}>
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className={loading ? 'gf-rssreader__spin' : ''}>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className={loading ? 'gf-rssreader__spin' : ''} aria-hidden="true">
               <path d="M12 7a5 5 0 11-5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
               <path d="M12 2v4.5H7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             Refresh
           </button>
           <button className="gf-rssreader__btn gf-rssreader__btn--secondary" onClick={openEditor}>
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
               <path d="M2 11.5l.5 2 2-.5L13 4.5l-1.5-1.5L2 11.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
               <path d="M10.5 3L13 5.5" stroke="currentColor" strokeWidth="1.3"/>
             </svg>
@@ -286,7 +314,7 @@ export default function RssReaderApp() {
       {drawerArticle && (
         <>
           <div className="gf-rssreader__drawer-overlay" onClick={handleCloseDrawer} />
-          <aside className="gf-rssreader__drawer" role="dialog" aria-label={drawerArticle.title}>
+          <aside className="gf-rssreader__drawer" role="dialog" aria-label={drawerArticle.title} ref={drawerRef}>
             <div className="gf-rssreader__drawer-header">
               <div className="gf-rssreader__drawer-header-top">
                 <a

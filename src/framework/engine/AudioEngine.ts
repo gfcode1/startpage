@@ -66,6 +66,26 @@ export class AudioEngine {
     osc.stop(now + duration)
   }
 
+  playTone(freq: number, type: OscillatorType, duration: number, gainStart: number, gainEnd: number): void {
+    this.osc(freq, type, duration, gainStart, gainEnd)
+  }
+
+  playSweep(fromFreq: number, toFreq: number, type: OscillatorType, duration: number, gain: number): void {
+    if (!this.ensure()) return
+    const now = this.ctx!.currentTime
+    const osc = this.ctx!.createOscillator()
+    const gainNode = this.ctx!.createGain()
+    osc.type = type
+    osc.frequency.setValueAtTime(fromFreq, now)
+    osc.frequency.exponentialRampToValueAtTime(Math.max(toFreq, 20), now + duration)
+    gainNode.gain.setValueAtTime(gain, now)
+    gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration)
+    osc.connect(gainNode)
+    gainNode.connect(this.master!)
+    osc.start(now)
+    osc.stop(now + duration)
+  }
+
   playClick(): void {
     this.osc(800, 'square', 0.04, 0.15, 0.001)
   }
@@ -99,63 +119,5 @@ export class AudioEngine {
     gain.connect(this.master!)
     osc.start(now)
     osc.stop(now + 0.08)
-  }
-
-  playMerge(value?: number): void {
-    if (!this.ensure()) return
-    const now = this.ctx!.currentTime
-    const base = 440
-    const mult = value ? Math.min(1 + Math.log2(value) * 0.1, 3) : 2
-    const osc = this.ctx!.createOscillator()
-    const gain = this.ctx!.createGain()
-    osc.type = 'sine'
-    osc.frequency.setValueAtTime(base, now)
-    osc.frequency.exponentialRampToValueAtTime(base * mult, now + 0.1)
-    gain.gain.setValueAtTime(0.2, now)
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15)
-    osc.connect(gain)
-    gain.connect(this.master!)
-    osc.start(now)
-    osc.stop(now + 0.15)
-  }
-
-  playNewTile(): void {
-    this.osc(600, 'sine', 0.06, 0.12, 0.001)
-  }
-
-  playGameOver(): void {
-    if (!this.ensure()) return
-    const now = this.ctx!.currentTime
-    const osc = this.ctx!.createOscillator()
-    const gain = this.ctx!.createGain()
-    osc.type = 'sawtooth'
-    osc.frequency.setValueAtTime(400, now)
-    osc.frequency.exponentialRampToValueAtTime(80, now + 0.4)
-    gain.gain.setValueAtTime(0.15, now)
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4)
-    osc.connect(gain)
-    gain.connect(this.master!)
-    osc.start(now)
-    osc.stop(now + 0.4)
-  }
-
-  playVictory(): void {
-    if (!this.ensure()) return
-    const now = this.ctx!.currentTime
-    const notes = [523, 659, 784, 1047]
-    notes.forEach((freq, i) => {
-      const osc = this.ctx!.createOscillator()
-      const gain = this.ctx!.createGain()
-      osc.type = 'sine'
-      const t = now + i * 0.12
-      osc.frequency.setValueAtTime(freq, t)
-      gain.gain.setValueAtTime(0, t)
-      gain.gain.linearRampToValueAtTime(0.2, t + 0.02)
-      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15)
-      osc.connect(gain)
-      gain.connect(this.master!)
-      osc.start(t)
-      osc.stop(t + 0.15)
-    })
   }
 }

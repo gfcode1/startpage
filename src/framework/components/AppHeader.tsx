@@ -10,6 +10,8 @@ interface Segment {
 interface AppHeaderProps {
   title: string
   badge?: string
+  count?: number
+  countLabel?: string
   gradient?: string
   segments?: Segment[]
   segmentValue?: string
@@ -22,6 +24,8 @@ interface AppHeaderProps {
 export function AppHeader({
   title,
   badge,
+  count,
+  countLabel = 'items',
   gradient,
   segments,
   segmentValue,
@@ -39,7 +43,10 @@ export function AppHeader({
         >
           {title}
         </h1>
-        {badge && <GfBadge variant="listeners">{badge}</GfBadge>}
+        <div className="gf-app-header__meta">
+          {badge && <GfBadge variant="listeners">{badge}</GfBadge>}
+          {count !== undefined && <span className="gf-app-header__count">{count} {countLabel}</span>}
+        </div>
       </div>
       <div className="gf-app-header__filters">
         {segments && (

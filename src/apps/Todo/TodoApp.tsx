@@ -2,6 +2,8 @@ import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
 import { useToast } from '../../framework/ToastContext'
 import { AppHeader } from '../../framework/components/AppHeader'
+import { useFlipAnimation } from '../../framework/hooks/useFlipAnimation'
+import { useAppBadge } from '../../framework/AppBadgeContext'
 import { generateId, formatRelativeTime, formatDate } from './utils'
 import type { TodoItem, FilterMode, Priority } from './types'
 import './TodoApp.css'
@@ -33,6 +35,8 @@ export default function TodoApp() {
   const [editText, setEditText] = useState('')
   const { addToast } = useToast()
   const inputRef = useRef<HTMLInputElement>(null)
+  const listRef = useRef<HTMLDivElement>(null)
+  const { setBadge } = useAppBadge('todo')
 
   const filteredItems = useMemo(() => {
     let items = list.items
@@ -54,6 +58,12 @@ export default function TodoApp() {
     const active = total - completed
     return { total, completed, active }
   }, [list.items])
+
+  useFlipAnimation(listRef, [filteredItems])
+
+  useEffect(() => {
+    setBadge(stats.active > 0 ? stats.active : null)
+  }, [stats.active, setBadge])
 
   const updateItems = useCallback(
     (updater: (prev: TodoItem[]) => TodoItem[]) => {
@@ -262,10 +272,11 @@ export default function TodoApp() {
       )}
 
       {filteredItems.length > 0 && (
-        <div className="gf-todo__list">
+        <div className="gf-todo__list" ref={listRef}>
           {filteredItems.map(item => (
             <div
               key={item.id}
+              data-flip-id={item.id}
               className={`gf-todo__item ${item.completed ? 'gf-todo__item--completed' : ''} gf-todo__item--${item.priority}`}
             >
               <button

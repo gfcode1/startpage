@@ -110,7 +110,8 @@ export class Game2048Engine extends GameEngine {
       } else if (this._won) {
         this.callbacks?.onWin?.(this._score)
       }
-    } catch {
+    } catch (e) {
+      console.warn('Game2048Engine: deserialize failed', e)
       this.init()
     }
   }
@@ -278,12 +279,12 @@ export class Game2048Engine extends GameEngine {
     this.audio?.playMove()
 
     const hadMerge = this.hasMerges(result.grid)
-    if (hadMerge) this.audio?.playMerge()
+    if (hadMerge) this.playMergeSound()
 
     if (result.won && !this._wonContinued) {
       this._won = true
       this.callbacks?.onWin?.(this._score)
-      this.audio?.playVictory()
+      this.playVictorySound()
     }
 
     this._gameOver = result.gameOver
@@ -402,7 +403,7 @@ export class Game2048Engine extends GameEngine {
         this.inputBlocked = false
         this.syncAnimTiles()
         if (endsGameOver) {
-          this.audio?.playGameOver()
+          this.playGameOverSound()
           this.callbacks?.onGameOver?.(this._score)
         }
         this.saveGameState()
@@ -441,6 +442,25 @@ export class Game2048Engine extends GameEngine {
 
   deserialize(data: unknown): void {
     this.loadGameFromState(data)
+  }
+
+  private playMergeSound(): void {
+    this.audio?.playSweep(440, 880, 'sine', 0.1, 0.2)
+  }
+
+  private playVictorySound(): void {
+    const engine = this.audio
+    if (!engine) return
+    const notes = [523, 659, 784, 1047]
+    notes.forEach((freq, i) => {
+      setTimeout(() => {
+        engine.playTone(freq, 'sine', 0.12, 0.2, 0.001)
+      }, i * 120)
+    })
+  }
+
+  private playGameOverSound(): void {
+    this.audio?.playSweep(400, 80, 'sawtooth', 0.4, 0.15)
   }
 
   private saveGameState(): void {

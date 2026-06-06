@@ -14,14 +14,16 @@
   cursor: pointer;
 }
 
-.gf-card--clickable:hover {
-  border-color: var(--gf-card-accent, var(--gf-border-accent));
-  box-shadow: 0 0 30px var(--gf-glow);
-  transform: translateY(-2px);
+@media (hover: hover) {
+  .gf-card--clickable:hover {
+    border-color: var(--gf-card-accent, var(--gf-border-accent));
+    box-shadow: 0 8px 32px var(--gf-glow);
+    transform: translateY(-4px);
+  }
 }
 
 .gf-card--clickable:active {
-  transform: translateY(0);
+  transform: scale(0.98);
 }
 
 .gf-card__accent {

@@ -107,7 +107,8 @@ export class SnakeEngine extends GameEngine {
       this._state = 'playing'
       this.stepAcc = 0
       this.initialised = true
-    } catch {
+    } catch (e) {
+      console.warn('SnakeEngine: deserialize failed', e)
       this.init()
     }
   }
@@ -122,7 +123,7 @@ export class SnakeEngine extends GameEngine {
     }
   }
 
-  protected render(_ctx: CanvasRenderingContext2D): void {
+  protected render(ctx: CanvasRenderingContext2D): void {
     if (!this.initialised) return
     this.readTheme()
     this.cls()
@@ -167,7 +168,7 @@ export class SnakeEngine extends GameEngine {
 
     if (willEat) {
       this._score++
-      this.audio?.playMerge()
+      this.playCollectSound()
       if (this._score > this._bestScore) {
         this._bestScore = this._score
         this.callbacks?.onBestScoreChange?.(this._bestScore)
@@ -205,7 +206,7 @@ export class SnakeEngine extends GameEngine {
   private endGame(): void {
     this._gameOver = true
     this._state = 'gameOver'
-    this.audio?.playGameOver()
+    this.playGameOverSound()
     this.callbacks?.onGameOver?.(this._score)
     this.saveState()
   }
@@ -378,6 +379,14 @@ export class SnakeEngine extends GameEngine {
     const g = Math.round(g1 * (1 - ratio) + g2 * ratio)
     const b = Math.round(b1 * (1 - ratio) + b2 * ratio)
     return `rgb(${r},${g},${b})`
+  }
+
+  private playCollectSound(): void {
+    this.audio?.playTone(600, 'sine', 0.06, 0.12, 0.001)
+  }
+
+  private playGameOverSound(): void {
+    this.audio?.playSweep(400, 80, 'sawtooth', 0.4, 0.15)
   }
 
   protected onPause(): void {

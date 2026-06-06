@@ -17,8 +17,8 @@ function tryMigrate(appId: string, key: string): void {
       localStorage.setItem(newKey, oldVal)
       localStorage.removeItem(oldKey)
     }
-  } catch {
-    // silent
+  } catch (e) {
+    console.warn(`useAppStorage: migration failed for ${appId}:${key}`, e)
   }
 }
 
@@ -44,7 +44,7 @@ export function useAppStorage<T>(
     tryMigrate(appId, key)
     const raw = localStorage.getItem(storageKey(appId, key))
     if (raw !== null) {
-      try { return JSON.parse(raw) as T } catch { /* fall through */ }
+      try { return JSON.parse(raw) as T } catch (e) { console.warn(`useAppStorage: parse failed for ${appId}:${key}`, e) }
     }
     return initialValue
   })
@@ -54,7 +54,7 @@ export function useAppStorage<T>(
       const next = typeof value === 'function' ? (value as (prev: T) => T)(prev) : value
       try {
         localStorage.setItem(storageKey(appId, key), JSON.stringify(next))
-      } catch { /* empty */ }
+      } catch (e) { console.warn(`useAppStorage: set failed for ${appId}:${key}`, e) }
       return next
     })
   }, [appId, key])

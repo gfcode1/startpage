@@ -76,7 +76,9 @@ export function VideoPlayer({ youtubeId, volume, isPlaying, onError }: VideoPlay
     if (playerRef.current) {
       try {
         playerRef.current.destroy()
-      } catch {}
+      } catch (e) {
+        console.warn('VideoPlayer: destroy failed', e)
+      }
       playerRef.current = null
     }
   }, [])
@@ -139,6 +141,7 @@ export function VideoPlayer({ youtubeId, volume, isPlaying, onError }: VideoPlay
       clearTimeout(timeoutId)
       destroyPlayer()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- destroyPlayer is stable
   }, [youtubeId])
 
   useEffect(() => {
@@ -155,7 +158,7 @@ export function VideoPlayer({ youtubeId, volume, isPlaying, onError }: VideoPlay
       } else {
         playerRef.current.pauseVideo()
       }
-    } catch {}
+      } catch (e) { console.warn('VideoPlayer: play/pause failed', e) }
   }, [isPlaying])
 
   return (

@@ -13,9 +13,16 @@
   overflow: hidden;
 }
 
-.gf-media-card:hover {
-  border-color: var(--gf-border-accent);
-  box-shadow: var(--gf-shadow-glow);
+@media (hover: hover) {
+  .gf-media-card:hover {
+    border-color: var(--gf-border-accent);
+    box-shadow: var(--gf-shadow-glow);
+    transform: translateY(-2px);
+  }
+}
+
+.gf-media-card:active {
+  transform: scale(0.98);
 }
 
 .gf-media-card--playing {

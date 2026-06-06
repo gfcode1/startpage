@@ -118,11 +118,17 @@
   border-radius: 50%;
   background: var(--gf-accent);
   color: var(--gf-text-inverse);
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
-.gf-playerbar__play:hover {
-  filter: brightness(1.15);
+@media (hover: hover) {
+  .gf-playerbar__play:hover {
+    filter: brightness(1.15);
+  }
+}
+
+.gf-playerbar__play:active {
+  transform: scale(0.92);
 }
 
 .gf-playerbar__stop {
@@ -134,12 +140,18 @@
   border-radius: var(--gf-radius-md);
   border: 1px solid var(--gf-border);
   color: var(--gf-text-muted);
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
-.gf-playerbar__stop:hover {
-  border-color: var(--gf-error);
-  color: var(--gf-error);
+@media (hover: hover) {
+  .gf-playerbar__stop:hover {
+    border-color: var(--gf-error);
+    color: var(--gf-error);
+  }
+}
+
+.gf-playerbar__stop:active {
+  transform: scale(0.92);
 }
 
 .gf-playerbar__volume {

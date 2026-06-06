@@ -32,7 +32,7 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>,
     )
     expect(screen.getByText('Something went wrong')).toBeInTheDocument()
-    expect(screen.getByText('Test error!')).toBeInTheDocument()
+    expect(screen.getByText('this page encountered an error: Test error!')).toBeInTheDocument()
   })
 
   it('shows generic message when error has no message', () => {
@@ -41,7 +41,7 @@ describe('ErrorBoundary', () => {
         <ThrowWithNoMessage />
       </ErrorBoundary>,
     )
-    expect(screen.getByText('An unexpected error occurred.')).toBeInTheDocument()
+    expect(screen.getByText('An unexpected error occurred in this page.')).toBeInTheDocument()
   })
 
   it('renders retry button', () => {

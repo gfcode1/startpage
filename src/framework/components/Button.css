@@ -25,9 +25,11 @@
   color: var(--gf-text-inverse);
   border-color: var(--gf-accent);
 }
-.gf-btn--primary:hover {
-  background: var(--gf-accent-hover);
-  box-shadow: var(--gf-shadow-glow);
+@media (hover: hover) {
+  .gf-btn--primary:hover {
+    background: var(--gf-accent-hover);
+    box-shadow: var(--gf-shadow-glow);
+  }
 }
 
 .gf-btn--secondary {
@@ -35,18 +37,22 @@
   color: var(--gf-text);
   border-color: var(--gf-border);
 }
-.gf-btn--secondary:hover {
-  border-color: var(--gf-border-accent);
-  background: var(--gf-bg-hover);
+@media (hover: hover) {
+  .gf-btn--secondary:hover {
+    border-color: var(--gf-border-accent);
+    background: var(--gf-bg-hover);
+  }
 }
 
 .gf-btn--ghost {
   background: transparent;
   color: var(--gf-text-muted);
 }
-.gf-btn--ghost:hover {
-  color: var(--gf-text);
-  background: var(--gf-bg-hover);
+@media (hover: hover) {
+  .gf-btn--ghost:hover {
+    color: var(--gf-text);
+    background: var(--gf-bg-hover);
+  }
 }
 
 .gf-btn--icon {
@@ -57,7 +63,9 @@
   color: var(--gf-text-muted);
   border-color: var(--gf-border);
 }
-.gf-btn--icon:hover {
-  color: var(--gf-accent);
-  border-color: var(--gf-border-accent);
+@media (hover: hover) {
+  .gf-btn--icon:hover {
+    color: var(--gf-accent);
+    border-color: var(--gf-border-accent);
+  }
 }

@@ -115,7 +115,8 @@ export default function WeatherApp() {
           setShowResults(results.length > 0)
           setSearching(false)
         }
-      } catch {
+      } catch (err) {
+        console.warn('WeatherApp: search failed', err)
         if (!controller.signal.aborted) {
           setSearchResults([])
           setShowResults(false)
@@ -151,7 +152,8 @@ export default function WeatherApp() {
       setCoords({ lat, lon })
       setCity('Current location')
       setCountry('')
-    } catch {
+    } catch (err) {
+      console.warn('WeatherApp: geolocation failed', err)
       setError('Unable to get location. Enable geolocation or search for a city.')
       setGeoLoading(false)
     } finally {
@@ -171,7 +173,8 @@ export default function WeatherApp() {
     setShowResults(false)
   }, [setSavedCoords, setSavedCity])
 
-  const showRain = data && data.current.weather_code >= 61 && data.current.weather_code <= 82
+  const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const showRain = data && data.current.weather_code >= 61 && data.current.weather_code <= 82 && !prefersReducedMotion
   const showLightning = data && data.current.weather_code >= 95
 
   const showErrorPage = error && !data
@@ -181,7 +184,7 @@ export default function WeatherApp() {
       <div className="gf-weather">
         <div className="gf-weather__search" ref={searchRef}>
           <div className="gf-weather__search-bar">
-            <svg className="gf-weather__search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <svg className="gf-weather__search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.5"/>
               <path d="M11 11l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
             </svg>
@@ -200,7 +203,7 @@ export default function WeatherApp() {
               disabled={geoLoading}
                aria-label="Current location"
             >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                 <circle cx="8" cy="8" r="3" stroke="currentColor" strokeWidth="1.5"/>
                 <path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
               </svg>
@@ -259,17 +262,17 @@ export default function WeatherApp() {
             onChange={e => setSearchQuery(e.target.value)}
             onFocus={() => searchResults.length > 0 && setShowResults(true)}
           />
-          <button
-            className={`gf-weather__geo-btn ${geoLoading ? 'gf-weather__geo-btn--loading' : ''}`}
-            onClick={handleGeoRequest}
-            disabled={geoLoading}
-               aria-label="Current location"
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <circle cx="8" cy="8" r="3" stroke="currentColor" strokeWidth="1.5"/>
-              <path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
-          </button>
+            <button
+              className={`gf-weather__geo-btn ${geoLoading ? 'gf-weather__geo-btn--loading' : ''}`}
+              onClick={handleGeoRequest}
+              disabled={geoLoading}
+                 aria-label="Current location"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <circle cx="8" cy="8" r="3" stroke="currentColor" strokeWidth="1.5"/>
+                <path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </button>
             {searching && (
               <div className="gf-weather__search-dropdown">
                 <div className="gf-weather__search-loading">Searching...</div>

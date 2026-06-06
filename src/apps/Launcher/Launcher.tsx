@@ -1,6 +1,7 @@
 import { useState, useMemo, CSSProperties } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { apps, AppDef, AppCategory } from '../../framework/appRegistry'
+import { useBadges } from '../../framework/AppBadgeContext'
 import {
   IconHeadphones, IconRadio, IconGrid, IconChecklist,
   IconBird, IconRss, IconGlobe,
@@ -43,6 +44,8 @@ const categoryLabels: Record<AppCategory, { label: string; icon: string }> = {
 function AppCard({ app, index }: { app: AppDef; index: number }) {
   const navigate = useNavigate()
   const Icon = icons[app.id]
+  const badges = useBadges()
+  const badge = badges[app.id]
 
   return (
     <div
@@ -62,6 +65,9 @@ function AppCard({ app, index }: { app: AppDef; index: number }) {
         <div className="gf-launcher__card-icon">
           {Icon ? <Icon /> : null}
         </div>
+        {badge !== undefined && (
+          <span className="gf-launcher__card-badge-count">{badge}</span>
+        )}
         <button
           className="gf-launcher__card-popup-btn"
           onClick={(e) => { e.stopPropagation(); openInPopup(app) }}

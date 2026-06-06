@@ -15,13 +15,27 @@ A React + TypeScript PWA platform with **12 mini-apps** across music, games, pro
 
 - **5 themes** — Analog, Spectrum, Daylight, Retro, Forest — applied as CSS custom properties with smooth transitions
 - **Cross-app audio player** — Shared player bar persists volume, handles SomaFM, YouTube, Radio Browser, and Soundscape sources
-- **PWA** — Installable as standalone app with service worker caching (Google Fonts, JS, CSS, assets)
+- **PWA** — Installable as standalone app with in-app install banner, service worker caching (Google Fonts, JS, CSS, assets)
 - **Persistent storage** — All app data saved to `localStorage` under namespaced keys, with full export/import backup
 - **Game engine** — Custom canvas game loop, Web Audio SFX synthesizer, tween system, and input manager used by 2048 and Flappy Bird
 - **EmulatorJS** — Drag-and-drop ROM loading for 16 retro systems; bundled ROMs served at build time
 - **RSS proxy** — Dev-only middleware that fetches feeds with CORS headers; article extraction via Mozilla Readability
 - **SPA routing** — GitHub Pages–friendly with `_redirects` + `404.html` fallback
 - **GitHub Actions** — Auto-deploys to GitHub Pages on push to `main`
+
+### UI/UX
+
+- **View Transitions API** — Smooth crossfade page transitions between apps
+- **Command Palette (⌘K)** — Fuzzy-search across all apps, themes, and actions
+- **Auto-hide topbar** — Sticky header hides on scroll down, reappears on scroll up
+- **Micro-interactions** — Hover/press feedback on all interactive elements with touch-device-aware `@media (hover: hover)` guards
+- **Bottom sheets** — Mobile-optimized draggable sheet component with snap gesture
+- **Animated lists** — FLIP-based enter and position-change animations (used in Todo)
+- **Empty states** — Unified `GfEmptyState` component for consistent no-data UI
+- **Confirm dialogs** — Accessible `alertdialog` for destructive action confirmation
+- **Theme preview** — Live mini preview card when browsing themes in Settings
+- **App badges** — Count indicators on launcher cards (active tasks in Todo)
+- **Custom scrollbar** — Matches the active theme's color palette
 
 ## Built with
 

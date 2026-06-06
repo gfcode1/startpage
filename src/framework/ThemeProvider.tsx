@@ -25,7 +25,7 @@ function migrateOldKey(): void {
       }
       localStorage.removeItem(OLD_KEY)
     }
-  } catch { /* silent */ }
+  } catch (e) { console.warn('ThemeProvider: migration failed', e) }
 }
 
 function applyTheme(themeKey: string): void {

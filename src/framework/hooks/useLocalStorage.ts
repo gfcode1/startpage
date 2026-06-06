@@ -5,7 +5,8 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, Dispatch<S
     try {
       const item = localStorage.getItem(key)
       return item ? JSON.parse(item) : initialValue
-    } catch {
+    } catch (e) {
+      console.warn('useLocalStorage: read failed', e)
       return initialValue
     }
   })
@@ -15,7 +16,7 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, Dispatch<S
       const next = typeof value === 'function' ? (value as (prev: T) => T)(prev) : value
       try {
         localStorage.setItem(key, JSON.stringify(next))
-      } catch { /* empty */ }
+      } catch (e) { console.warn('useLocalStorage: write failed', e) }
       return next
     })
   }, [key])
