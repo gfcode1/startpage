@@ -1,0 +1,48 @@
+.gf-somafm {
+  padding-bottom: calc(var(--gf-playerbar-height) + var(--gf-space-xl));
+}
+
+.gf-somafm__genre {
+  font-size: 0.6rem;
+  color: var(--gf-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+}
+
+.gf-somafm__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gf-space-md);
+}
+
+@media (min-width: 640px) {
+  .gf-somafm__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .gf-somafm__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.gf-somafm__error {
+  padding: var(--gf-space-sm) var(--gf-space-md);
+  margin-bottom: var(--gf-space-md);
+  background: var(--gf-error);
+  color: var(--gf-text-inverse);
+  border-radius: var(--gf-radius-md);
+  font-size: var(--gf-size-small);
+  text-align: center;
+  animation: gf-shake 0.4s ease;
+}
+
+.gf-somafm__empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: var(--gf-space-3xl);
+  color: var(--gf-text-muted);
+  font-size: var(--gf-size-body);
+}

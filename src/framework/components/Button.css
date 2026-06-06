@@ -1,0 +1,63 @@
+.gf-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gf-space-sm);
+  border-radius: var(--gf-radius-md);
+  font-family: var(--gf-font-ui);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.gf-btn:active {
+  transform: scale(0.97);
+}
+
+.gf-btn--sm { padding: 4px 12px; font-size: var(--gf-size-small); min-height: 44px; }
+.gf-btn--md { padding: 8px 20px; font-size: var(--gf-size-body); min-height: 44px; }
+.gf-btn--lg { padding: 12px 28px; font-size: var(--gf-size-heading); }
+
+.gf-btn--primary {
+  background: var(--gf-accent);
+  color: var(--gf-text-inverse);
+  border-color: var(--gf-accent);
+}
+.gf-btn--primary:hover {
+  background: var(--gf-accent-hover);
+  box-shadow: var(--gf-shadow-glow);
+}
+
+.gf-btn--secondary {
+  background: transparent;
+  color: var(--gf-text);
+  border-color: var(--gf-border);
+}
+.gf-btn--secondary:hover {
+  border-color: var(--gf-border-accent);
+  background: var(--gf-bg-hover);
+}
+
+.gf-btn--ghost {
+  background: transparent;
+  color: var(--gf-text-muted);
+}
+.gf-btn--ghost:hover {
+  color: var(--gf-text);
+  background: var(--gf-bg-hover);
+}
+
+.gf-btn--icon {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: var(--gf-bg-hover);
+  color: var(--gf-text-muted);
+  border-color: var(--gf-border);
+}
+.gf-btn--icon:hover {
+  color: var(--gf-accent);
+  border-color: var(--gf-border-accent);
+}

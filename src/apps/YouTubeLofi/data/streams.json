@@ -1,0 +1,102 @@
+[
+  {
+    "id": "lofi-main",
+    "title": "lofi hip hop radio 📚 beats to relax/study to",
+    "description": "24/7 lofi hip hop stream — the iconic Lofi Girl study session",
+    "youtubeId": "EWrX250Zhko",
+    "source": "lofigirl",
+    "thumbnail": "https://media.lofigirl.com/main.png",
+    "color": "#7c3aed",
+    "genre": "lofi hip hop"
+  },
+  {
+    "id": "lofi-synthwave",
+    "title": "synthwave radio 🌌 beats to chill/game to",
+    "description": "24/7 synthwave & retrowave beats for gaming and chilling",
+    "youtubeId": "4xDzrJKXOOY",
+    "source": "lofigirl",
+    "thumbnail": "https://media.lofigirl.com/synthwave.jpeg",
+    "color": "#ec4899",
+    "genre": "synthwave"
+  },
+  {
+    "id": "lofi-jazz",
+    "title": "jazz lofi radio 🎷 beats to chill/study to",
+    "description": "24/7 jazz lofi hip hop for relaxation and focus",
+    "youtubeId": "HuFYqnbVbzY",
+    "source": "lofigirl",
+    "thumbnail": "https://media.lofigirl.com/jazz.jpeg",
+    "color": "#f59e0b",
+    "genre": "jazz lofi"
+  },
+  {
+    "id": "lofi-study-pomodoro",
+    "title": "Study With Me 📚 Pomodoro",
+    "description": "Pomodoro study sessions with lofi beats in the background",
+    "youtubeId": "1oDrJba2PSs",
+    "source": "lofigirl",
+    "thumbnail": "https://media.lofigirl.com/pomodro.jpeg",
+    "color": "#10b981",
+    "genre": "pomodoro"
+  },
+  {
+    "id": "lofi-pov",
+    "title": "POV: It's {today} and you have an essay due tomorrow",
+    "description": "Last-minute essay writing vibes with lofi hip hop",
+    "youtubeId": "uFlzUaisbig",
+    "source": "lofigirl",
+    "thumbnail": "https://media.lofigirl.com/pov.jpeg",
+    "color": "#f97316",
+    "genre": "lofi hip hop"
+  },
+  {
+    "id": "lofi-sleep",
+    "title": "lofi hip hop radio 💤 beats to sleep/chill to",
+    "description": "24/7 gentle lofi beats for sleep, rest and relaxation",
+    "youtubeId": "28KRPhVzCus",
+    "source": "lofigirl",
+    "thumbnail": "https://media.lofigirl.com/sleep.jpeg",
+    "color": "#6366f1",
+    "genre": "sleep lofi"
+  },
+  {
+    "id": "chillhop-radio",
+    "title": "Chillhop Radio 🐾 jazzy & lofi hip hop beats",
+    "description": "24/7 chillhop radio — jazzy lofi hip hop beats curated by Chillhop Music",
+    "youtubeId": "5yx6BWlEVcY",
+    "source": "chillhop",
+    "thumbnail": "https://chillhop.com/assets/img/livestreams/chillhopradio.jpg",
+    "color": "#2d8a4e",
+    "genre": "lofi hip hop"
+  },
+  {
+    "id": "chillhop-latenight",
+    "title": "Late Night Vibes 😴 calm lofi / dreamy beats",
+    "description": "24/7 calm lofi and dreamy beats for late night relaxation",
+    "youtubeId": "i6WzngxTnBA",
+    "source": "chillhop",
+    "thumbnail": "https://chillhop.com/assets/img/livestreams/latenight.jpg",
+    "color": "#1e3a5f",
+    "genre": "calm lofi"
+  },
+  {
+    "id": "chillhop-study",
+    "title": "Chill Study Beats 📚 lofi productivity & pomodoro",
+    "description": "Lofi productivity beats with pomodoro timer 25/5 for focused study sessions",
+    "youtubeId": "HOqQXM7pOUc",
+    "source": "chillhop",
+    "thumbnail": "https://chillhop.com/assets/img/livestreams/chillstudy.jpg",
+    "color": "#0d9488",
+    "genre": "study beats"
+  },
+  {
+    "id": "chillhop-essentials",
+    "title": "Chillhop Essentials 🍦 Summer 2026",
+    "description": "Chillhop Essentials Summer 2026 — chill beats & lofi hip hop mix",
+    "youtubeId": "xx3X4HRbtgI",
+    "source": "chillhop",
+    "thumbnail": "https://chillhop.com/assets/img/livestreams/essentials.jpg",
+    "color": "#d97706",
+    "genre": "chillhop essentials"
+  }
+]

@@ -1,0 +1,135 @@
+import { lazy, ComponentType, LazyExoticComponent } from 'react'
+
+export type AppCategory = 'music' | 'games' | 'productivity' | 'utilities'
+
+export interface AppDef {
+  id: string
+  name: string
+  description: string
+  path: string
+  color: string
+  gradient: string
+  category: AppCategory
+  component: LazyExoticComponent<ComponentType>
+}
+
+export const apps: AppDef[] = [
+  {
+    id: 'youtubelofi',
+    name: 'YouTube LoFi',
+    description: 'Lofi Girl & Chillhop — browse, search & play YouTube streams',
+    path: '/youtubelofi',
+    color: '#7c3aed',
+    gradient: 'linear-gradient(135deg, #7c3aed, #2d8a4e)',
+    category: 'music',
+    component: lazy(() => import('../apps/YouTubeLofi/YouTubeLofiApp')),
+  },
+  {
+    id: 'somafm',
+    name: 'SomaFM Radio',
+    description: '46 curated internet radio channels — ambient, electronic, lounge & more',
+    path: '/somafm',
+    color: '#d4763a',
+    gradient: 'linear-gradient(135deg, #d4763a, #f0a757)',
+    category: 'music',
+    component: lazy(() => import('../apps/Somafm/SomafmApp')),
+  },
+  {
+    id: 'game2048',
+    name: '2048',
+    description: 'Merge tiles to reach 2048',
+    path: '/game2048',
+    color: '#d4763a',
+    gradient: 'linear-gradient(135deg, #d4763a, #6b2fa0)',
+    category: 'games',
+    component: lazy(() => import('../apps/Game2048/Game2048App')),
+  },
+  {
+    id: 'todo',
+    name: 'Todo List',
+    description: 'Simple task manager — add, complete, prioritize, and filter tasks',
+    path: '/todo',
+    color: '#22c55e',
+    gradient: 'linear-gradient(135deg, #22c55e, #06b6d4)',
+    category: 'productivity',
+    component: lazy(() => import('../apps/Todo/TodoApp')),
+  },
+  {
+    id: 'flappybird',
+    name: 'Flappy Bird',
+    description: 'Tap to fly! Dodge pipes and set your high score',
+    path: '/flappybird',
+    color: '#4dc9f6',
+    gradient: 'linear-gradient(135deg, #4dc9f6, #73bf2e)',
+    category: 'games',
+    component: lazy(() => import('../apps/FlappyBird/FlappyBirdApp')),
+  },
+  {
+    id: 'rssreader',
+    name: 'RSS Reader',
+    description: 'Aggregate and browse articles from multiple RSS feeds',
+    path: '/rssreader',
+    color: '#f97316',
+    gradient: 'linear-gradient(135deg, #f97316, #eab308)',
+    category: 'utilities',
+    component: lazy(() => import('../apps/RssReader/RssReaderApp')),
+  },
+  {
+    id: 'radiobrowser',
+    name: 'Radio Browser',
+    description: 'Browse & play thousands of radio stations from around the world',
+    path: '/radiobrowser',
+    color: '#22c55e',
+    gradient: 'linear-gradient(135deg, #22c55e, #06b6d4)',
+    category: 'music',
+    component: lazy(() => import('../apps/RadioBrowser/RadioBrowserApp')),
+  },
+  {
+    id: 'emulator',
+    name: 'EmulatorJS',
+    description: 'Play retro games — NES, SNES, GameBoy, N64, Sega, Atari, and more',
+    path: '/emulator',
+    color: '#9b59b6',
+    gradient: 'linear-gradient(135deg, #9b59b6, #e74c3c)',
+    category: 'games',
+    component: lazy(() => import('../apps/EmulatorLauncher/EmulatorLauncherApp')),
+  },
+  {
+    id: 'markdownnotes',
+    name: 'Markdown Notes',
+    description: 'Write and organize notes in Markdown with live preview',
+    path: '/markdownnotes',
+    color: '#eab308',
+    gradient: 'linear-gradient(135deg, #eab308, #f97316)',
+    category: 'productivity',
+    component: lazy(() => import('../apps/MarkdownNotes/MarkdownNotesApp')),
+  },
+  {
+    id: 'weather',
+    name: 'Weather',
+    description: 'Current weather & 7-day forecast — search cities, check conditions',
+    path: '/weather',
+    color: '#3b82f6',
+    gradient: 'linear-gradient(135deg, #3b82f6, #06b6d4)',
+    category: 'utilities',
+    component: lazy(() => import('../apps/Weather/WeatherApp')),
+  },
+  {
+    id: 'snake',
+    name: 'Snake',
+    description: 'Classic snake — eat, grow, and avoid crashing into walls or yourself',
+    path: '/snake',
+    color: '#22c55e',
+    gradient: 'linear-gradient(135deg, #22c55e, #16a34a)',
+    category: 'games',
+    component: lazy(() => import('../apps/Snake/SnakeApp')),
+  },
+]
+
+export function getAppById(id: string): AppDef | undefined {
+  return apps.find(a => a.id === id)
+}
+
+export function getAppByPath(path: string): AppDef | undefined {
+  return apps.find(a => a.path === path)
+}
