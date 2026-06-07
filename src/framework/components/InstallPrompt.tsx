@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import { GfIcon } from '../iconSystem'
 import { useInstallPrompt } from '../hooks/useInstallPrompt'
 import './InstallPrompt.css'
 
@@ -21,9 +22,7 @@ export function InstallPrompt() {
           Install
         </button>
         <button className="gf-install-prompt__dismiss" onClick={handleDismiss} aria-label="Dismiss">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path d="M2 2l8 8M10 2L2 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-          </svg>
+          <GfIcon name="close" size={12} />
         </button>
       </div>
     </div>

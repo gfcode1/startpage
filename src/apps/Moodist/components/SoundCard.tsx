@@ -1,4 +1,5 @@
 import { memo, useCallback, useEffect } from 'react'
+import { GfIcon } from '../../../framework/iconSystem'
 import type { Sound, SoundState } from '../types'
 import { useSoundPlayer } from '../hooks/useSoundPlayer'
 
@@ -67,11 +68,11 @@ export const SoundCard = memo(function SoundCard({
         onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); onToggleFavorite() } }}
         aria-label={`Favorite ${sound.label}`}
       >
-        {state.favorite ? '\u2764' : '\u2661'}
+        {state.favorite ? <GfIcon name="heart" size={12} /> : <GfIcon name="heart-outline" size={12} />}
       </button>
 
       <div className="gf-moodist__sound-label" style={{ position: 'absolute', top: 4, left: 6, fontSize: 9, opacity: 0.5 }}>
-        {player.isLoading ? '\u23F3' : ''}
+        {player.isLoading ? <GfIcon name="loading" size={10} /> : ''}
       </div>
 
       <input

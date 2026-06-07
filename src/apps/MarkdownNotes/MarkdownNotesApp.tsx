@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
+import { GfIcon } from '../../framework/iconSystem'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
 import { useToast } from '../../framework/ToastContext'
 import { AppHeader } from '../../framework/components/AppHeader'
@@ -125,9 +126,7 @@ export default function MarkdownNotesApp() {
               onClick={handleBack}
               aria-label="Back to notes"
             >
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-                <path d="M12 4l-6 5 6 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+              <GfIcon name="chevron-left" size={18} />
             </button>
             <input
               className="gf-markdown-notes__editor-title-input"
@@ -145,9 +144,7 @@ export default function MarkdownNotesApp() {
                 aria-label="Delete note"
                 title="Delete note"
               >
-                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
-                  <path d="M3 4.5h9M5.5 4.5V3a.5.5 0 01.5-.5h3a.5.5 0 01.5.5v1.5M6 7v3.5M9 7v3.5M3.5 4.5l.7 8.4a.5.5 0 00.5.5h5.6a.5.5 0 00.5-.5l.7-8.4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                <GfIcon name="trash" size={15} />
               </button>
             </div>
           </div>
@@ -200,19 +197,14 @@ export default function MarkdownNotesApp() {
           className="gf-markdown-notes__btn gf-markdown-notes__btn--primary"
           onClick={handleNewNote}
         >
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path d="M7 2v10M2 7h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-          </svg>
+          <GfIcon name="plus" size={14} />
           New Note
         </button>
       </div>
 
       {sortedNotes.length === 0 && (
         <div className="gf-markdown-notes__empty">
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" opacity="0.3">
-            <rect x="10" y="6" width="28" height="36" rx="3" stroke="currentColor" strokeWidth="2"/>
-            <path d="M16 16h16M16 24h12M16 32h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-          </svg>
+          <GfIcon name="document" size={48} />
           {search ? (
             <p>No notes match your search</p>
           ) : (
@@ -256,9 +248,7 @@ export default function MarkdownNotesApp() {
                 aria-label="Delete note"
                 title="Delete note"
               >
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                  <path d="M2 2l8 8M10 2L2 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
+                <GfIcon name="close" size={12} />
               </button>
             </div>
           ))}

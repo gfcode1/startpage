@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
+import { GfIcon } from '../../framework/iconSystem'
 import channelData from './data/channels.json'
 import { MediaCard } from '../../framework/components/MediaCard'
 import { AppHeader } from '../../framework/components/AppHeader'
@@ -148,10 +149,7 @@ export default function SomafmApp() {
             metadata={
               <>
                 <GfBadge variant="listeners">
-                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ marginRight: 3 }} aria-hidden="true">
-                    <path d="M1 9V7l4-4 4 4v2" stroke="currentColor" strokeWidth="1.2" fill="none"/>
-                    <circle cx="5" cy="2.5" r="1.5" stroke="currentColor" strokeWidth="1.2" fill="none"/>
-                  </svg>
+                  <GfIcon name="headphones" size={10} />
                   {Number(channel.listeners) >= 1000
                     ? `${(Number(channel.listeners) / 1000).toFixed(1)}k`
                     : channel.listeners}

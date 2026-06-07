@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { GfIcon, type IconName } from '../../../framework/iconSystem'
 import type { Category, SoundsState } from '../types'
 import { SoundCard } from './SoundCard'
 
@@ -32,7 +33,7 @@ export function CategorySection({
   return (
     <div className="gf-moodist__section">
       <div className="gf-moodist__section-header">
-        <span className="gf-moodist__section-icon">{category.icon}</span>
+        <span className="gf-moodist__section-icon"><GfIcon name={category.icon as IconName} size={14} /></span>
         <span className="gf-moodist__section-title">{category.title}</span>
       </div>
 

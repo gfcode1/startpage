@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { GfIcon } from '../../framework/iconSystem'
 import { SYSTEM_MAP, type ScannedGame } from './constants'
 
 interface GameViewProps {
@@ -36,9 +37,7 @@ export function GameView({ game, romData, onBack }: GameViewProps) {
     <div className="gf-emu__view">
       <div className="gf-emu__view-header">
         <button className="gf-emu__view-back" onClick={onBack} aria-label="Back to library">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <path d="M11 4l-5 5 5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+          <GfIcon name="chevron-left" size={18} />
           <span>Library</span>
         </button>
         <div className="gf-emu__view-info">

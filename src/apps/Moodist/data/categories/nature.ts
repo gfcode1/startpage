@@ -5,7 +5,7 @@ const BASE = 'https://moodist.mvze.net/sounds/nature'
 export const nature: Category = {
   id: 'nature',
   title: 'Nature',
-  icon: '\u{1F333}',
+  icon: 'sparkles',
   sounds: [
     { id: 'river', label: 'River', src: `${BASE}/river.mp3` },
     { id: 'waves', label: 'Waves', src: `${BASE}/waves.mp3` },

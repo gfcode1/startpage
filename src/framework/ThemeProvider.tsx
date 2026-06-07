@@ -9,7 +9,8 @@ interface GfThemeContextValue {
   themes: Record<string, Theme>
 }
 
-const GfThemeContext = createContext<GfThemeContextValue | null>(null)
+// eslint-disable-next-line react-refresh/only-export-components
+export const GfThemeContext = createContext<GfThemeContextValue | null>(null)
 
 const OLD_KEY = 'gf-theme'
 const APP_ID = '_framework'

@@ -1,6 +1,7 @@
 import { useRef, useEffect, useCallback, useState } from 'react'
 import { useGfTheme } from '../ThemeProvider'
 import { themeKeys, themes, type Theme } from '../themes'
+import { GfIcon } from '../iconSystem'
 import { persistenceService } from '../persistence/PersistenceService'
 import { useToast } from '../ToastContext'
 import './SettingsModal.css'
@@ -103,9 +104,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
           <div className="gf-settings-modal__header">
             <h2 className="gf-settings-modal__title">Settings</h2>
             <button className="gf-settings-modal__close" onClick={onClose} aria-label="Close">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-                <path d="M4 4l10 10M14 4L4 14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-              </svg>
+              <GfIcon name="close" size={18} />
             </button>
           </div>
 
@@ -129,11 +128,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
                   >
                     <span className="gf-settings-theme-item__dot" style={{ background: t.colors.accent }} />
                     <span className="gf-settings-theme-item__name">{t.name}</span>
-                    {active && (
-                      <svg className="gf-settings-theme-item__check" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                        <path d="M2 7l4 4 6-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    )}
+                    {active && <GfIcon name="check" size={14} />}
                   </button>
                 )
               })}
@@ -161,17 +156,11 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
             </p>
             <div className="gf-settings-actions">
               <button className="gf-settings-btn" onClick={handleExport}>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M8 11V3M8 3l4 4M8 3L4 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M2 11v2a1 1 0 001 1h10a1 1 0 001-1v-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
+                <GfIcon name="download" size={16} />
                 Download backup
               </button>
               <button className="gf-settings-btn" onClick={() => fileRef.current?.click()}>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M8 5v8M8 13l-4-4M8 13l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M2 11v2a1 1 0 001 1h10a1 1 0 001-1v-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
+                <GfIcon name="upload" size={16} />
                 Upload backup
               </button>
               <input

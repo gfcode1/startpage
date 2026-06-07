@@ -1,14 +1,9 @@
 import { useState, useMemo, CSSProperties } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { GfIcon, IconName } from '../../framework/iconSystem'
 import { apps, AppDef, AppCategory } from '../../framework/appRegistry'
 import { useBadges } from '../../framework/AppBadgeContext'
 import { WidgetGrid } from '../../framework/components/WidgetGrid'
-import {
-  IconHeadphones, IconRadio, IconGrid, IconChecklist,
-  IconBird, IconRss, IconGlobe,
-  IconGamepad, IconDocument, IconWeather,
-  IconSnake, IconWave,
-} from './icons'
 import './Launcher.css'
 
 function openInPopup(app: AppDef) {
@@ -17,34 +12,41 @@ function openInPopup(app: AppDef) {
   window.open(url, app.id, 'width=800,height=650,menubar=no,toolbar=no,location=no,status=no')
 }
 
-const icons: Record<string, () => React.ReactNode> = {
-  youtubelofi: IconHeadphones,
-  somafm: IconRadio,
-  game2048: IconGrid,
-  todo: IconChecklist,
+const iconMap: Record<string, IconName> = {
+  youtubelofi: 'headphones',
+  somafm: 'radio',
+  game2048: 'grid',
+  todo: 'checklist',
 
-  flappybird: IconBird,
-  rssreader: IconRss,
-  radiobrowser: IconGlobe,
-  emulator: IconGamepad,
-  markdownnotes: IconDocument,
-  weather: IconWeather,
-  snake: IconSnake,
-  moodist: IconWave,
+  flappybird: 'bird',
+  rssreader: 'rss',
+  radiobrowser: 'globe',
+  emulator: 'gamepad',
+  markdownnotes: 'document',
+  weather: 'sun',
+  snake: 'snake',
+  moodist: 'wave',
 }
 
 const categoryOrder: AppCategory[] = ['music', 'games', 'productivity', 'utilities']
 
-const categoryLabels: Record<AppCategory, { label: string; icon: string }> = {
-  music: { label: 'Music', icon: '♪' },
-  games: { label: 'Games', icon: '◆' },
-  productivity: { label: 'Productivity', icon: '✓' },
-  utilities: { label: 'Utilities', icon: '○' },
+const categoryLabels: Record<AppCategory, string> = {
+  music: 'Music',
+  games: 'Games',
+  productivity: 'Productivity',
+  utilities: 'Utilities',
+}
+
+const categoryIcons: Record<AppCategory, IconName> = {
+  music: 'music',
+  games: 'games',
+  productivity: 'productivity',
+  utilities: 'utilities',
 }
 
 function AppCard({ app, index }: { app: AppDef; index: number }) {
   const navigate = useNavigate()
-  const Icon = icons[app.id]
+  const iconName = iconMap[app.id]
   const badges = useBadges()
   const badge = badges[app.id]
 
@@ -66,7 +68,7 @@ function AppCard({ app, index }: { app: AppDef; index: number }) {
         {/* Front — gradient + icon + name */}
         <div className="gf-launcher__card-front" style={{ background: app.gradient }}>
           <div className="gf-launcher__card-icon">
-            {Icon ? <Icon /> : null}
+            {iconName ? <GfIcon name={iconName} size={24} /> : null}
           </div>
           <h3 className="gf-launcher__card-front-title">{app.name}</h3>
           {badge !== undefined && (
@@ -77,15 +79,13 @@ function AppCard({ app, index }: { app: AppDef; index: number }) {
         {/* Back — description + actions */}
         <div className="gf-launcher__card-back">
           <span className="gf-launcher__card-badge" style={{ color: app.color }}>
-            {categoryLabels[app.category].icon} {categoryLabels[app.category].label}
+            <GfIcon name={categoryIcons[app.category]} size={10} /> {categoryLabels[app.category]}
           </span>
           <p className="gf-launcher__card-desc">{app.description}</p>
           <div className="gf-launcher__card-back-footer">
             <span className="gf-launcher__card-action">
               Launch
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M6 4l4 4-4 4" />
-              </svg>
+              <GfIcon name="chevron-right" size={16} />
             </span>
             <button
               className="gf-launcher__card-popup-btn"
@@ -93,11 +93,7 @@ function AppCard({ app, index }: { app: AppDef; index: number }) {
               title="Open in popup window"
               aria-label="Open in popup window"
             >
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
-                <rect x="1.5" y="1.5" width="11" height="11" rx="1.5" fill="none" />
-                <path d="M5 1.5V1a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-.5" fill="none" />
-                <path d="M1.5 5.5v6a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1z" fill="none" />
-              </svg>
+              <GfIcon name="popup" size={14} />
             </button>
           </div>
         </div>
@@ -132,10 +128,7 @@ export function Launcher() {
     <div className="gf-launcher">
       <h1 className="gf-sr-only">GFcode</h1>
       <div className="gf-launcher__search">
-        <svg className="gf-launcher__search-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="8" cy="8" r="5.5" />
-          <path d="M12 12l4 4" />
-        </svg>
+        <GfIcon name="search" size={18} />
         <input
           className="gf-launcher__search-input"
           type="text"
@@ -150,9 +143,7 @@ export function Launcher() {
             onClick={() => setQuery('')}
             aria-label="Clear search"
           >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-              <path d="M4 4l8 8M12 4l-8 8" />
-            </svg>
+            <GfIcon name="close" size={16} />
           </button>
         )}
       </div>
@@ -170,7 +161,6 @@ export function Launcher() {
       {categoryOrder.map(cat => {
         const items = grouped[cat]
         if (items.length === 0) return null
-        const { label, icon } = categoryLabels[cat]
         const sectionCards = items.map(app => {
           const idx = cardIndex++
           return <AppCard key={app.id} app={app} index={idx} />
@@ -178,7 +168,7 @@ export function Launcher() {
 
         return (
           <section key={cat} className="gf-launcher__section">
-            <h2 className="gf-launcher__section-title">{icon} {label}</h2>
+            <h2 className="gf-launcher__section-title"><GfIcon name={categoryIcons[cat]} size={14} /> {categoryLabels[cat]}</h2>
             <div className="gf-launcher__grid">
               {sectionCards}
             </div>

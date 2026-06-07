@@ -1,3 +1,4 @@
+import { GfIcon } from '../iconSystem'
 import { GfSegmentedControl } from './SegmentedControl'
 import { GfBadge } from './Badge'
 import './AppHeader.css'
@@ -53,10 +54,7 @@ export function AppHeader({
           <GfSegmentedControl segments={segments} value={segmentValue} onChange={onSegmentChange} />
         )}
         <div className="gf-app-header__search">
-          <svg className="gf-app-header__search-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-            <circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1.5"/>
-            <path d="M9.5 9.5L13 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-          </svg>
+          <GfIcon name="search" size={14} />
           <input
             className="gf-app-header__search-input"
             type="text"

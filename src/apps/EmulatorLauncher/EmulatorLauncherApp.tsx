@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { GfIcon } from '../../framework/iconSystem'
 import { type SystemId, type ScannedGame, EXTENSION_TO_SYSTEM, ALL_EXTENSIONS } from './constants'
 import { SystemFilter } from './SystemFilter'
 import { GameCard } from './GameCard'
@@ -184,9 +185,7 @@ export default function EmulatorLauncherApp() {
           hidden
         />
         <button className="gf-emu__load-btn" onClick={() => fileInputRef.current?.click()}>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-          </svg>
+          <GfIcon name="plus" size={16} />
           Load ROM
         </button>
       </div>

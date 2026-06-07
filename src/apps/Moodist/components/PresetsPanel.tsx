@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { GfIcon } from '../../../framework/iconSystem'
 import { useAppStorage } from '../../../framework/persistence/useAppStorage'
 import type { Preset, SoundsState } from '../types'
 
@@ -83,14 +84,14 @@ export function PresetsPanel({ sounds, onApplyPreset }: PresetsPanelProps) {
             onClick={() => renamePreset(p.id)}
             title="Rename"
           >
-            {'\u270E'}
+            <GfIcon name="rename" size={14} />
           </button>
           <button
             className="gf-moodist__preset-btn gf-moodist__preset-btn--danger"
             onClick={() => deletePreset(p.id)}
             title="Delete"
           >
-            {'\u2716'}
+            <GfIcon name="delete" size={14} />
           </button>
         </div>
       ))}

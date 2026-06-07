@@ -140,6 +140,14 @@
   padding: 0;
 }
 
+.gf-todo__checkbox-empty {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--gf-border);
+  border-radius: 4px;
+}
+
 .gf-todo__text {
   flex: 1;
   min-width: 0;

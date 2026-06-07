@@ -2,6 +2,7 @@ import { useReducer, useMemo, useCallback, useEffect } from 'react'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
 import { AppHeader } from '../../framework/components/AppHeader'
 import { useToast } from '../../framework/ToastContext'
+
 import { categories, getAllSounds } from './data/sounds'
 import { moodistReducer, createInitialState } from './reducer'
 import type { SoundsState } from './types'
@@ -98,7 +99,7 @@ export default function MoodistApp() {
       {
         id: 'favorites',
         title: 'Favorites',
-        icon: '\u2764',
+        icon: 'heart',
         sounds: favoriteSounds,
       },
       ...categories,

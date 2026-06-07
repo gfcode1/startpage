@@ -77,9 +77,7 @@ export default function NewsWidget() {
       <div className="gf-widget-news">
         <button className="gf-widget-news__action" onClick={() => navigate('/rssreader')}>
           Add feeds in RSS Reader
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M4 3l4 4-4 4" />
-          </svg>
+          <GfIcon name="chevron-right" size={12} />
         </button>
       </div>
     )

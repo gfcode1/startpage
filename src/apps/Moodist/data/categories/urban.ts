@@ -5,7 +5,7 @@ const BASE = 'https://moodist.mvze.net/sounds/urban'
 export const urban: Category = {
   id: 'urban',
   title: 'Urban',
-  icon: '\u{1F3D9}\uFE0F',
+  icon: 'gamepad',
   sounds: [
     { id: 'highway', label: 'Highway', src: `${BASE}/highway.mp3` },
     { id: 'road', label: 'Road', src: `${BASE}/road.mp3` },

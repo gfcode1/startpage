@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { GfIcon } from '../../framework/iconSystem'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
 import './TodoWidget.css'
 
@@ -23,9 +24,7 @@ export default function TodoWidget() {
       <div className="gf-widget-todo">
         <button className="gf-widget-todo__action" onClick={() => navigate('/todo')}>
           Add tasks in Todo
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M4 3l4 4-4 4" />
-          </svg>
+          <GfIcon name="chevron-right" size={12} />
         </button>
       </div>
     )
@@ -40,9 +39,7 @@ export default function TodoWidget() {
       <div className="gf-widget-todo__header">
         <span className="gf-widget-todo__count">{done}/{total} done</span>
         <button className="gf-widget-todo__open" onClick={() => navigate('/todo')} aria-label="Open Todo">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M5 3l4 4-4 4" />
-          </svg>
+          <GfIcon name="chevron-right" size={14} />
         </button>
       </div>
       <ul className="gf-widget-todo__list">

@@ -5,7 +5,7 @@ const BASE = 'https://moodist.mvze.net/sounds/things'
 export const things: Category = {
   id: 'things',
   title: 'Things',
-  icon: '\u{1F4BB}',
+  icon: 'grid',
   sounds: [
     { id: 'keyboard', label: 'Keyboard', src: `${BASE}/keyboard.mp3` },
     { id: 'typewriter', label: 'Typewriter', src: `${BASE}/typewriter.mp3` },

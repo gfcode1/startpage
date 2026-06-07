@@ -5,7 +5,7 @@ const BASE = 'https://moodist.mvze.net/sounds/rain'
 export const rain: Category = {
   id: 'rain',
   title: 'Rain',
-  icon: '\u{1F327}\uFE0F',
+  icon: 'weather-drizzle',
   sounds: [
     { id: 'light-rain', label: 'Light Rain', src: `${BASE}/light-rain.mp3` },
     { id: 'heavy-rain', label: 'Heavy Rain', src: `${BASE}/heavy-rain.mp3` },

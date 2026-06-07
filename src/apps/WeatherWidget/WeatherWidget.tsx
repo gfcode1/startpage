@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { GfIcon } from '../../framework/iconSystem'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
 import './WeatherWidget.css'
 
@@ -24,18 +25,6 @@ interface WeatherData {
   daily: DailyWeather
 }
 
-function getWeatherEmoji(code: number): string {
-  if (code === 0) return '☀️'
-  if (code <= 2) return '⛅'
-  if (code === 3) return '☁️'
-  if (code >= 45 && code <= 48) return '🌫️'
-  if (code >= 51 && code <= 55) return '🌦️'
-  if (code >= 61 && code <= 65) return '🌧️'
-  if (code >= 71 && code <= 75) return '❄️'
-  if (code >= 80 && code <= 82) return '🌦️'
-  if (code >= 95) return '⛈️'
-  return '☀️'
-}
 
 function getWeatherLabel(code: number): string {
   if (code === 0) return 'Clear'
@@ -93,9 +82,7 @@ export default function WeatherWidget() {
       <div className="gf-widget-weather">
         <button className="gf-widget-weather__action" onClick={() => navigate('/weather')}>
           Set a city in Weather
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M4 3l4 4-4 4" />
-          </svg>
+          <GfIcon name="chevron-right" size={12} />
         </button>
       </div>
     )
@@ -116,13 +103,12 @@ export default function WeatherWidget() {
   const { current, daily } = data
   const temp = Math.round(current.temperature_2m)
   const feels = Math.round(current.apparent_temperature)
-  const emoji = getWeatherEmoji(current.weather_code)
   const label = getWeatherLabel(current.weather_code)
 
   return (
     <div className="gf-widget-weather">
       <div className="gf-widget-weather__main">
-        <span className="gf-widget-weather__emoji">{emoji}</span>
+        <span className="gf-widget-weather__emoji"><GfIcon name="sun" size={28} /></span>
         <span className="gf-widget-weather__temp">{temp}°</span>
         <span className="gf-widget-weather__city">{city}</span>
       </div>
@@ -131,13 +117,13 @@ export default function WeatherWidget() {
       </span>
       <div className="gf-widget-weather__details">
         <span className="gf-widget-weather__detail">
-          💧 {current.relative_humidity_2m}%
+          <GfIcon name="droplet" size={10} /> {current.relative_humidity_2m}%
         </span>
         <span className="gf-widget-weather__detail">
-          🪮 {Math.round(current.wind_speed_10m)} km/h
+          <GfIcon name="wind" size={10} /> {Math.round(current.wind_speed_10m)} km/h
         </span>
         <span className="gf-widget-weather__detail">
-          🌡 H:{Math.round(daily.temperature_2m_max[0])}° L:{Math.round(daily.temperature_2m_min[0])}°
+          <GfIcon name="temperature" size={10} /> H:{Math.round(daily.temperature_2m_max[0])}° L:{Math.round(daily.temperature_2m_min[0])}°
         </span>
       </div>
     </div>

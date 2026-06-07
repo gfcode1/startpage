@@ -1,4 +1,5 @@
 import { useRef, useEffect, useCallback, useState, ReactNode } from 'react'
+import { GfIcon } from '../iconSystem'
 import './BottomSheet.css'
 
 interface BottomSheetProps {
@@ -126,9 +127,7 @@ export function GfBottomSheet({ open, onClose, title, children }: BottomSheetPro
           <div className="gf-sheet__header">
             <h2 className="gf-sheet__title">{title}</h2>
             <button className="gf-sheet__close" onClick={onClose} aria-label="Close">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M4 4l8 8M12 4L4 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
+              <GfIcon name="close" size={16} />
             </button>
           </div>
         )}

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useCallback, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGfTheme } from '../ThemeProvider'
+import { GfIcon } from '../iconSystem'
 import { apps } from '../appRegistry'
 import { themeKeys, themes } from '../themes'
 import './CommandPalette.css'
@@ -138,10 +139,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
     >
       <div className="gf-cmdk-modal">
         <div className="gf-cmdk-input-wrap">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.5" opacity="0.4"/>
-            <path d="M11 11l3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.4"/>
-          </svg>
+          <GfIcon name="search" size={16} />
           <input
             ref={inputRef}
             className="gf-cmdk-input"

@@ -3,6 +3,7 @@ import { useGfTheme } from './ThemeProvider'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { getAppByPath } from './appRegistry'
 import { useScrollToTop } from './hooks/useScrollToTop'
+import { GfIcon } from './iconSystem'
 import { SettingsModal } from './components/SettingsModal'
 import { InstallPrompt } from './components/InstallPrompt'
 import './AppShell.css'
@@ -52,16 +53,11 @@ export function AppShell({ children }: { children: ReactNode }) {
         <nav className="gf-topbar__left" aria-label="Navigation">
           {isPopup ? (
             <button className="gf-topbar__close" onClick={() => window.close()} aria-label="Close">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-              </svg>
+              <GfIcon name="close" size={16} />
             </button>
           ) : !isHome && (
             <button className="gf-topbar__home" onClick={() => { console.log('[DEBUG] Home button clicked, navigating to /'); navigate('/'); }} aria-label="Home">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                <path d="M16 19H4a1 1 0 0 1-1-1V8l7-6 7 6v10a1 1 0 0 1-1 1z" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-                <path d="M8 19v-6h4v6" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-              </svg>
+              <GfIcon name="home" size={20} />
             </button>
           )}
         </nav>
@@ -79,10 +75,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             aria-label="Settings"
             title="Settings"
           >
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-              <circle cx="9" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.5"/>
-              <path d="M9 1.5V4M9 14v2.5M1.5 9H4M14 9h2.5M3.2 3.2l2 2M12.8 12.8l2 2M3.2 14.8l2-2M12.8 5.2l2-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
+            <GfIcon name="gear" size={18} />
           </button>
           <div className="gf-theme-indicator" style={{ background: activeTheme?.colors?.accent }} title={activeTheme?.name} />
         </div>

@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, useRef, useEffect, ReactNode } from 'react'
+import { GfIcon } from './iconSystem'
 import './Toast.css'
 
 const MAX_TOASTS = 5
@@ -83,9 +84,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           <div key={toast.id} className={`gf-toast gf-toast--${toast.type}`} role="alert">
             <span className="gf-toast__msg">{toast.message}</span>
             <button className="gf-toast__close" onClick={() => removeToast(toast.id)} aria-label="Dismiss">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                <path d="M2 2l8 8M10 2L2 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
+              <GfIcon name="close" size={12} />
             </button>
           </div>
         ))}

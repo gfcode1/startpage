@@ -1,4 +1,5 @@
 import { ReactNode, useState } from 'react'
+import { GfIcon } from '../iconSystem'
 import './MediaCard.css'
 
 interface MediaCardProps {
@@ -91,14 +92,9 @@ export function MediaCard({
           {isLoading ? (
             <span className="gf-media-card__spinner" />
           ) : isPlaying ? (
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <rect x="2" y="1" width="3.5" height="12" rx="1" fill="currentColor"/>
-              <rect x="8.5" y="1" width="3.5" height="12" rx="1" fill="currentColor"/>
-            </svg>
+            <GfIcon name="pause" size={14} />
           ) : (
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path d="M4 1.5l8 5.5-8 5.5V1.5z" fill="currentColor"/>
-            </svg>
+            <GfIcon name="play" size={14} />
           )}
         </button>
         <button
@@ -106,10 +102,7 @@ export function MediaCard({
           onClick={() => onFavorite?.(id)}
           aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
         >
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path d="M7 12.5l-5.5-5A3.5 3.5 0 017 2.5a3.5 3.5 0 015.5 5L7 12.5z"
-              stroke="currentColor" strokeWidth="1.3" fill={isFavorite ? 'currentColor' : 'none'} />
-          </svg>
+          <GfIcon name={isFavorite ? 'heart' : 'heart-outline'} size={14} />
         </button>
       </div>
 

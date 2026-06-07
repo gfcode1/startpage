@@ -1,3 +1,5 @@
+import { GfIcon } from '../../../framework/iconSystem'
+
 interface PlayerControlsProps {
   isPlaying: boolean
   hasSelection: boolean
@@ -23,13 +25,7 @@ export function PlayerControls({
         onClick={onTogglePlay}
         title={hasSelection ? (isPlaying ? 'Pause' : 'Play') : 'Select a sound first'}
       >
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          {isPlaying ? (
-            <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
-          ) : (
-            <path d="M8 5v14l11-7z" />
-          )}
-        </svg>
+        <GfIcon name={isPlaying ? 'pause' : 'play'} size={16} />
         {isPlaying ? 'Pause' : 'Play'}
       </button>
 
@@ -39,13 +35,7 @@ export function PlayerControls({
         onClick={onShuffle}
         title="Shuffle — pick 5 random sounds"
       >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="16 3 21 3 21 8" />
-          <line x1="4" y1="20" x2="21" y2="3" />
-          <polyline points="21 16 21 21 16 21" />
-          <line x1="15" y1="15" x2="21" y2="21" />
-          <line x1="4" y1="4" x2="9" y2="9" />
-        </svg>
+        <GfIcon name="shuffle" size={16} />
         Shuffle
       </button>
 
@@ -55,10 +45,7 @@ export function PlayerControls({
         onClick={onUnselectAll}
         title="Unselect all sounds"
       >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="3 6 5 6 21 6" />
-          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-        </svg>
+        <GfIcon name="clear" size={16} />
         Clear
       </button>
     </div>

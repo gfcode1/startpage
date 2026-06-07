@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState, useCallback } from 'react'
+import { GfIcon } from '../../framework/iconSystem'
 import { StorageManager } from '../../framework/storage/StorageManager'
 import { persistenceService } from '../../framework/persistence/PersistenceService'
 import type { HighScoreEntry } from '../../framework/storage/types'
@@ -145,16 +146,7 @@ export default function SnakeApp() {
           <button className="gf-btn gf-btn--icon" onClick={handlePause}
             aria-label={paused ? 'Resume' : 'Pause'}
             title={paused ? 'Resume' : 'Pause'}>
-            {paused ? (
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <polygon points="5,3 15,9 5,15" fill="currentColor"/>
-              </svg>
-            ) : (
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <rect x="4" y="3" width="3.5" height="12" rx="1" fill="currentColor"/>
-                <rect x="10.5" y="3" width="3.5" height="12" rx="1" fill="currentColor"/>
-              </svg>
-            )}
+            {paused ? <GfIcon name="play" size={18} /> : <GfIcon name="pause" size={18} />}
           </button>
           <GfButton variant="secondary" size="sm" onClick={handleNewGame}>
             New

@@ -5,7 +5,7 @@ const BASE = 'https://moodist.mvze.net/sounds/animals'
 export const animals: Category = {
   id: 'animals',
   title: 'Animals',
-  icon: '\u{1F98D}',
+  icon: 'bird',
   sounds: [
     { id: 'birds', label: 'Birds', src: `${BASE}/birds.mp3` },
     { id: 'seagulls', label: 'Seagulls', src: `${BASE}/seagulls.mp3` },

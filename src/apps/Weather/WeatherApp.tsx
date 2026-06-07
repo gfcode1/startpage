@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import { GfIcon, type IconName } from '../../framework/iconSystem'
 import { searchCity, fetchWeather, getPosition } from './api'
 import { getWeatherInfo, isNightTime } from './weatherCodes'
 import type { CityResult, WeatherData } from './types'
@@ -184,10 +185,7 @@ export default function WeatherApp() {
       <div className="gf-weather">
         <div className="gf-weather__search" ref={searchRef}>
           <div className="gf-weather__search-bar">
-            <svg className="gf-weather__search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.5"/>
-              <path d="M11 11l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
+            <GfIcon name="search" size={16} />
             <input
               className="gf-weather__search-input"
               type="text"
@@ -203,10 +201,7 @@ export default function WeatherApp() {
               disabled={geoLoading}
                aria-label="Current location"
             >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                <circle cx="8" cy="8" r="3" stroke="currentColor" strokeWidth="1.5"/>
-                <path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
+              <GfIcon name="globe" size={16} />
             </button>
             {searching && (
               <div className="gf-weather__search-dropdown">
@@ -268,10 +263,7 @@ export default function WeatherApp() {
               disabled={geoLoading}
                  aria-label="Current location"
             >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                <circle cx="8" cy="8" r="3" stroke="currentColor" strokeWidth="1.5"/>
-                <path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
+              <GfIcon name="globe" size={16} />
             </button>
             {searching && (
               <div className="gf-weather__search-dropdown">
@@ -351,7 +343,7 @@ export default function WeatherApp() {
                 <p className="gf-weather__condition">{weatherInfo.label}</p>
               </div>
               <div className="gf-weather__temp-section">
-                <span className="gf-weather__icon">{weatherInfo.icon}</span>
+                <span className="gf-weather__icon"><GfIcon name={weatherInfo.icon as IconName} size={48} /></span>
                 <span className="gf-weather__temp">
                   {Math.round(data.current.temperature_2m)}°
                 </span>
@@ -364,22 +356,22 @@ export default function WeatherApp() {
 
           <div className="gf-weather__details">
             <div className="gf-weather__detail-card">
-              <div className="gf-weather__detail-icon">💧</div>
+              <div className="gf-weather__detail-icon"><GfIcon name="droplet" size={18} /></div>
               <div className="gf-weather__detail-value">{data.current.relative_humidity_2m}%</div>
               <div className="gf-weather__detail-label">Humidity</div>
             </div>
             <div className="gf-weather__detail-card">
-              <div className="gf-weather__detail-icon">🌬️</div>
+              <div className="gf-weather__detail-icon"><GfIcon name="wind" size={18} /></div>
               <div className="gf-weather__detail-value">{Math.round(data.current.wind_speed_10m)} km/h</div>
               <div className="gf-weather__detail-label">Wind</div>
             </div>
             <div className="gf-weather__detail-card">
-              <div className="gf-weather__detail-icon">🌀</div>
+              <div className="gf-weather__detail-icon"><GfIcon name="pressure" size={18} /></div>
               <div className="gf-weather__detail-value">{Math.round(data.current.pressure_msl)} hPa</div>
               <div className="gf-weather__detail-label">Pressure</div>
             </div>
             <div className="gf-weather__detail-card">
-              <div className="gf-weather__detail-icon">🌅</div>
+              <div className="gf-weather__detail-icon"><GfIcon name="sunrise" size={18} /></div>
               <div className="gf-weather__detail-value">
                 {data.daily.sunrise[0] ? formatTime(data.daily.sunrise[0]) : '--'}
               </div>
@@ -408,7 +400,7 @@ export default function WeatherApp() {
                 return (
                   <div key={dateStr} className="gf-weather__day" style={{ animationDelay: `${i * 0.05}s` }}>
                     <span className="gf-weather__day-name">{formatDay(dateStr, i)}</span>
-                    <span className="gf-weather__day-icon">{dayInfo.icon}</span>
+                    <span className="gf-weather__day-icon"><GfIcon name={dayInfo.icon as IconName} size={16} /></span>
                     <div className="gf-weather__day-temps">
                       <span className="gf-weather__day-min">{minT}°</span>
                       <div className="gf-weather__day-bar-track">
@@ -424,7 +416,7 @@ export default function WeatherApp() {
                     </div>
                     {precip !== undefined && precip > 0 && (
                       <span className="gf-weather__day-precip">
-                        <span className="gf-weather__day-precip-icon">💧</span>
+                        <span className="gf-weather__day-precip-icon"><GfIcon name="droplet" size={10} /></span>
                         {precip}%
                       </span>
                     )}

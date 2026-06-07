@@ -18,6 +18,7 @@
     "*.{js,jsx,ts,tsx,css}": "eslint --fix"
   },
   "dependencies": {
+    "@iconify/react": "^6.0.2",
     "@mozilla/readability": "^0.6.0",
     "howler": "^2.2.4",
     "marked": "^18.0.4",

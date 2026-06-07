@@ -5,7 +5,7 @@ const BASE = 'https://moodist.mvze.net/sounds/places'
 export const places: Category = {
   id: 'places',
   title: 'Places',
-  icon: '\u{1F30D}',
+  icon: 'globe',
   sounds: [
     { id: 'cafe', label: 'Cafe', src: `${BASE}/cafe.mp3` },
     { id: 'airport', label: 'Airport', src: `${BASE}/airport.mp3` },

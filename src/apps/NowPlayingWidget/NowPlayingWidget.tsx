@@ -1,3 +1,4 @@
+import { GfIcon } from '../../framework/iconSystem'
 import { usePlayer } from '../../framework/PlayerContext'
 import './NowPlayingWidget.css'
 
@@ -8,9 +9,7 @@ export default function NowPlayingWidget() {
     return (
       <div className="gf-widget-nowplaying">
         <span className="gf-widget-nowplaying__muted">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M6 3v10M6 3l7 4-7 4" />
-          </svg>
+          <GfIcon name="music-note" size={16} />
           Nothing playing
         </span>
       </div>

@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
+import { GfIcon } from '../../framework/iconSystem'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
 import { useToast } from '../../framework/ToastContext'
 import { AppHeader } from '../../framework/components/AppHeader'
@@ -218,42 +219,13 @@ export default function TodoApp() {
           disabled={!newTodoText.trim()}
           aria-label="Add task"
         >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path
-              d="M8 3v10M3 8h10"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-            />
-          </svg>
+          <GfIcon name="plus" size={16} />
         </button>
       </div>
 
       {filteredItems.length === 0 && (
         <div className="gf-todo__empty">
-          <svg
-            width="40"
-            height="40"
-            viewBox="0 0 40 40"
-            fill="none"
-            opacity="0.25"
-          >
-            <rect
-              x="8"
-              y="6"
-              width="24"
-              height="28"
-              rx="3"
-              stroke="currentColor"
-              strokeWidth="2"
-            />
-            <path
-              d="M14 18h12M14 24h8M14 12h12"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-          </svg>
+          <GfIcon name="checklist" size={40} />
           {search ? (
             <p>No tasks match &ldquo;{search}&rdquo;</p>
           ) : filter === 'completed' ? (
@@ -284,39 +256,7 @@ export default function TodoApp() {
                 onClick={() => handleToggle(item.id)}
                 aria-label={item.completed ? 'Mark incomplete' : 'Mark complete'}
               >
-                {item.completed ? (
-                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                    <rect
-                      x="2"
-                      y="2"
-                      width="14"
-                      height="14"
-                      rx="4"
-                      fill="var(--gf-success)"
-                      stroke="var(--gf-success)"
-                      strokeWidth="1.5"
-                    />
-                    <path
-                      d="M6 9l2 2 4-4"
-                      stroke="var(--gf-text-inverse)"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                ) : (
-                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                    <rect
-                      x="2"
-                      y="2"
-                      width="14"
-                      height="14"
-                      rx="4"
-                      stroke="var(--gf-border)"
-                      strokeWidth="1.5"
-                    />
-                  </svg>
-                )}
+                {item.completed ? <GfIcon name="check" size={18} /> : <span className="gf-todo__checkbox-empty" />}
               </button>
 
               {editingId === item.id ? (
@@ -368,14 +308,7 @@ export default function TodoApp() {
                   onClick={e => handleDelete(e, item.id)}
                   aria-label="Delete task"
                 >
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                    <path
-                      d="M2 2l8 8M10 2L2 10"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                    />
-                  </svg>
+                  <GfIcon name="close" size={12} />
                 </button>
               </div>
             </div>

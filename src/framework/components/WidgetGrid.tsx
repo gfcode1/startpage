@@ -1,4 +1,5 @@
 import { Suspense, useState, useRef, useEffect } from 'react'
+import { GfIcon } from '../iconSystem'
 import { widgets, WidgetDef } from '../widgetRegistry'
 import { useAppStorage } from '../persistence/useAppStorage'
 import './WidgetGrid.css'
@@ -22,9 +23,7 @@ function WidgetCard({ widget, onRemove }: { widget: WidgetDef; onRemove: () => v
         aria-label={`Remove ${widget.name} widget`}
         title="Remove widget"
       >
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-          <path d="M3 3l6 6M9 3l-6 6" />
-        </svg>
+        <GfIcon name="close" size={12} />
       </button>
       <Suspense fallback={
         <div className="gf-widget-card__loading">
@@ -92,9 +91,7 @@ export function WidgetGrid() {
             aria-label="Add widget"
             title="Add widget"
           >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-              <path d="M8 3v10M3 8h10" />
-            </svg>
+            <GfIcon name="plus" size={16} />
           </button>
 
           {showPicker && (

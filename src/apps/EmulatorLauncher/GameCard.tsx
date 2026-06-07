@@ -1,3 +1,4 @@
+import { GfIcon } from '../../framework/iconSystem'
 import { SYSTEM_MAP, type ScannedGame } from './constants'
 
 interface GameCardProps {
@@ -31,9 +32,7 @@ export function GameCard({ game, index, onClick }: GameCardProps) {
         <h3 className="gf-emu__card-title">{game.title}</h3>
         <span className="gf-emu__card-action">
           Play
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <polygon points="4,2 12,7 4,12" fill="currentColor"/>
-          </svg>
+          <GfIcon name="play" size={14} />
         </span>
       </div>
     </div>
