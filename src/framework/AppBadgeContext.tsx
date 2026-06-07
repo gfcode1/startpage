@@ -34,9 +34,13 @@ export function AppBadgeProvider({ children }: { children: ReactNode }) {
 
 export function useAppBadge(appId: string) {
   const { badges, setBadge } = useContext(AppBadgeContext)
+  const setter = useCallback(
+    (count: string | number | null) => setBadge(appId, count),
+    [appId, setBadge],
+  )
   return {
     badge: badges[appId],
-    setBadge: (count: string | number | null) => setBadge(appId, count),
+    setBadge: setter,
   }
 }
 

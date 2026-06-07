@@ -1,4 +1,4 @@
-import { Suspense, ReactNode, useState, useEffect, useRef } from 'react'
+import { Suspense, ReactNode, useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { flushSync } from 'react-dom'
 import { GfThemeProvider } from './framework/ThemeProvider'
@@ -27,7 +27,6 @@ function AppShellWrapper({ children }: { children: ReactNode }) {
 function useViewTransitionLocation() {
   const location = useLocation()
   const [displayLocation, setDisplayLocation] = useState(location)
-  const prevLocKey = useRef(`${location.pathname}${location.search}`)
 
   useEffect(() => {
     const locKey = `${location.pathname}${location.search}`
@@ -43,9 +42,8 @@ function useViewTransitionLocation() {
         setDisplayLocation(location)
       })
     }
-
-    prevLocKey.current = locKey
-  }, [location, displayLocation.pathname, displayLocation.search])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location])
 
   return displayLocation
 }

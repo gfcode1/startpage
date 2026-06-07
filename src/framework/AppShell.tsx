@@ -57,7 +57,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               </svg>
             </button>
           ) : !isHome && (
-            <button className="gf-topbar__home" onClick={() => navigate('/')} aria-label="Home">
+            <button className="gf-topbar__home" onClick={() => { console.log('[DEBUG] Home button clicked, navigating to /'); navigate('/'); }} aria-label="Home">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
                 <path d="M16 19H4a1 1 0 0 1-1-1V8l7-6 7 6v10a1 1 0 0 1-1 1z" stroke="currentColor" strokeWidth="1.5" fill="none"/>
                 <path d="M8 19v-6h4v6" stroke="currentColor" strokeWidth="1.5" fill="none"/>

@@ -62,39 +62,45 @@ function AppCard({ app, index }: { app: AppDef; index: number }) {
       aria-label={`Open ${app.name}`}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(app.path) } }}
     >
-      <div className="gf-launcher__card-header" style={{ background: app.gradient }}>
-        <div className="gf-launcher__card-icon">
-          {Icon ? <Icon /> : null}
+      <div className="gf-launcher__card-inner">
+        {/* Front — gradient + icon + name */}
+        <div className="gf-launcher__card-front" style={{ background: app.gradient }}>
+          <div className="gf-launcher__card-icon">
+            {Icon ? <Icon /> : null}
+          </div>
+          <h3 className="gf-launcher__card-front-title">{app.name}</h3>
+          {badge !== undefined && (
+            <span className="gf-launcher__card-badge-count">{badge}</span>
+          )}
         </div>
-        {badge !== undefined && (
-          <span className="gf-launcher__card-badge-count">{badge}</span>
-        )}
-        <button
-          className="gf-launcher__card-popup-btn"
-          onClick={(e) => { e.stopPropagation(); openInPopup(app) }}
-          title="Open in popup window"
-          aria-label="Open in popup window"
-        >
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
-            <rect x="1.5" y="1.5" width="11" height="11" rx="1.5" fill="none" />
-            <path d="M5 1.5V1a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-.5" fill="none" />
-            <path d="M1.5 5.5v6a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1z" fill="none" />
-          </svg>
-        </button>
-      </div>
 
-      <div className="gf-launcher__card-body">
-        <span className="gf-launcher__card-badge" style={{ color: app.color }}>
-          {categoryLabels[app.category].icon} {categoryLabels[app.category].label}
-        </span>
-        <h3 className="gf-launcher__card-title">{app.name}</h3>
-        <p className="gf-launcher__card-desc">{app.description}</p>
-        <span className="gf-launcher__card-action">
-          Launch
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M6 4l4 4-4 4" />
-          </svg>
-        </span>
+        {/* Back — description + actions */}
+        <div className="gf-launcher__card-back">
+          <span className="gf-launcher__card-badge" style={{ color: app.color }}>
+            {categoryLabels[app.category].icon} {categoryLabels[app.category].label}
+          </span>
+          <p className="gf-launcher__card-desc">{app.description}</p>
+          <div className="gf-launcher__card-back-footer">
+            <span className="gf-launcher__card-action">
+              Launch
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6 4l4 4-4 4" />
+              </svg>
+            </span>
+            <button
+              className="gf-launcher__card-popup-btn"
+              onClick={(e) => { e.stopPropagation(); openInPopup(app) }}
+              title="Open in popup window"
+              aria-label="Open in popup window"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
+                <rect x="1.5" y="1.5" width="11" height="11" rx="1.5" fill="none" />
+                <path d="M5 1.5V1a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-.5" fill="none" />
+                <path d="M1.5 5.5v6a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1z" fill="none" />
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   )
