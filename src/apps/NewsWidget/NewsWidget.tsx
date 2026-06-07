@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { GfIcon } from '../../framework/iconSystem'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
 import './NewsWidget.css'
 
