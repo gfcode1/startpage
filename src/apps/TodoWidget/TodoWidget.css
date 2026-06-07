@@ -1,0 +1,106 @@
+.gf-widget-todo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gf-space-sm);
+  width: 100%;
+  padding: var(--gf-space-md) var(--gf-space-lg);
+}
+
+.gf-widget-todo__action {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: var(--gf-space-xs);
+  font-family: var(--gf-font-ui);
+  font-size: var(--gf-size-small);
+  font-weight: 600;
+  color: var(--gf-accent);
+  background: none;
+  border: none;
+  padding: var(--gf-space-xs) var(--gf-space-sm);
+  border-radius: var(--gf-radius-md);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.gf-widget-todo__action:hover {
+  background: var(--gf-bg-hover);
+  color: var(--gf-accent-hover);
+}
+
+.gf-widget-todo__action svg {
+  transition: transform 0.15s ease;
+}
+
+.gf-widget-todo__action:hover svg {
+  transform: translateX(3px);
+}
+
+.gf-widget-todo__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gf-widget-todo__count {
+  font-family: var(--gf-font-ui);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gf-text-muted);
+}
+
+.gf-widget-todo__open {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--gf-radius-md);
+  color: var(--gf-text-muted);
+  transition: all 0.15s ease;
+}
+
+.gf-widget-todo__open:hover {
+  color: var(--gf-accent);
+  background: var(--gf-bg-hover);
+}
+
+.gf-widget-todo__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gf-space-xs);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.gf-widget-todo__item {
+  display: flex;
+  align-items: center;
+  gap: var(--gf-space-sm);
+  min-width: 0;
+}
+
+.gf-widget-todo__bullet {
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gf-accent);
+}
+
+.gf-widget-todo__text {
+  font-size: var(--gf-size-small);
+  color: var(--gf-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gf-widget-todo__more {
+  font-family: var(--gf-font-ui);
+  font-size: 0.65rem;
+  color: var(--gf-text-muted);
+}

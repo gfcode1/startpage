@@ -1,0 +1,50 @@
+.gf-widget-uv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 100%;
+  padding: var(--gf-space-lg);
+}
+
+.gf-widget-uv--loading {
+  color: var(--gf-text-muted);
+  font-size: var(--gf-size-body);
+}
+
+.gf-widget-uv__empty {
+  font-size: var(--gf-size-small);
+  color: var(--gf-text-muted);
+  font-style: italic;
+}
+
+.gf-widget-uv__label {
+  font-family: var(--gf-font-ui);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gf-text-muted);
+}
+
+.gf-widget-uv__value {
+  font-family: var(--gf-font-display);
+  font-size: 1.8rem;
+  font-weight: var(--gf-weight-display, 700);
+  line-height: 1.1;
+}
+
+.gf-widget-uv__level {
+  font-family: var(--gf-font-ui);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.gf-widget-uv--low { color: #22c55e; }
+.gf-widget-uv--moderate { color: #eab308; }
+.gf-widget-uv--high { color: #f97316; }
+.gf-widget-uv--very-high { color: #ef4444; }
+.gf-widget-uv--extreme { color: #a855f7; }

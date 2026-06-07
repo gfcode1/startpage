@@ -1,0 +1,25 @@
+.gf-widget-clock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: var(--gf-space-lg);
+  gap: 2px;
+}
+
+.gf-widget-clock__time {
+  font-family: var(--gf-font-display);
+  font-size: 2rem;
+  font-weight: var(--gf-weight-display, 700);
+  color: var(--gf-text);
+  line-height: 1.1;
+}
+
+.gf-widget-clock__date {
+  font-family: var(--gf-font-ui);
+  font-size: var(--gf-size-small);
+  color: var(--gf-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}

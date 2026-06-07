@@ -2,6 +2,7 @@ import { useState, useMemo, CSSProperties } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { apps, AppDef, AppCategory } from '../../framework/appRegistry'
 import { useBadges } from '../../framework/AppBadgeContext'
+import { WidgetGrid } from '../../framework/components/WidgetGrid'
 import {
   IconHeadphones, IconRadio, IconGrid, IconChecklist,
   IconBird, IconRss, IconGlobe,
@@ -155,6 +156,10 @@ export function Launcher() {
           <p>No apps match "{query}"</p>
         </div>
       )}
+
+      {!query && <WidgetGrid />}
+
+      {query && <div className="gf-launcher__search-divider" />}
 
       {categoryOrder.map(cat => {
         const items = grouped[cat]

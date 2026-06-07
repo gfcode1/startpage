@@ -64,6 +64,14 @@
   background: var(--gf-bg-hover);
 }
 
+/* ── Divider between widgets and sections ── */
+
+.gf-launcher__search-divider {
+  height: 1px;
+  background: var(--gf-border);
+  margin: 0;
+}
+
 /* ── Section ── */
 
 .gf-launcher__section {

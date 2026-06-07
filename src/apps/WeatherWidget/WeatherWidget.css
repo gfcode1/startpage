@@ -1,0 +1,101 @@
+.gf-widget-weather {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gf-space-xs);
+  width: 100%;
+  padding: var(--gf-space-lg);
+}
+
+.gf-widget-weather--loading {
+  align-items: center;
+  justify-content: center;
+  color: var(--gf-text-muted);
+  font-size: var(--gf-size-body);
+  min-height: 80px;
+}
+
+.gf-widget-weather__empty {
+  color: var(--gf-text-muted);
+  font-size: var(--gf-size-small);
+  font-style: italic;
+}
+
+.gf-widget-weather__action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gf-space-xs);
+  font-family: var(--gf-font-ui);
+  font-size: var(--gf-size-small);
+  font-weight: 600;
+  color: var(--gf-accent);
+  background: none;
+  border: none;
+  padding: var(--gf-space-xs) var(--gf-space-sm);
+  border-radius: var(--gf-radius-md);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.gf-widget-weather__action:hover {
+  background: var(--gf-bg-hover);
+  color: var(--gf-accent-hover);
+}
+
+.gf-widget-weather__action svg {
+  transition: transform 0.15s ease;
+}
+
+.gf-widget-weather__action:hover svg {
+  transform: translateX(3px);
+}
+
+.gf-widget-weather__main {
+  display: flex;
+  align-items: center;
+  gap: var(--gf-space-sm);
+}
+
+.gf-widget-weather__emoji {
+  font-size: 2.2rem;
+  line-height: 1;
+}
+
+.gf-widget-weather__temp {
+  font-family: var(--gf-font-display);
+  font-size: 2rem;
+  font-weight: var(--gf-weight-display, 700);
+  color: var(--gf-text);
+  line-height: 1;
+}
+
+.gf-widget-weather__city {
+  font-family: var(--gf-font-ui);
+  font-size: var(--gf-size-small);
+  color: var(--gf-text-muted);
+  margin-left: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gf-widget-weather__condition {
+  font-family: var(--gf-font-ui);
+  font-size: var(--gf-size-small);
+  color: var(--gf-text-muted);
+}
+
+.gf-widget-weather__details {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gf-space-xs);
+  margin-top: var(--gf-space-xs);
+  padding-top: var(--gf-space-xs);
+  border-top: 1px solid var(--gf-border);
+}
+
+.gf-widget-weather__detail {
+  font-family: var(--gf-font-ui);
+  font-size: 0.7rem;
+  color: var(--gf-text-muted);
+  white-space: nowrap;
+}

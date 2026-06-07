@@ -1,0 +1,118 @@
+import { Suspense, useState, useRef, useEffect } from 'react'
+import { widgets, WidgetDef } from '../widgetRegistry'
+import { useAppStorage } from '../persistence/useAppStorage'
+import './WidgetGrid.css'
+
+interface WidgetConfig {
+  activeWidgets: string[]
+}
+
+function WidgetCard({ widget, onRemove }: { widget: WidgetDef; onRemove: () => void }) {
+  const [hover, setHover] = useState(false)
+
+  return (
+    <div
+      className={`gf-widget-card gf-widget-card--${widget.size}`}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+    >
+      <button
+        className={`gf-widget-card__remove${hover ? ' gf-widget-card__remove--visible' : ''}`}
+        onClick={onRemove}
+        aria-label={`Remove ${widget.name} widget`}
+        title="Remove widget"
+      >
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+          <path d="M3 3l6 6M9 3l-6 6" />
+        </svg>
+      </button>
+      <Suspense fallback={
+        <div className="gf-widget-card__loading">
+          <span className="gf-widget-card__loading-dot" />
+        </div>
+      }>
+        <widget.component />
+      </Suspense>
+    </div>
+  )
+}
+
+export function WidgetGrid() {
+  const [config, setConfig] = useAppStorage<WidgetConfig>('_framework', 'widgetConfig', {
+    activeWidgets: ['clock', 'weather', 'news'],
+  })
+  const [showPicker, setShowPicker] = useState(false)
+  const pickerRef = useRef<HTMLDivElement>(null)
+
+  const active = config.activeWidgets
+    .map(id => widgets.find(w => w.id === id))
+    .filter(Boolean) as WidgetDef[]
+
+  const inactive = widgets.filter(w => !config.activeWidgets.includes(w.id))
+
+  useEffect(() => {
+    if (!showPicker) return
+    const handler = (e: MouseEvent) => {
+      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
+        setShowPicker(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [showPicker])
+
+  const addWidget = (id: string) => {
+    setConfig(prev => ({ activeWidgets: [...prev.activeWidgets, id] }))
+    setShowPicker(false)
+  }
+
+  const removeWidget = (id: string) => {
+    setConfig(prev => ({ activeWidgets: prev.activeWidgets.filter(w => w !== id) }))
+  }
+
+  if (active.length === 0 && inactive.length === 0) return null
+
+  return (
+    <section className="gf-widgets" aria-label="Widgets">
+      <div className="gf-widgets__grid">
+        {active.map(widget => (
+          <WidgetCard
+            key={widget.id}
+            widget={widget}
+            onRemove={() => removeWidget(widget.id)}
+          />
+        ))}
+      </div>
+
+      {inactive.length > 0 && (
+        <div className="gf-widgets__add" ref={pickerRef}>
+          <button
+            className="gf-widgets__add-btn"
+            onClick={() => setShowPicker(prev => !prev)}
+            aria-label="Add widget"
+            title="Add widget"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+              <path d="M8 3v10M3 8h10" />
+            </svg>
+          </button>
+
+          {showPicker && (
+            <div className="gf-widgets__picker">
+              {inactive.map(w => (
+                <button
+                  key={w.id}
+                  className="gf-widgets__picker-item"
+                  onClick={() => addWidget(w.id)}
+                >
+                  <span className="gf-widgets__picker-name">{w.name}</span>
+                  <span className="gf-widgets__picker-desc">{w.description}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </section>
+  )
+}

@@ -1,0 +1,50 @@
+.gf-widget-aqi {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 100%;
+  padding: var(--gf-space-lg);
+}
+
+.gf-widget-aqi--loading {
+  color: var(--gf-text-muted);
+  font-size: var(--gf-size-body);
+}
+
+.gf-widget-aqi__empty {
+  font-size: var(--gf-size-small);
+  color: var(--gf-text-muted);
+  font-style: italic;
+}
+
+.gf-widget-aqi__label {
+  font-family: var(--gf-font-ui);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gf-text-muted);
+}
+
+.gf-widget-aqi__value {
+  font-family: var(--gf-font-display);
+  font-size: 1.8rem;
+  font-weight: var(--gf-weight-display, 700);
+  line-height: 1.1;
+}
+
+.gf-widget-aqi__level {
+  font-family: var(--gf-font-ui);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.gf-widget-aqi--good { color: #22c55e; }
+.gf-widget-aqi--fair { color: #eab308; }
+.gf-widget-aqi--moderate { color: #f97316; }
+.gf-widget-aqi--poor { color: #ef4444; }
+.gf-widget-aqi--very-poor { color: #7c3aed; }
