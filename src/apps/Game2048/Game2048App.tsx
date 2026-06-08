@@ -1,11 +1,11 @@
 import { useRef, useEffect, useState, useCallback } from 'react'
-import { GfIcon } from '../../framework/iconSystem'
 import { StorageManager } from '../../framework/storage/StorageManager'
 import { persistenceService } from '../../framework/persistence/PersistenceService'
 import type { HighScoreEntry } from '../../framework/storage/types'
 import { AudioEngine } from '../../framework/engine/AudioEngine'
 import { Game2048Engine } from './Game2048Engine'
 import { GfButton } from '../../framework/components/Button'
+import { useTopbar } from '../../framework/TopbarContext'
 import './Game2048App.css'
 
 const BEST_SCORE_KEY = 'bestScore'
@@ -36,6 +36,7 @@ export default function Game2048App() {
   const [finalScore, setFinalScore] = useState(0)
   const [playerName, setPlayerName] = useState('')
   const [showNameInput, setShowNameInput] = useState(false)
+  const { setActions, clearConfig } = useTopbar()
 
   useEffect(() => {
     persistenceService.registerNamespace('game2048', BEST_SCORE_KEY, HIGH_SCORES_KEY, 'gameState')
@@ -137,6 +138,19 @@ export default function Game2048App() {
     else engine.pause()
   }, [])
 
+  useEffect(() => {
+    setActions([
+      {
+        id: 'pause',
+        icon: paused ? 'play' : 'pause',
+        label: paused ? 'Resume' : 'Pause',
+        onClick: handlePause,
+      },
+      { id: 'new-game', icon: 'plus', label: 'New Game', onClick: handleNewGame, variant: 'primary' },
+    ])
+    return () => { clearConfig() }
+  }, [paused, handlePause, handleNewGame, setActions, clearConfig])
+
   const handleSaveScore = useCallback(() => {
     const name = playerName.trim() || 'Anonymous'
     const entry: HighScoreEntry = { name, score: finalScore, date: new Date().toISOString() }
@@ -172,19 +186,6 @@ export default function Game2048App() {
             <span className="gf-game__score-value">{bestScore}</span>
           </div>
         </div>
-        <div className="gf-game__actions">
-          <button
-            className="gf-btn gf-btn--icon"
-            onClick={handlePause}
-            aria-label={paused ? 'Resume' : 'Pause'}
-            title={paused ? 'Resume' : 'Pause'}
-          >
-            {paused ? <GfIcon name="play" size={18} /> : <GfIcon name="pause" size={18} />}
-          </button>
-          <GfButton variant="secondary" size="sm" onClick={handleNewGame}>
-            New
-          </GfButton>
-        </div>
       </div>
 
       <div className="gf-game__board">
@@ -217,12 +218,6 @@ export default function Game2048App() {
             </div>
           </div>
         )}
-      </div>
-
-      <div className="gf-game__footer">
-        <GfButton variant="primary" size="md" onClick={handleNewGame}>
-          New game
-        </GfButton>
       </div>
 
       {(gameOver || won) && !showNameInput && !showResume && (

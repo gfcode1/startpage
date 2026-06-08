@@ -58,7 +58,7 @@
 
 .gf-emu__filter-btn--active {
   background: var(--sys-color, var(--gf-accent));
-  color: #fff;
+  color: var(--gf-text-inverse);
   border-color: var(--sys-color, var(--gf-accent));
 }
 
@@ -389,10 +389,10 @@
   font-size: var(--gf-size-small);
   color: var(--gf-text-muted);
   padding: var(--gf-space-sm);
-  animation: gf-pulse 1.5s ease-in-out infinite;
+  animation: gf-emu-pulse 1.5s ease-in-out infinite;
 }
 
-@keyframes gf-pulse {
+@keyframes gf-emu-pulse {
   0%, 100% { opacity: 0.6; }
   50% { opacity: 1; }
 }

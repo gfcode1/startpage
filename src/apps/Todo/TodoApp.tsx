@@ -7,6 +7,7 @@ import { GfBottomSheet } from '../../framework/components/BottomSheet'
 import { GfConfirmDialog } from '../../framework/components/ConfirmDialog'
 import { GfEmptyState } from '../../framework/components/EmptyState'
 import { useAppBadge } from '../../framework/AppBadgeContext'
+import { useTopbar } from '../../framework/TopbarContext'
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragOverlay, type DragStartEvent, type DragEndEvent } from '@dnd-kit/core'
 import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
@@ -299,12 +300,38 @@ export default function TodoApp() {
   const [subtaskText, setSubtaskText] = useState('')
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
   const { addToast } = useToast()
+  const { setActions, setSearch: setTopbarSearch, clearConfig } = useTopbar()
   const inputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
   const subtaskInputRef = useRef<HTMLInputElement>(null)
   const { setBadge } = useAppBadge('todo')
 
   useEffect(() => { editingIdRef.current = editingId }, [editingId])
+
+  const cycleSort = useCallback(() => {
+    const modes: SortMode[] = ['manual', 'dueDate', 'priority', 'createdAt']
+    const idx = modes.indexOf(sortMode)
+    setSortMode(modes[(idx + 1) % modes.length])
+  }, [sortMode])
+
+  useEffect(() => {
+    setActions([
+      {
+        id: 'sort',
+        icon: 'refresh',
+        label: `Sort: ${sortMode}`,
+        onClick: cycleSort,
+      },
+      {
+        id: 'tags',
+        icon: 'tag',
+        label: 'Manage tags',
+        onClick: () => setShowTagManager(true),
+      },
+    ])
+    setTopbarSearch({ placeholder: 'Search tasks or tags...', value: search, onChange: setSearch })
+    return () => { clearConfig() }
+  }, [search, sortMode, cycleSort, setActions, setTopbarSearch, clearConfig])
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -625,42 +652,11 @@ export default function TodoApp() {
   return (
     <div className="gf-todo">
       <AppHeader
-        title={list.name}
         badge={`${stats.active} active`}
         segments={segmentOptions}
         segmentValue={filter}
         onSegmentChange={v => setFilter(v as FilterMode)}
-        searchPlaceholder="Search tasks or tags..."
-        searchValue={search}
-        onSearchChange={setSearch}
       />
-
-      <div className="gf-todo__toolbar">
-        <button
-          className="gf-todo__btn gf-todo__btn--tag-manager"
-          onClick={() => setShowTagManager(true)}
-          aria-label="Manage tags"
-          title="Manage tags"
-        >
-          <GfIcon name="tag" size={14} />
-          Tags
-          {list.tags.length > 0 && <span className="gf-todo__tag-count">{list.tags.length}</span>}
-        </button>
-
-        <button
-          className="gf-todo__btn"
-          onClick={() => {
-            const modes: SortMode[] = ['manual', 'dueDate', 'priority', 'createdAt']
-            const idx = modes.indexOf(sortMode)
-            setSortMode(modes[(idx + 1) % modes.length])
-          }}
-          aria-label={`Sort by ${sortMode}`}
-          title={`Sort: ${sortMode}`}
-        >
-          <GfIcon name="refresh" size={14} />
-          {sortMode === 'manual' ? 'Manual' : sortMode === 'dueDate' ? 'Due date' : sortMode === 'priority' ? 'Priority' : 'Created'}
-        </button>
-      </div>
 
       <div className="gf-todo__add">
         <input

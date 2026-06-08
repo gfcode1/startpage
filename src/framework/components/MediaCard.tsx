@@ -14,6 +14,7 @@ interface MediaCardProps {
   isLoading?: boolean
   isFavorite?: boolean
   accentColor?: string
+  onClick?: () => void
   onPlay?: () => void
   onFavorite?: (id: string) => void
   renderBeforeTitle?: () => ReactNode | null
@@ -31,19 +32,31 @@ export function MediaCard({
   isLoading,
   isFavorite,
   accentColor,
+  onClick,
   onPlay,
   onFavorite,
   renderBeforeTitle,
 }: MediaCardProps) {
   const [imgError, setImgError] = useState(false)
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (onClick && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault()
+      onClick()
+    }
+  }
+
   return (
     <div
-      className={`gf-media-card ${isPlaying ? 'gf-media-card--playing' : ''}`}
+      className={`gf-media-card ${isPlaying ? 'gf-media-card--playing' : ''} ${onClick ? 'gf-media-card--clickable' : ''}`}
       style={{
         '--card-accent': accentColor,
         '--card-index': index,
       } as React.CSSProperties}
+      onClick={onClick}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={onClick ? handleKeyDown : undefined}
     >
       <div className="gf-media-card__top">
         {image && !imgError && (
@@ -84,26 +97,30 @@ export function MediaCard({
       )}
 
       <div className="gf-media-card__actions">
-        <button
-          className={`gf-media-card__play ${isPlaying ? 'gf-media-card__play--active' : ''}`}
-          onClick={onPlay}
-          aria-label={isPlaying ? 'Stop' : 'Play'}
-        >
-          {isLoading ? (
-            <span className="gf-media-card__spinner" />
-          ) : isPlaying ? (
-            <GfIcon name="pause" size={14} />
-          ) : (
-            <GfIcon name="play" size={14} />
-          )}
-        </button>
-        <button
-          className={`gf-media-card__fav ${isFavorite ? 'gf-media-card__fav--active' : ''}`}
-          onClick={() => onFavorite?.(id)}
-          aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
-        >
-          <GfIcon name={isFavorite ? 'heart' : 'heart-outline'} size={14} />
-        </button>
+        {onPlay && (
+          <button
+            className={`gf-media-card__play ${isPlaying ? 'gf-media-card__play--active' : ''}`}
+            onClick={(e) => { e.stopPropagation(); onPlay() }}
+            aria-label={isPlaying ? 'Stop' : 'Play'}
+          >
+            {isLoading ? (
+              <span className="gf-media-card__spinner" />
+            ) : isPlaying ? (
+              <GfIcon name="pause" size={14} />
+            ) : (
+              <GfIcon name="play" size={14} />
+            )}
+          </button>
+        )}
+        {onFavorite && (
+          <button
+            className={`gf-media-card__fav ${isFavorite ? 'gf-media-card__fav--active' : ''}`}
+            onClick={(e) => { e.stopPropagation(); onFavorite?.(id) }}
+            aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+          >
+            <GfIcon name={isFavorite ? 'heart' : 'heart-outline'} size={14} />
+          </button>
+        )}
       </div>
 
       {isPlaying && (

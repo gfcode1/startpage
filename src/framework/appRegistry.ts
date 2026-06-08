@@ -9,20 +9,22 @@ export interface AppDef {
   path: string
   color: string
   gradient: string
+  icon: string
   category: AppCategory
   component: LazyExoticComponent<ComponentType>
 }
 
 export const apps: AppDef[] = [
   {
-    id: 'youtubelofi',
-    name: 'YouTube LoFi',
-    description: 'Lofi Girl & Chillhop — browse, search & play YouTube streams',
-    path: '/youtubelofi',
+    id: 'youtubestreams',
+    name: 'YouTube Streams',
+    description: 'Play any YouTube stream — add custom streams, search & save favorites',
+    path: '/youtubestreams',
     color: '#7c3aed',
-    gradient: 'linear-gradient(135deg, #7c3aed, #2d8a4e)',
+    gradient: 'linear-gradient(135deg, #7c3aed, #ef4444)',
+    icon: 'tabler:headphones',
     category: 'music',
-    component: lazy(() => import('../apps/YouTubeLofi/YouTubeLofiApp')),
+    component: lazy(() => import('../apps/YouTubeStreams/YouTubeStreamsApp')),
   },
   {
     id: 'somafm',
@@ -31,6 +33,7 @@ export const apps: AppDef[] = [
     path: '/somafm',
     color: '#d4763a',
     gradient: 'linear-gradient(135deg, #d4763a, #f0a757)',
+    icon: 'tabler:antenna-bars-5',
     category: 'music',
     component: lazy(() => import('../apps/Somafm/SomafmApp')),
   },
@@ -41,6 +44,7 @@ export const apps: AppDef[] = [
     path: '/game2048',
     color: '#d4763a',
     gradient: 'linear-gradient(135deg, #d4763a, #6b2fa0)',
+    icon: 'tabler:layout-grid',
     category: 'games',
     component: lazy(() => import('../apps/Game2048/Game2048App')),
   },
@@ -51,6 +55,7 @@ export const apps: AppDef[] = [
     path: '/todo',
     color: '#22c55e',
     gradient: 'linear-gradient(135deg, #22c55e, #06b6d4)',
+    icon: 'tabler:list-check',
     category: 'productivity',
     component: lazy(() => import('../apps/Todo/TodoApp')),
   },
@@ -61,6 +66,7 @@ export const apps: AppDef[] = [
     path: '/flappybird',
     color: '#4dc9f6',
     gradient: 'linear-gradient(135deg, #4dc9f6, #73bf2e)',
+    icon: 'lucide:bird',
     category: 'games',
     component: lazy(() => import('../apps/FlappyBird/FlappyBirdApp')),
   },
@@ -71,6 +77,7 @@ export const apps: AppDef[] = [
     path: '/rssreader',
     color: '#f97316',
     gradient: 'linear-gradient(135deg, #f97316, #eab308)',
+    icon: 'tabler:rss',
     category: 'utilities',
     component: lazy(() => import('../apps/RssReader/RssReaderApp')),
   },
@@ -81,6 +88,7 @@ export const apps: AppDef[] = [
     path: '/radiobrowser',
     color: '#22c55e',
     gradient: 'linear-gradient(135deg, #22c55e, #06b6d4)',
+    icon: 'tabler:globe',
     category: 'music',
     component: lazy(() => import('../apps/RadioBrowser/RadioBrowserApp')),
   },
@@ -91,6 +99,7 @@ export const apps: AppDef[] = [
     path: '/emulator',
     color: '#9b59b6',
     gradient: 'linear-gradient(135deg, #9b59b6, #e74c3c)',
+    icon: 'tabler:device-gamepad-2',
     category: 'games',
     component: lazy(() => import('../apps/EmulatorLauncher/EmulatorLauncherApp')),
   },
@@ -101,6 +110,7 @@ export const apps: AppDef[] = [
     path: '/markdownnotes',
     color: '#eab308',
     gradient: 'linear-gradient(135deg, #eab308, #f97316)',
+    icon: 'tabler:file-text',
     category: 'productivity',
     component: lazy(() => import('../apps/MarkdownNotes/MarkdownNotesApp')),
   },
@@ -111,6 +121,7 @@ export const apps: AppDef[] = [
     path: '/weather',
     color: '#3b82f6',
     gradient: 'linear-gradient(135deg, #3b82f6, #06b6d4)',
+    icon: 'tabler:sun',
     category: 'utilities',
     component: lazy(() => import('../apps/Weather/WeatherApp')),
   },
@@ -121,6 +132,7 @@ export const apps: AppDef[] = [
     path: '/snake',
     color: '#22c55e',
     gradient: 'linear-gradient(135deg, #22c55e, #16a34a)',
+    icon: 'tabler:bug',
     category: 'games',
     component: lazy(() => import('../apps/Snake/SnakeApp')),
   },
@@ -131,6 +143,7 @@ export const apps: AppDef[] = [
     path: '/moodist',
     color: '#06b6d4',
     gradient: 'linear-gradient(135deg, #06b6d4, #7c3aed)',
+    icon: 'tabler:wave-sine',
     category: 'music',
     component: lazy(() => import('../apps/Moodist/MoodistApp')),
   },

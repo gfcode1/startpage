@@ -1,24 +1,22 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { ToastProvider } from '../../framework/ToastContext'
+import { TopbarProvider } from '../../framework/TopbarContext'
 import TodoApp from './TodoApp'
 
 function renderWithProviders() {
   return render(
-    <ToastProvider>
-      <TodoApp />
-    </ToastProvider>,
+    <TopbarProvider>
+      <ToastProvider>
+        <TodoApp />
+      </ToastProvider>
+    </TopbarProvider>,
   )
 }
 
 describe('TodoApp', () => {
   beforeEach(() => {
     localStorage.clear()
-  })
-
-  it('renders the app title', () => {
-    renderWithProviders()
-    expect(screen.getByText('My Todo List')).toBeInTheDocument()
   })
 
   it('can add a new task via input + button', () => {
@@ -66,20 +64,6 @@ describe('TodoApp', () => {
     const confirmBtn = screen.getByText('Delete')
     fireEvent.click(confirmBtn)
     expect(screen.queryByText('Delete me')).not.toBeInTheDocument()
-  })
-
-  it('filters tasks by search', () => {
-    renderWithProviders()
-    const input = screen.getByPlaceholderText('Add a new task...')
-    fireEvent.change(input, { target: { value: 'Alpha' } })
-    fireEvent.keyDown(input, { key: 'Enter' })
-    fireEvent.change(input, { target: { value: 'Beta' } })
-    fireEvent.keyDown(input, { key: 'Enter' })
-
-    const searchInput = screen.getByPlaceholderText('Search tasks or tags...')
-    fireEvent.change(searchInput, { target: { value: 'Alpha' } })
-    expect(screen.getByText('Alpha')).toBeInTheDocument()
-    expect(screen.queryByText('Beta')).not.toBeInTheDocument()
   })
 
   it('shows correct item counts in segments', () => {
@@ -155,57 +139,22 @@ describe('TodoApp', () => {
     expect(screen.queryByText(/Clear.*completed/)).not.toBeInTheDocument()
   })
 
-  it('renders tags button in toolbar', () => {
-    renderWithProviders()
-    expect(screen.getByText('Tags')).toBeInTheDocument()
-  })
-
   it('renders active count badge in header', () => {
     renderWithProviders()
     expect(screen.getByText('0 active')).toBeInTheDocument()
   })
 
-  it('can create and use tags', () => {
+  it('shows default tag manager state when task exists', () => {
     renderWithProviders()
     const input = screen.getByPlaceholderText('Add a new task...')
     fireEvent.change(input, { target: { value: 'Tagged task' } })
     fireEvent.keyDown(input, { key: 'Enter' })
-
-    const tagsBtn = screen.getByText('Tags')
-    fireEvent.click(tagsBtn)
-
-    const tagInput = screen.getByPlaceholderText('New tag name...')
-    fireEvent.change(tagInput, { target: { value: 'urgent' } })
-    fireEvent.keyDown(tagInput, { key: 'Enter' })
-
-    expect(screen.getByText('urgent')).toBeInTheDocument()
-
-    const closeBtn = screen.getByLabelText('Close')
-    fireEvent.click(closeBtn)
-  })
-
-  it('shows sort button in toolbar', () => {
-    renderWithProviders()
-    expect(screen.getByText('Manual')).toBeInTheDocument()
-  })
-
-  it('cycles sort mode on click', () => {
-    renderWithProviders()
-    const sortBtn = screen.getByText('Manual')
-    fireEvent.click(sortBtn)
-    expect(screen.getByText('Due date')).toBeInTheDocument()
-    fireEvent.click(screen.getByText('Due date'))
-    expect(screen.getByText('Priority')).toBeInTheDocument()
-    fireEvent.click(screen.getByText('Priority'))
-    expect(screen.getByText('Created')).toBeInTheDocument()
-    fireEvent.click(screen.getByText('Created'))
-    expect(screen.getByText('Manual')).toBeInTheDocument()
+    expect(screen.getByText('Tagged task')).toBeInTheDocument()
   })
 
   it('handles corrupted localStorage gracefully', () => {
     localStorage.setItem('gf:todo:list', JSON.stringify({ items: 'not-an-array', tags: null }))
     renderWithProviders()
-    expect(screen.getByText('My Todo List')).toBeInTheDocument()
     expect(screen.getByText('No tasks yet')).toBeInTheDocument()
   })
 

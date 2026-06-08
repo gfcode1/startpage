@@ -9,8 +9,8 @@ function TestHarness() {
       <p data-testid="theme-key">{themeKey}</p>
       <p data-testid="theme-name">{activeTheme?.name}</p>
       <p data-testid="theme-count">{Object.keys(themes).length}</p>
-      <button data-testid="btn-daylight" onClick={() => setTheme('daylight')}>Set Daylight</button>
-      <button data-testid="btn-forest" onClick={() => setTheme('forest')}>Set Forest</button>
+      <button data-testid="btn-light" onClick={() => setTheme('light')}>Set Light</button>
+      <button data-testid="btn-dark" onClick={() => setTheme('dark')}>Set Dark</button>
     </div>
   )
 }
@@ -33,38 +33,38 @@ describe('GfThemeProvider', () => {
     expect(screen.getByTestId('theme-key')).toBeInTheDocument()
   })
 
-  it('defaults to analog theme', () => {
+  it('defaults to dark theme', () => {
     renderWithProvider()
-    expect(screen.getByTestId('theme-key').textContent).toBe('analog')
+    expect(screen.getByTestId('theme-key').textContent).toBe('dark')
   })
 
   it('provides activeTheme with name', () => {
     renderWithProvider()
-    expect(screen.getByTestId('theme-name').textContent).toBe('Analog')
+    expect(screen.getByTestId('theme-name').textContent).toBe('Dark')
   })
 
-  it('provides all 5 themes', () => {
+  it('provides 2 themes', () => {
     renderWithProvider()
-    expect(screen.getByTestId('theme-count').textContent).toBe('5')
+    expect(screen.getByTestId('theme-count').textContent).toBe('2')
   })
 
   it('changes theme on setTheme', () => {
     renderWithProvider()
-    act(() => { fireEvent.click(screen.getByTestId('btn-daylight')) })
-    expect(screen.getByTestId('theme-key').textContent).toBe('daylight')
+    act(() => { fireEvent.click(screen.getByTestId('btn-light')) })
+    expect(screen.getByTestId('theme-key').textContent).toBe('light')
   })
 
   it('sets data-theme attribute on html', () => {
     renderWithProvider()
-    act(() => { fireEvent.click(screen.getByTestId('btn-forest')) })
-    expect(document.documentElement.getAttribute('data-theme')).toBe('forest')
+    act(() => { fireEvent.click(screen.getByTestId('btn-dark')) })
+    expect(document.documentElement.getAttribute('data-theme')).toBe('dark')
   })
 
   it('persists theme to localStorage', () => {
     renderWithProvider()
-    act(() => { fireEvent.click(screen.getByTestId('btn-daylight')) })
+    act(() => { fireEvent.click(screen.getByTestId('btn-light')) })
     const stored = localStorage.getItem('gf:_framework:theme')
-    expect(stored).toBe('"daylight"')
+    expect(stored).toBe('"light"')
   })
 
   it('migrates old gf-theme key', () => {
@@ -72,8 +72,15 @@ describe('GfThemeProvider', () => {
     expect(localStorage.getItem('gf-theme')).toBe('retro')
     renderWithProvider()
     const themeEl = screen.getByTestId('theme-key')
-    expect(themeEl.textContent).toBe('retro')
+    expect(themeEl.textContent).toBe('dark')
     expect(localStorage.getItem('gf-theme')).toBeNull()
-    expect(localStorage.getItem('gf:_framework:theme')).toBe('"retro"')
+    expect(localStorage.getItem('gf:_framework:theme')).toBe('"dark"')
+  })
+
+  it('migrates daylight to light', () => {
+    localStorage.setItem('gf-theme', 'daylight')
+    renderWithProvider()
+    const themeEl = screen.getByTestId('theme-key')
+    expect(themeEl.textContent).toBe('light')
   })
 })

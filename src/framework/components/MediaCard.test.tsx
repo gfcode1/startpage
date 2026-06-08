@@ -30,7 +30,7 @@ describe('MediaCard', () => {
   })
 
   it('shows play button', () => {
-    render(<MediaCard {...baseProps} />)
+    render(<MediaCard {...baseProps} onPlay={() => {}} />)
     expect(screen.getByLabelText('Play')).toBeInTheDocument()
   })
 
@@ -42,22 +42,22 @@ describe('MediaCard', () => {
   })
 
   it('shows stop label when playing', () => {
-    render(<MediaCard {...baseProps} isPlaying />)
+    render(<MediaCard {...baseProps} isPlaying onPlay={() => {}} />)
     expect(screen.getByLabelText('Stop')).toBeInTheDocument()
   })
 
   it('shows spinner when loading', () => {
-    render(<MediaCard {...baseProps} isLoading isPlaying />)
+    render(<MediaCard {...baseProps} isLoading isPlaying onPlay={() => {}} />)
     expect(screen.getByLabelText('Stop')).toBeInTheDocument()
   })
 
   it('shows favorite button', () => {
-    render(<MediaCard {...baseProps} />)
+    render(<MediaCard {...baseProps} onFavorite={() => {}} />)
     expect(screen.getByLabelText('Add to favorites')).toBeInTheDocument()
   })
 
   it('shows remove from favorites when favorited', () => {
-    render(<MediaCard {...baseProps} isFavorite />)
+    render(<MediaCard {...baseProps} isFavorite onFavorite={() => {}} />)
     expect(screen.getByLabelText('Remove from favorites')).toBeInTheDocument()
   })
 

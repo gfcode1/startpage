@@ -5,7 +5,7 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--gf-overlay);
   backdrop-filter: blur(4px);
   animation: gf-sheet-overlay-in 0.2s ease-out;
 }
@@ -101,7 +101,7 @@
 }
 
 .gf-sheet__close:active {
-  transform: scale(0.9);
+  transform: scale(0.97);
 }
 
 .gf-sheet__body {

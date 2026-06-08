@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { GfIcon, type IconName } from '../../framework/iconSystem'
+import { useTopbar } from '../../framework/TopbarContext'
 import { searchCity, fetchWeather, fetchHistoricalWeather, getPosition } from './api'
 import { getWeatherInfo, isNightTime } from './weatherCodes'
 import type { CityResult, WeatherData } from './types'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
+import { WeatherTopbarSearch } from './WeatherTopbarSearch'
 import './WeatherApp.css'
 
 const APP_ID = 'weather'
@@ -54,10 +56,8 @@ export default function WeatherApp() {
     typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
   )
 
-  const searchRef = useRef<HTMLDivElement>(null)
-  const searchInputRef = useRef<HTMLInputElement>(null)
-  const dropdownRef = useRef<HTMLDivElement>(null)
   const abortRef = useRef<AbortController | null>(null)
+  const { setCustomSearch, clearConfig } = useTopbar()
 
   const isNight = useMemo(() => {
     if (!data) return false
@@ -148,16 +148,6 @@ export default function WeatherApp() {
   }, [searchQuery])
 
   useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
-        setShowResults(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
-  }, [])
-
-  useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
     const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches)
     mq.addEventListener('change', handler)
@@ -201,7 +191,6 @@ export default function WeatherApp() {
       if (e.key === 'Escape') {
         setShowResults(false)
         setSearchQuery('')
-        searchInputRef.current?.blur()
       }
       return
     }
@@ -229,11 +218,37 @@ export default function WeatherApp() {
     }
   }, [showResults, searchResults, searchIndex, selectCity])
 
+  const handleClearSearch = useCallback(() => {
+    setSearchQuery('')
+    setShowResults(false)
+    setSearchIndex(-1)
+  }, [])
+
+  const handleCloseResults = useCallback(() => {
+    setShowResults(false)
+  }, [])
+
   useEffect(() => {
-    if (searchIndex < 0 || !dropdownRef.current) return
-    const items = dropdownRef.current.querySelectorAll<HTMLButtonElement>('.gf-weather__search-item')
-    items[searchIndex]?.scrollIntoView({ block: 'nearest' })
-  }, [searchIndex])
+    setCustomSearch(
+      <WeatherTopbarSearch
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchResults={searchResults}
+        showResults={showResults}
+        onCloseResults={handleCloseResults}
+        searchIndex={searchIndex}
+        onHoverResult={setSearchIndex}
+        searching={searching}
+        geoLoading={geoLoading}
+        onKeyDown={handleSearchKeyDown}
+        onSelectCity={selectCity}
+        onGeoRequest={handleGeoRequest}
+        onClear={handleClearSearch}
+        onFocusSearch={() => searchResults.length > 0 && setShowResults(true)}
+      />,
+    )
+    return () => { clearConfig() }
+  }, [searchQuery, searchResults, showResults, searchIndex, searching, geoLoading, handleSearchKeyDown, selectCity, handleGeoRequest, handleClearSearch, handleCloseResults, setCustomSearch, clearConfig])
 
   const showRain = data && data.current.weather_code >= 61 && data.current.weather_code <= 82 && !prefersReducedMotion
   const showLightning = data && data.current.weather_code >= 95
@@ -243,61 +258,6 @@ export default function WeatherApp() {
   if (showErrorPage) {
     return (
       <div className="gf-weather">
-        <div className="gf-weather__search" ref={searchRef}>
-          <div className="gf-weather__search-bar">
-            <GfIcon name="search" size={16} className="gf-weather__search-icon" />
-            <input
-              ref={searchInputRef}
-              className="gf-weather__search-input"
-              type="text"
-              placeholder="Search city..."
-              aria-label="Search city"
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              onFocus={() => searchResults.length > 0 && setShowResults(true)}
-              onKeyDown={handleSearchKeyDown}
-            />
-            {searchQuery && (
-              <button
-                className="gf-weather__clear-btn"
-                onClick={() => { setSearchQuery(''); setShowResults(false); setSearchIndex(-1); searchInputRef.current?.focus() }}
-                aria-label="Clear search"
-              >
-                <GfIcon name="close" size={14} />
-              </button>
-            )}
-            <button
-              className={`gf-weather__geo-btn ${geoLoading ? 'gf-weather__geo-btn--loading' : ''}`}
-              onClick={handleGeoRequest}
-              disabled={geoLoading}
-               aria-label="Current location"
-            >
-              <GfIcon name="globe" size={16} />
-            </button>
-            {searching && (
-              <div className="gf-weather__search-dropdown">
-                <div className="gf-weather__search-loading">Searching...</div>
-              </div>
-            )}
-            {!searching && searchResults.length > 0 && showResults && (
-              <div className="gf-weather__search-dropdown" ref={dropdownRef}>
-                {searchResults.map((r, i) => (
-                  <button
-                    key={r.id}
-                    className={`gf-weather__search-item${i === searchIndex ? ' gf-weather__search-item--active' : ''}`}
-                    onClick={() => selectCity(r)}
-                    onMouseEnter={() => setSearchIndex(i)}
-                  >
-                    <span className="gf-weather__search-item-name">
-                      {r.name}{r.admin1 ? `, ${r.admin1}` : ''}
-                    </span>
-                    <span className="gf-weather__search-item-country">{r.country}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
         <div className="gf-weather__error-state">
           <p className="gf-weather__error-text">{error}</p>
           <button className="gf-weather__retry-btn" onClick={() => { setLoading(true); setError(null); setRetryKey(k => k + 1); }}>
@@ -314,61 +274,6 @@ export default function WeatherApp() {
   return (
     <div className="gf-weather">
       <h1 className="gf-sr-only">Weather</h1>
-      <div className="gf-weather__search" ref={searchRef}>
-        <div className="gf-weather__search-bar">
-          <GfIcon name="search" size={16} className="gf-weather__search-icon" />
-          <input
-            ref={searchInputRef}
-            className="gf-weather__search-input"
-            type="text"
-            placeholder="Search city..."
-            aria-label="Search city"
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            onFocus={() => searchResults.length > 0 && setShowResults(true)}
-            onKeyDown={handleSearchKeyDown}
-          />
-            {searchQuery && (
-              <button
-                className="gf-weather__clear-btn"
-                onClick={() => { setSearchQuery(''); setShowResults(false); setSearchIndex(-1); searchInputRef.current?.focus() }}
-                aria-label="Clear search"
-              >
-                <GfIcon name="close" size={14} />
-              </button>
-            )}
-            <button
-              className={`gf-weather__geo-btn ${geoLoading ? 'gf-weather__geo-btn--loading' : ''}`}
-              onClick={handleGeoRequest}
-              disabled={geoLoading}
-                 aria-label="Current location"
-            >
-              <GfIcon name="globe" size={16} />
-            </button>
-            {searching && (
-              <div className="gf-weather__search-dropdown">
-                <div className="gf-weather__search-loading">Searching...</div>
-              </div>
-            )}
-            {!searching && searchResults.length > 0 && showResults && (
-              <div className="gf-weather__search-dropdown" ref={dropdownRef}>
-                {searchResults.map((r, i) => (
-                  <button
-                    key={r.id}
-                    className={`gf-weather__search-item${i === searchIndex ? ' gf-weather__search-item--active' : ''}`}
-                    onClick={() => selectCity(r)}
-                    onMouseEnter={() => setSearchIndex(i)}
-                  >
-                    <span className="gf-weather__search-item-name">
-                      {r.name}{r.admin1 ? `, ${r.admin1}` : ''}
-                    </span>
-                    <span className="gf-weather__search-item-country">{r.country}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-        </div>
-      </div>
 
       {error && data && (
         <div className="gf-weather__error-banner">{error}</div>

@@ -37,8 +37,8 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding-top: 4px;
+  gap: var(--gf-space-sm);
+  padding-top: var(--gf-space-xs);
 }
 
 .gf-skeleton-card__actions {
@@ -49,14 +49,14 @@
 
 .gf-skeleton-box {
   background: var(--gf-bg-hover);
-  border-radius: 4px;
+  border-radius: var(--gf-radius-sm);
   animation: gf-skeleton-pulse 1.5s ease-in-out infinite;
 }
 
 .gf-skeleton-line {
   height: 12px;
   background: var(--gf-bg-hover);
-  border-radius: 4px;
+  border-radius: var(--gf-radius-sm);
   animation: gf-skeleton-pulse 1.5s ease-in-out infinite;
 }
 

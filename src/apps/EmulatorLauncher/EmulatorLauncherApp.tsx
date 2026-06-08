@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { GfIcon } from '../../framework/iconSystem'
 import { GfEmptyState } from '../../framework/components/EmptyState'
+import { useTopbar } from '../../framework/TopbarContext'
 import { type SystemId, type ScannedGame, EXTENSION_TO_SYSTEM, ALL_EXTENSIONS } from './constants'
 import { SystemFilter } from './SystemFilter'
 import { GameCard } from './GameCard'
@@ -35,6 +36,15 @@ export default function EmulatorLauncherApp() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const dragTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const mountedRef = useRef(true)
+  const { setActions, setSearch: setTopbarSearch, clearConfig } = useTopbar()
+
+  useEffect(() => {
+    setActions([
+      { id: 'load-rom', icon: 'plus', label: 'Load ROM', onClick: () => fileInputRef.current?.click(), variant: 'primary' },
+    ])
+    setTopbarSearch({ placeholder: 'Search games…', value: search, onChange: setSearch })
+    return () => { clearConfig() }
+  }, [search, setActions, setTopbarSearch, clearConfig])
 
   useEffect(() => {
     let cancelled = false
@@ -197,41 +207,18 @@ export default function EmulatorLauncherApp() {
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      <header className="gf-emu__hero">
-        <h1 className="gf-emu__title">EmulatorJS</h1>
-        {!loading && games.length > 0 && (
-          <p className="gf-emu__subtitle">
-            {games.length} game{games.length !== 1 ? 's' : ''} across {new Set(games.map(g => g.system)).size} console{new Set(games.map(g => g.system)).size !== 1 ? 's' : ''}
-          </p>
-        )}
-      </header>
-
       <div className="gf-emu__toolbar">
         <SystemFilter selected={filter} onChange={setFilter} />
       </div>
 
-      <div className="gf-emu__actions">
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept={ALL_EXTENSIONS.join(',')}
-          multiple
-          onChange={handleFileSelect}
-          hidden
-        />
-        <input
-          className="gf-emu__search"
-          type="search"
-          placeholder="Search games…"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          aria-label="Search games"
-        />
-        <button className="gf-emu__load-btn" type="button" onClick={() => fileInputRef.current?.click()}>
-          <GfIcon name="plus" size={16} />
-          Load ROM
-        </button>
-      </div>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept={ALL_EXTENSIONS.join(',')}
+        multiple
+        onChange={handleFileSelect}
+        hidden
+      />
 
       {importProgress && (
         <div className="gf-emu__import-progress">

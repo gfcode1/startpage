@@ -5,6 +5,7 @@ import { AppHeader } from '../../framework/components/AppHeader'
 import { GfBadge } from '../../framework/components/Badge'
 import { GfEmptyState } from '../../framework/components/EmptyState'
 import { useToast } from '../../framework/ToastContext'
+import { useTopbar } from '../../framework/TopbarContext'
 import { fetchAndParseFeed, fetchAndParseArticle, parseOpml, downloadOpml, getCachedData, setCachedData, getCachedFeedKey, getCachedArticleKey, isOnline } from './rssParser'
 import type { Article, FeedResult, FeedConfig, DrawerContent } from './types'
 import './RssReaderApp.css'
@@ -45,6 +46,7 @@ export default function RssReaderApp() {
   const [drawerError, setDrawerError] = useState<string | null>(null)
   const [offline, setOffline] = useState(!isOnline())
   const { addToast } = useToast()
+  const { setActions, setSearch: setTopbarSearch, clearConfig } = useTopbar()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const drawerRef = useRef<HTMLDivElement>(null)
 
@@ -295,17 +297,25 @@ export default function RssReaderApp() {
 
   const totalErrors = results.filter(r => r.error).length
 
+  useEffect(() => {
+    setActions([
+      { id: 'refresh', icon: 'refresh', label: 'Refresh', onClick: () => setRefreshKey(k => k + 1) },
+      { id: 'mark-read', icon: 'check', label: 'Mark all read', onClick: handleMarkAllRead },
+      { id: 'export', icon: 'download', label: 'Export OPML', onClick: handleExportOpml },
+      { id: 'import', icon: 'upload', label: 'Import OPML', onClick: () => fileInputRef.current?.click() },
+      { id: 'manage', icon: 'edit', label: 'Manage Feeds', onClick: openEditor },
+    ])
+    setTopbarSearch({ placeholder: 'Search articles...', value: search, onChange: setSearch })
+    return () => { clearConfig() }
+  }, [search, handleMarkAllRead, handleExportOpml, openEditor, setActions, setTopbarSearch, clearConfig])
+
   return (
     <div className="gf-rssreader">
       <AppHeader
-        title="RSS Reader"
         badge={allArticles.length > 0 ? `${allArticles.length} articles` : undefined}
         segments={feedSegments.length > 1 ? feedSegments : undefined}
         segmentValue={filterFeed}
         onSegmentChange={setFilterFeed}
-        searchPlaceholder="Search articles..."
-        searchValue={search}
-        onSearchChange={setSearch}
       />
 
       {offline && (
@@ -351,28 +361,9 @@ export default function RssReaderApp() {
             </>
           )}
         </div>
-        <div className="gf-rssreader__toolbar-right">
-          <button className="gf-rssreader__btn" onClick={() => setRefreshKey(k => k + 1)} disabled={loading || feeds.length === 0}>
-            <GfIcon name="refresh" size={14} />
-            Refresh
-          </button>
-          <button className="gf-rssreader__btn" onClick={handleMarkAllRead} disabled={filteredArticles.length === 0 || unreadCount === 0}>
-            <GfIcon name="check-double" size={14} />
-            Mark all read
-          </button>
-          <button className="gf-rssreader__btn" onClick={handleExportOpml} disabled={feeds.length === 0} title="Export OPML">
-            <GfIcon name="download" size={14} />
-          </button>
-          <button className="gf-rssreader__btn" onClick={() => fileInputRef.current?.click()} title="Import OPML">
-            <GfIcon name="upload" size={14} />
-          </button>
-          <input ref={fileInputRef} type="file" accept=".opml,.xml,.json" style={{ display: 'none' }} onChange={handleImportOpml} />
-          <button className="gf-rssreader__btn gf-rssreader__btn--secondary" onClick={openEditor}>
-            <GfIcon name="edit" size={14} />
-            Manage Feeds
-          </button>
-        </div>
       </div>
+
+      <input ref={fileInputRef} type="file" accept=".opml,.xml,.json" style={{ display: 'none' }} onChange={handleImportOpml} />
 
       {results.filter(r => r.error).length > 0 && (
         <div className="gf-rssreader__feed-errors">

@@ -1,7 +1,9 @@
-import { useReducer, useMemo, useCallback, useEffect } from 'react'
+import { useReducer, useMemo, useCallback, useEffect, useState } from 'react'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
 import { AppHeader } from '../../framework/components/AppHeader'
+import { GfBottomSheet } from '../../framework/components/BottomSheet'
 import { useToast } from '../../framework/ToastContext'
+import { useTopbar } from '../../framework/TopbarContext'
 
 import { categories, getAllSounds } from './data/sounds'
 import { moodistReducer, createInitialState } from './reducer'
@@ -21,6 +23,27 @@ export default function MoodistApp() {
   const { addToast } = useToast()
   const [persisted, setPersisted] = useAppStorage<SoundsState | undefined>(APP_ID, STORAGE_KEY, undefined)
   const [state, dispatch] = useReducer(moodistReducer, persisted, createInitialState)
+  const [showPresets, setShowPresets] = useState(false)
+  const [showSleepTimer, setShowSleepTimer] = useState(false)
+  const { setActions, clearConfig } = useTopbar()
+
+  useEffect(() => {
+    setActions([
+      {
+        id: 'presets',
+        icon: 'sparkles',
+        label: 'Presets',
+        onClick: () => setShowPresets(true),
+      },
+      {
+        id: 'sleep-timer',
+        icon: 'moon',
+        label: 'Sleep Timer',
+        onClick: () => setShowSleepTimer(true),
+      },
+    ])
+    return () => { clearConfig() }
+  }, [setActions, clearConfig])
 
   useEffect(() => {
     setPersisted(state.sounds)
@@ -114,10 +137,7 @@ export default function MoodistApp() {
 
   return (
     <div className="gf-moodist">
-      <AppHeader
-        title="Moodist"
-        badge="84 sounds"
-      />
+      <AppHeader badge="84 sounds" />
 
       <PlayerControls
         isPlaying={state.isPlaying}
@@ -140,16 +160,19 @@ export default function MoodistApp() {
         />
       ))}
 
-      <PresetsPanel
-        sounds={state.sounds}
-        onApplyPreset={handleApplyPreset}
-      />
-
-      <SleepTimer onSleep={handleSleep} />
-
       <BinauralPanel />
-
       <NoisePanel />
+
+      <GfBottomSheet open={showPresets} onClose={() => setShowPresets(false)} title="Presets">
+        <PresetsPanel
+          sounds={state.sounds}
+          onApplyPreset={handleApplyPreset}
+        />
+      </GfBottomSheet>
+
+      <GfBottomSheet open={showSleepTimer} onClose={() => setShowSleepTimer(false)} title="Sleep Timer">
+        <SleepTimer onSleep={() => { handleSleep(); setShowSleepTimer(false) }} />
+      </GfBottomSheet>
     </div>
   )
 }

@@ -1,10 +1,10 @@
 import { useRef, useEffect, useState, useCallback } from 'react'
-import { GfIcon } from '../../framework/iconSystem'
 import { StorageManager } from '../../framework/storage/StorageManager'
 import type { HighScoreEntry } from '../../framework/storage/types'
 import { AudioEngine } from '../../framework/engine/AudioEngine'
 import { SnakeEngine } from './SnakeEngine'
 import { GfButton } from '../../framework/components/Button'
+import { useTopbar } from '../../framework/TopbarContext'
 import './SnakeApp.css'
 
 const BEST_SCORE_KEY = 'bestScore'
@@ -29,6 +29,7 @@ export default function SnakeApp() {
   const [finalScore, setFinalScore] = useState(0)
   const [playerName, setPlayerName] = useState('')
   const [showNameInput, setShowNameInput] = useState(false)
+  const { setActions, clearConfig } = useTopbar()
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -105,6 +106,19 @@ export default function SnakeApp() {
     else engine.pause()
   }, [])
 
+  useEffect(() => {
+    setActions([
+      {
+        id: 'pause',
+        icon: paused ? 'play' : 'pause',
+        label: paused ? 'Resume' : 'Pause',
+        onClick: handlePause,
+      },
+      { id: 'new-game', icon: 'plus', label: 'New Game', onClick: handleNewGame, variant: 'primary' },
+    ])
+    return () => { clearConfig() }
+  }, [paused, handlePause, handleNewGame, setActions, clearConfig])
+
   const handleSaveScore = useCallback(() => {
     const name = playerName.trim() || 'Anonymous'
     const entry: HighScoreEntry = {
@@ -137,16 +151,6 @@ export default function SnakeApp() {
             <span className="gf-snake__score-value">{bestScore}</span>
           </div>
         </div>
-        <div className="gf-snake__actions">
-          <button className="gf-btn gf-btn--icon" onClick={handlePause}
-            aria-label={paused ? 'Resume' : 'Pause'}
-            title={paused ? 'Resume' : 'Pause'}>
-            {paused ? <GfIcon name="play" size={18} /> : <GfIcon name="pause" size={18} />}
-          </button>
-          <GfButton variant="secondary" size="sm" onClick={handleNewGame}>
-            New
-          </GfButton>
-        </div>
       </div>
 
       <div className="gf-snake__board">
@@ -161,12 +165,6 @@ export default function SnakeApp() {
             </div>
           </div>
         )}
-      </div>
-
-      <div className="gf-snake__footer">
-        <GfButton variant="primary" size="md" onClick={handleNewGame}>
-          New Game
-        </GfButton>
       </div>
 
       {gameOver && !showNameInput && (

@@ -16,13 +16,22 @@ const OLD_KEY = 'gf-theme'
 const APP_ID = '_framework'
 const KEY = 'theme'
 
+const LEGACY_MAP: Record<string, string> = {
+  analog: 'dark',
+  spectrum: 'dark',
+  retro: 'dark',
+  forest: 'dark',
+  daylight: 'light',
+}
+
 function migrateOldKey(): void {
   try {
     const oldVal = localStorage.getItem(OLD_KEY)
     if (oldVal !== null) {
+      const mapped = LEGACY_MAP[oldVal] || 'dark'
       const newKey = `gf:${APP_ID}:${KEY}`
       if (localStorage.getItem(newKey) === null) {
-        localStorage.setItem(newKey, JSON.stringify(oldVal))
+        localStorage.setItem(newKey, JSON.stringify(mapped))
       }
       localStorage.removeItem(OLD_KEY)
     }
@@ -44,6 +53,7 @@ function applyTheme(themeKey: string): void {
     '--gf-bg-app': c.bgApp,
     '--gf-bg-elevated': c.bgElevated,
     '--gf-bg-hover': c.bgHover,
+    '--gf-overlay': c.overlay,
     '--gf-text': c.text,
     '--gf-text-muted': c.textMuted,
     '--gf-text-inverse': c.textInverse,
@@ -73,7 +83,9 @@ function applyTheme(themeKey: string): void {
 export function GfThemeProvider({ children }: { children: ReactNode }) {
   migrateOldKey()
 
-  const [themeKey, setThemeKeyState] = useAppStorage<string>(APP_ID, KEY, 'analog')
+  const [themeKey, setThemeKeyState] = useAppStorage<string>(APP_ID, KEY, 'dark')
+
+  const validKey = themes[themeKey] ? themeKey : 'dark'
 
   const setTheme = useCallback((key: string) => {
     if (themes[key]) {
@@ -82,11 +94,15 @@ export function GfThemeProvider({ children }: { children: ReactNode }) {
   }, [setThemeKeyState])
 
   useEffect(() => {
+    if (!themes[themeKey]) {
+      setThemeKeyState('dark')
+      return
+    }
     applyTheme(themeKey)
-  }, [themeKey])
+  }, [themeKey, setThemeKeyState])
 
   return (
-    <GfThemeContext.Provider value={{ themeKey, setTheme, activeTheme: themes[themeKey], themes }}>
+    <GfThemeContext.Provider value={{ themeKey: validKey, setTheme, activeTheme: themes[validKey], themes }}>
       {children}
     </GfThemeContext.Provider>
   )

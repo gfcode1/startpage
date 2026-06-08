@@ -91,7 +91,7 @@ input, select, textarea {
   --gf-radius-full: 9999px;
 
   --gf-layout-max: 1400px;
-  --gf-topbar-height: 56px;
+  --gf-topbar-height: 64px;
   --gf-playerbar-height: 72px;
 
   --gf-size-display: clamp(2rem, 5vw, 4rem);

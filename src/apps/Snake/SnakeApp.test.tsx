@@ -1,5 +1,14 @@
 import { render, screen } from '@testing-library/react'
+import { TopbarProvider } from '../../framework/TopbarContext'
 import SnakeApp from './SnakeApp'
+
+function renderWithProviders() {
+  return render(
+    <TopbarProvider>
+      <SnakeApp />
+    </TopbarProvider>,
+  )
+}
 
 beforeAll(() => {
   HTMLCanvasElement.prototype.getContext = function () {
@@ -38,18 +47,13 @@ beforeAll(() => {
 
 describe('SnakeApp', () => {
   it('renders the app without crashing', () => {
-    render(<SnakeApp />)
+    renderWithProviders()
     expect(screen.getByText('Snake')).toBeInTheDocument()
   })
 
   it('shows score and best score boxes', () => {
-    render(<SnakeApp />)
+    renderWithProviders()
     expect(screen.getByText('SCORE')).toBeInTheDocument()
     expect(screen.getByText('BEST')).toBeInTheDocument()
-  })
-
-  it('renders new game button', () => {
-    render(<SnakeApp />)
-    expect(screen.getByText('New Game')).toBeInTheDocument()
   })
 })

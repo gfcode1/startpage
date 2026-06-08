@@ -23,7 +23,7 @@
 
 .gf-radiobrowser__skeleton {
   height: 140px;
-  background: var(--gf-surface);
+  background: var(--gf-bg-hover);
   border-radius: var(--gf-radius-md);
   opacity: 0.5;
   animation: gf-pulse 1.5s ease-in-out infinite;
@@ -67,10 +67,10 @@
   gap: 4px;
   padding: 4px 12px;
   border: 1px solid var(--gf-border);
-  border-radius: 999px;
+  border-radius: var(--gf-radius-full);
   background: transparent;
   color: var(--gf-text-muted);
-  font-size: 0.75rem;
+  font-size: var(--gf-size-small);
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.2s ease;
@@ -94,10 +94,10 @@
   gap: 4px;
   padding: 4px 12px;
   border: 1px solid var(--gf-border);
-  border-radius: 999px;
+  border-radius: var(--gf-radius-full);
   background: transparent;
   color: var(--gf-text-muted);
-  font-size: 0.75rem;
+  font-size: var(--gf-size-small);
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.2s ease;

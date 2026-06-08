@@ -50,12 +50,14 @@
   border-radius: var(--gf-radius-sm);
   color: var(--gf-text-muted);
   flex-shrink: 0;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
+@media (hover: hover) {
 .gf-toast__close:hover {
   color: var(--gf-text);
   background: var(--gf-bg-hover);
+}
 }
 
 @media (min-width: 640px) {

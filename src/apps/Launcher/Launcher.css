@@ -194,7 +194,7 @@
   height: 48px;
   border-radius: var(--gf-radius-xl);
   background: color-mix(in srgb, var(--gf-bg) 50%, transparent);
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--gf-text-inverse);
 }
 
 .gf-launcher__card-icon svg {
@@ -206,7 +206,7 @@
   font-family: var(--gf-font-display);
   font-weight: var(--gf-weight-display, 700);
   font-size: var(--gf-size-body);
-  color: #fff;
+  color: var(--gf-text-inverse);
   text-align: center;
   line-height: 1.2;
   padding: 0 var(--gf-space-sm);

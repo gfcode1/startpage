@@ -6,6 +6,7 @@ import { GfBadge } from '../../framework/components/Badge'
 import { GfEmptyState } from '../../framework/components/EmptyState'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
 import { usePlayer } from '../../framework/PlayerContext'
+import { useTopbar } from '../../framework/TopbarContext'
 import { fetchTopTags, fetchCountries, searchStations, clickStation, isHlsStream } from './api'
 import type { RadioStation, Tag, Country } from './types'
 import { countryCoords } from './countryCoords'
@@ -30,6 +31,20 @@ export default function RadioBrowserApp() {
   const [loading, setLoading] = useState(true)
   const [playError, setPlayError] = useState<string | null>(null)
   const [showMap, setShowMap] = useState(false)
+  const { setActions, setSearch: setTopbarSearch, clearConfig } = useTopbar()
+
+  useEffect(() => {
+    setActions([
+      {
+        id: 'map',
+        icon: 'globe',
+        label: showMap ? 'Hide map' : 'Show map',
+        onClick: () => setShowMap(prev => !prev),
+      },
+    ])
+    setTopbarSearch({ placeholder: 'Search stations...', value: search, onChange: setSearch })
+    return () => { clearConfig() }
+  }, [search, showMap, setActions, setTopbarSearch, clearConfig])
   const [mapReady, setMapReady] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const playerTypeRef = useRef(player.type)
@@ -226,14 +241,10 @@ export default function RadioBrowserApp() {
   return (
     <div className="gf-radiobrowser">
       <AppHeader
-        title="Radio Browser"
         badge={`${stations.length} stations`}
         segments={tagSegments}
         segmentValue={selectedTag}
         onSegmentChange={setSelectedTag}
-        searchPlaceholder="Search stations..."
-        searchValue={search}
-        onSearchChange={setSearch}
       />
 
       <div className="gf-radiobrowser__toolbar-row">
@@ -258,15 +269,6 @@ export default function RadioBrowserApp() {
             </button>
           ))}
         </div>
-        <button
-          className={`gf-radiobrowser__map-toggle ${showMap ? 'gf-radiobrowser__map-toggle--active' : ''}`}
-          onClick={() => setShowMap(prev => !prev)}
-          aria-label={showMap ? 'Hide map' : 'Show map'}
-          title={showMap ? 'Hide map' : 'Show map'}
-        >
-          <span className="gf-radiobrowser__map-toggle-icon">{showMap ? '\u25B2' : '\u25BC'}</span>
-          Map
-        </button>
       </div>
 
       <div className={`gf-radiobrowser__map-container ${showMap ? '' : 'gf-radiobrowser__map-container--hidden'}`}>

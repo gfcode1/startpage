@@ -18,6 +18,7 @@ interface PlayerBarProps {
   onPlayPause?: () => void
   onRemoveFromQueue?: (index: number) => void
   onSetSleepTimer?: (minutes: number | null) => void
+  onExpand?: () => void
 }
 
 export function PlayerBar({
@@ -33,6 +34,7 @@ export function PlayerBar({
   onPlayPause,
   onRemoveFromQueue,
   onSetSleepTimer,
+  onExpand,
 }: PlayerBarProps) {
   const [showQueue, setShowQueue] = useState(false)
   const [showSleep, setShowSleep] = useState(false)
@@ -51,6 +53,16 @@ export function PlayerBar({
       <div className={`gf-playerbar ${isPlaying ? 'gf-playerbar--active' : ''}`}>
         <div className="gf-playerbar__inner">
           <div className="gf-playerbar__left">
+            {onExpand && (
+              <button
+                className="gf-playerbar__expand"
+                onClick={onExpand}
+                aria-label="Show video"
+                title="Show video"
+              >
+                <GfIcon name="chevron-up" size={14} />
+              </button>
+            )}
             <div className="gf-playerbar__status">
               <span className={`gf-playerbar__indicator ${isPlaying ? 'gf-playerbar__indicator--live' : ''}`}>
                 {isLoading ? (

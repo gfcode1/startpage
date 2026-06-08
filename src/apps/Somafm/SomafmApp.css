@@ -38,14 +38,3 @@
   text-align: center;
   animation: gf-shake 0.4s ease;
 }
-
-.gf-somafm__error {
-  padding: var(--gf-space-sm) var(--gf-space-md);
-  margin-bottom: var(--gf-space-md);
-  background: var(--gf-error);
-  color: var(--gf-text-inverse);
-  border-radius: var(--gf-radius-md);
-  font-size: var(--gf-size-small);
-  text-align: center;
-  animation: gf-shake 0.4s ease;
-}

@@ -5,6 +5,7 @@ import { useToast } from '../../framework/ToastContext'
 import { AppHeader } from '../../framework/components/AppHeader'
 import { GfConfirmDialog } from '../../framework/components/ConfirmDialog'
 import { GfEmptyState } from '../../framework/components/EmptyState'
+import { useTopbar } from '../../framework/TopbarContext'
 import { renderMarkdown, generateId, formatDate, getPreview, highlightSearch, getFoldersFromNotes } from './utils'
 import type { Note } from './types'
 import './MarkdownNotesApp.css'
@@ -22,6 +23,7 @@ export default function MarkdownNotesApp() {
   const [showFolderSidebar, setShowFolderSidebar] = useState(false)
   const previewRef = useRef<HTMLDivElement>(null)
   const { addToast } = useToast()
+  const { setActions, setSearch: setTopbarSearch, clearConfig } = useTopbar()
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle')
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout>>()
@@ -97,6 +99,14 @@ export default function MarkdownNotesApp() {
     setSaveStatus('saved')
     addToast('New note created', 'success')
   }, [setNotes, addToast, selectedFolder])
+
+  useEffect(() => {
+    setActions([
+      { id: 'new-note', icon: 'plus', label: 'New Note', onClick: handleNewNote, variant: 'primary' },
+    ])
+    setTopbarSearch({ placeholder: 'Search notes...', value: search, onChange: setSearch })
+    return () => { clearConfig() }
+  }, [search, handleNewNote, setActions, setTopbarSearch, clearConfig])
 
   const handleBack = useCallback(() => {
     if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current)
@@ -315,21 +325,10 @@ export default function MarkdownNotesApp() {
         ) : (
           <>
             <AppHeader
-              title="Markdown Notes"
               badge={notes.length > 0 ? `${notes.length} note${notes.length !== 1 ? 's' : ''}` : undefined}
-              searchPlaceholder="Search notes..."
-              searchValue={search}
-              onSearchChange={setSearch}
             />
 
             <div className="gf-markdown-notes__toolbar">
-              <button
-                className="gf-markdown-notes__btn gf-markdown-notes__btn--primary"
-                onClick={handleNewNote}
-              >
-                <GfIcon name="plus" size={14} />
-                New Note
-              </button>
               <div className="gf-markdown-notes__toolbar-right">
                 <button
                   className={`gf-markdown-notes__btn ${showFolderSidebar ? 'gf-markdown-notes__btn--active' : ''}`}

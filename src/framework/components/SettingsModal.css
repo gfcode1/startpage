@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.6);
+  background: var(--gf-overlay);
   backdrop-filter: blur(4px);
   animation: gf-settings-fade-in 0.2s ease-out;
 }
@@ -57,7 +57,7 @@
   height: 36px;
   border-radius: var(--gf-radius-md);
   color: var(--gf-text-muted);
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 @media (hover: hover) {
@@ -68,7 +68,7 @@
 }
 
 .gf-settings-modal__close:active {
-  transform: scale(0.92);
+  transform: scale(0.97);
 }
 
 .gf-settings-modal__body {
@@ -94,59 +94,46 @@
   margin-bottom: var(--gf-space-sm);
 }
 
-.gf-settings-themes {
+.gf-settings-toggle {
   display: flex;
-  flex-direction: column;
   gap: var(--gf-space-xs);
+  width: 100%;
 }
 
-.gf-settings-theme-item {
+.gf-settings-toggle__btn {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--gf-space-sm);
-  width: 100%;
+  flex: 1;
   padding: var(--gf-space-sm) var(--gf-space-md);
   border-radius: var(--gf-radius-md);
-  border: 1px solid transparent;
+  border: 1px solid var(--gf-border);
   background: transparent;
-  color: var(--gf-text);
+  color: var(--gf-text-muted);
   font-family: var(--gf-font-ui);
   font-size: var(--gf-size-body);
   cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: left;
+  transition: all 0.15s ease;
+  min-height: 44px;
 }
 
 @media (hover: hover) {
-  .gf-settings-theme-item:hover {
+  .gf-settings-toggle__btn:hover {
     background: var(--gf-bg-hover);
-    border-color: var(--gf-border);
+    border-color: var(--gf-border-accent);
+    color: var(--gf-text);
   }
 }
 
-.gf-settings-theme-item:active {
+.gf-settings-toggle__btn:active {
   transform: scale(0.97);
 }
 
-.gf-settings-theme-item--active {
+.gf-settings-toggle__btn--active {
   border-color: var(--gf-accent);
-  background: var(--gf-bg-hover);
-}
-
-.gf-settings-theme-item__dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.gf-settings-theme-item__name {
-  flex: 1;
-}
-
-.gf-settings-theme-item__check {
+  background: var(--gf-accent-muted);
   color: var(--gf-accent);
-  flex-shrink: 0;
 }
 
 .gf-settings-actions {
@@ -162,12 +149,12 @@
   padding: var(--gf-space-sm) var(--gf-space-md);
   border: 1px solid var(--gf-border);
   border-radius: var(--gf-radius-md);
-  background: var(--gf-bg-raised, var(--gf-bg-app));
+  background: var(--gf-bg-elevated);
   color: var(--gf-text);
   font-family: var(--gf-font-ui);
   font-size: var(--gf-size-small);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 @media (hover: hover) {
@@ -179,79 +166,5 @@
 }
 
 .gf-settings-btn:active {
-  transform: scale(0.96);
-}
-
-.gf-settings-theme-item--preview {
-  border-color: var(--gf-border-accent);
-}
-
-.gf-theme-preview {
-  margin-top: var(--gf-space-md);
-  border: 1px solid var(--preview-border);
-  border-radius: var(--gf-radius-md);
-  overflow: hidden;
-  font-family: var(--preview-font);
-  animation: gf-fade-in-up 0.2s ease-out both;
-}
-
-.gf-theme-preview__bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 12px;
-  background: var(--preview-bg);
-  border-bottom: 1px solid var(--preview-border);
-}
-
-.gf-theme-preview__bar-text {
-  font-size: var(--gf-size-small);
-  font-weight: 600;
-  color: var(--preview-text);
-}
-
-.gf-theme-preview__bar-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--preview-accent);
-}
-
-.gf-theme-preview__body {
-  padding: 12px;
-  background: var(--preview-bg);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.gf-theme-preview__line {
-  height: 8px;
-  border-radius: 4px;
-  background: var(--preview-text-muted);
-  opacity: 0.2;
-  width: 60%;
-}
-
-.gf-theme-preview__line--wide {
-  width: 80%;
-}
-
-.gf-theme-preview__line--short {
-  width: 40%;
-}
-
-.gf-theme-preview__btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 12px;
-  margin-top: 4px;
-  background: var(--preview-accent);
-  color: var(--preview-bg);
-  border-radius: var(--gf-radius-sm);
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  align-self: flex-start;
+  transform: scale(0.97);
 }

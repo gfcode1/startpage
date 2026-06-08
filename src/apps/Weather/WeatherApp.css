@@ -7,6 +7,45 @@
 
 /* ── Search ── */
 
+.gf-topbar-weather-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.gf-topbar-weather-search .gf-weather__search-bar {
+  height: 36px;
+  padding: 0 6px;
+  border-radius: var(--gf-radius-md);
+}
+
+.gf-topbar-weather-search .gf-weather__search-input {
+  height: 34px;
+  font-size: var(--gf-size-small);
+  min-width: 140px;
+}
+
+.gf-topbar-weather-search .gf-weather__search-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  left: auto;
+  min-width: 280px;
+  z-index: 200;
+}
+
+@media (max-width: 639px) {
+  .gf-topbar-weather-search .gf-weather__search-input {
+    min-width: 80px;
+    width: 80px;
+  }
+  .gf-topbar-weather-search .gf-weather__search-dropdown {
+    left: 0;
+    right: auto;
+    min-width: 240px;
+  }
+}
+
 .gf-weather__search {
   position: sticky;
   top: 0;

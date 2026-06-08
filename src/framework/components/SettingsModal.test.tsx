@@ -39,13 +39,10 @@ describe('SettingsModal', () => {
     expect(screen.getByText('Theme')).toBeInTheDocument()
   })
 
-  it('renders all theme options', () => {
+  it('renders both theme toggles', () => {
     renderWithProviders(true)
-    expect(screen.getByText('Analog')).toBeInTheDocument()
-    expect(screen.getByText('Spectrum')).toBeInTheDocument()
-    expect(screen.getByText('Daylight')).toBeInTheDocument()
-    expect(screen.getByText('Retro')).toBeInTheDocument()
-    expect(screen.getByText('Forest')).toBeInTheDocument()
+    expect(screen.getByText('Light')).toBeInTheDocument()
+    expect(screen.getByText('Dark')).toBeInTheDocument()
   })
 
   it('renders backup section', () => {

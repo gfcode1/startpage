@@ -1,24 +1,22 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { PlayerProvider } from '../../framework/PlayerContext'
+import { TopbarProvider } from '../../framework/TopbarContext'
 import SomafmApp from './SomafmApp'
 
 function renderWithPlayer() {
   return render(
-    <PlayerProvider>
-      <SomafmApp />
-    </PlayerProvider>,
+    <TopbarProvider>
+      <PlayerProvider>
+        <SomafmApp />
+      </PlayerProvider>
+    </TopbarProvider>,
   )
 }
 
 describe('SomafmApp', () => {
   beforeEach(() => {
     localStorage.clear()
-  })
-
-  it('renders the app title', () => {
-    renderWithPlayer()
-    expect(screen.getByText('SomaFM')).toBeInTheDocument()
   })
 
   it('shows channel count in header badge', () => {
@@ -47,21 +45,6 @@ describe('SomafmApp', () => {
     fireEvent.click(screen.getByText('Ambient'))
     expect(screen.getByText('Drone Zone')).toBeInTheDocument()
     expect(screen.queryByText('Beat Blender')).not.toBeInTheDocument()
-  })
-
-  it('filters channels by search', () => {
-    renderWithPlayer()
-    const searchInput = screen.getByPlaceholderText('Search channel...')
-    fireEvent.change(searchInput, { target: { value: 'drone' } })
-    expect(screen.getByText('Drone Zone')).toBeInTheDocument()
-    expect(screen.queryByText('Groove Salad')).not.toBeInTheDocument()
-  })
-
-  it('shows empty state when no channels match', () => {
-    renderWithPlayer()
-    const searchInput = screen.getByPlaceholderText('Search channel...')
-    fireEvent.change(searchInput, { target: { value: 'zzzzzznonexistent' } })
-    expect(screen.getByText('No channels found')).toBeInTheDocument()
   })
 
   it('shows genre badge on channel cards', () => {

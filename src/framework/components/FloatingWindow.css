@@ -1,0 +1,115 @@
+.gf-floating {
+  position: fixed;
+  z-index: 1000;
+  background: var(--gf-bg-elevated);
+  border: 1px solid var(--gf-border);
+  border-radius: var(--gf-radius-md);
+  box-shadow: var(--gf-shadow-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: width 0.2s ease, height 0.2s ease, top 0.2s ease, left 0.2s ease, bottom 0.2s ease, right 0.2s ease;
+}
+
+.gf-floating--dragging {
+  transition: none !important;
+  opacity: 0.92;
+  user-select: none;
+}
+
+.gf-floating--maximized {
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  z-index: 1000;
+  transition: none;
+}
+
+.gf-floating--minimized {
+  border-radius: var(--gf-radius-md);
+  overflow: hidden;
+  box-shadow: var(--gf-shadow-md);
+}
+
+.gf-floating__titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--gf-space-xs) var(--gf-space-sm);
+  background: var(--gf-bg-app);
+  border-bottom: 1px solid var(--gf-border);
+  cursor: grab;
+  user-select: none;
+  flex-shrink: 0;
+  min-height: 32px;
+}
+
+.gf-floating--dragging .gf-floating__titlebar {
+  cursor: grabbing;
+}
+
+.gf-floating--minimized .gf-floating__titlebar {
+  border-bottom: none;
+  cursor: pointer;
+}
+
+.gf-floating__title {
+  font-size: var(--gf-size-small);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: var(--gf-space-sm);
+}
+
+.gf-floating__actions {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.gf-floating__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: var(--gf-text-muted);
+  border-radius: var(--gf-radius-sm);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.gf-floating__btn:hover {
+  background: var(--gf-bg-hover);
+  color: var(--gf-text);
+}
+
+.gf-floating__btn--close:hover {
+  background: var(--gf-error);
+  color: var(--gf-text-inverse);
+}
+
+.gf-floating__body {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.gf-floating--minimized .gf-floating__body {
+  display: none;
+}
+
+.gf-floating__resize-handle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  cursor: nwse-resize;
+  background: linear-gradient(135deg, transparent 50%, var(--gf-border) 50%, var(--gf-border) calc(50% + 1px), transparent calc(50% + 2px));
+  background-size: 100% 100%;
+}

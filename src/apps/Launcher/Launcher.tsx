@@ -1,5 +1,6 @@
 import { useState, useMemo, CSSProperties } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Icon } from '@iconify/react'
 import { GfIcon, IconName } from '../../framework/iconSystem'
 import { apps, AppDef, AppCategory } from '../../framework/appRegistry'
 import { useBadges } from '../../framework/AppBadgeContext'
@@ -10,22 +11,6 @@ function openInPopup(app: AppDef) {
   const base = import.meta.env.BASE_URL.slice(0, -1)
   const url = `${window.location.origin}${base}${app.path}?popup=1`
   window.open(url, app.id, 'width=800,height=650,menubar=no,toolbar=no,location=no,status=no')
-}
-
-const iconMap: Record<string, IconName> = {
-  youtubelofi: 'headphones',
-  somafm: 'radio',
-  game2048: 'grid',
-  todo: 'checklist',
-
-  flappybird: 'bird',
-  rssreader: 'rss',
-  radiobrowser: 'globe',
-  emulator: 'gamepad',
-  markdownnotes: 'document',
-  weather: 'sun',
-  snake: 'snake',
-  moodist: 'wave',
 }
 
 const categoryOrder: AppCategory[] = ['music', 'games', 'productivity', 'utilities']
@@ -46,7 +31,6 @@ const categoryIcons: Record<AppCategory, IconName> = {
 
 function AppCard({ app, index }: { app: AppDef; index: number }) {
   const navigate = useNavigate()
-  const iconName = iconMap[app.id]
   const badges = useBadges()
   const badge = badges[app.id]
 
@@ -68,7 +52,7 @@ function AppCard({ app, index }: { app: AppDef; index: number }) {
         {/* Front — gradient + icon + name */}
         <div className="gf-launcher__card-front" style={{ background: app.gradient }}>
           <div className="gf-launcher__card-icon">
-            {iconName ? <GfIcon name={iconName} size={24} /> : null}
+            <Icon icon={app.icon} width={24} height={24} />
           </div>
           <h3 className="gf-launcher__card-front-title">{app.name}</h3>
           {badge !== undefined && (

@@ -1,6 +1,5 @@
-import { useRef, useEffect, useCallback, useState } from 'react'
+import { useRef, useEffect, useCallback } from 'react'
 import { useGfTheme } from '../ThemeProvider'
-import { themeKeys, themes, type Theme } from '../themes'
 import { GfIcon } from '../iconSystem'
 import { persistenceService } from '../persistence/PersistenceService'
 import { useToast } from '../ToastContext'
@@ -18,7 +17,6 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null)
   const modalRef = useRef<HTMLDivElement>(null)
   const prevFocusRef = useRef<HTMLElement | null>(null)
-  const [previewTheme, setPreviewTheme] = useState<Theme | null>(null)
 
   const getFocusableElements = useCallback(() => {
     if (!modalRef.current) return []
@@ -111,42 +109,24 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
         <div className="gf-settings-modal__body">
           <section className="gf-settings-section">
             <h3 className="gf-settings-section__title">Theme</h3>
-            <div className="gf-settings-themes">
-              {themeKeys.map(key => {
-                const t = themes[key]
-                const active = key === themeKey
-                const isPreviewed = previewTheme === t
-                return (
-                  <button
-                    key={key}
-                    className={`gf-settings-theme-item${active ? ' gf-settings-theme-item--active' : ''}${isPreviewed ? ' gf-settings-theme-item--preview' : ''}`}
-                    onClick={() => setTheme(key)}
-                    onMouseEnter={() => setPreviewTheme(t)}
-                    onMouseLeave={() => setPreviewTheme(null)}
-                    onFocus={() => setPreviewTheme(t)}
-                    onBlur={() => setPreviewTheme(null)}
-                  >
-                    <span className="gf-settings-theme-item__dot" style={{ background: t.colors.accent }} />
-                    <span className="gf-settings-theme-item__name">{t.name}</span>
-                    {active && <GfIcon name="check" size={14} />}
-                  </button>
-                )
-              })}
+            <div className="gf-settings-toggle">
+              <button
+                className={`gf-settings-toggle__btn${themeKey === 'light' ? ' gf-settings-toggle__btn--active' : ''}`}
+                onClick={() => setTheme('light')}
+                aria-pressed={themeKey === 'light'}
+              >
+                <GfIcon name="sun" size={16} />
+                Light
+              </button>
+              <button
+                className={`gf-settings-toggle__btn${themeKey === 'dark' ? ' gf-settings-toggle__btn--active' : ''}`}
+                onClick={() => setTheme('dark')}
+                aria-pressed={themeKey === 'dark'}
+              >
+                <GfIcon name="moon" size={16} />
+                Dark
+              </button>
             </div>
-            {previewTheme && (
-              <div className="gf-theme-preview" style={{ '--preview-accent': previewTheme.colors.accent, '--preview-bg': previewTheme.colors.bgApp, '--preview-text': previewTheme.colors.text, '--preview-text-muted': previewTheme.colors.textMuted, '--preview-border': previewTheme.colors.border, '--preview-font': previewTheme.meta.fontUi } as React.CSSProperties}>
-                <div className="gf-theme-preview__bar">
-                  <span className="gf-theme-preview__bar-text">{previewTheme.name}</span>
-                  <span className="gf-theme-preview__bar-dot" />
-                </div>
-                <div className="gf-theme-preview__body">
-                  <div className="gf-theme-preview__line gf-theme-preview__line--wide" />
-                  <div className="gf-theme-preview__line" />
-                  <div className="gf-theme-preview__line gf-theme-preview__line--short" />
-                  <div className="gf-theme-preview__btn">{previewTheme.meta.fontDisplay}</div>
-                </div>
-              </div>
-            )}
           </section>
 
           <section className="gf-settings-section">

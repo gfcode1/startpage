@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { useGfTheme } from '../ThemeProvider'
 import { GfIcon } from '../iconSystem'
 import { apps } from '../appRegistry'
-import { themeKeys, themes } from '../themes'
 import './CommandPalette.css'
 
 interface CmdItem {
@@ -22,7 +21,7 @@ interface CommandPaletteProps {
 
 export function CommandPalette({ open, onClose }: CommandPaletteProps) {
   const navigate = useNavigate()
-  const { setTheme } = useGfTheme()
+  const { themeKey, setTheme } = useGfTheme()
   const [query, setQuery] = useState('')
   const [activeIndex, setActiveIndex] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -45,19 +44,28 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       })
     })
 
-    themeKeys.forEach(key => {
-      const t = themes[key]
-      items.push({
-        id: `theme-${key}`,
-        label: `Theme: ${t.name}`,
-        description: `Switch to ${t.name} theme`,
-        keywords: `theme ${t.name} ${key}`,
-        onAction: () => {
-          setTheme(key)
-          onClose()
-        },
-        section: 'Themes',
-      })
+    items.push({
+      id: 'theme-light',
+      label: 'Theme: Light',
+      description: themeKey === 'light' ? 'Currently active' : 'Switch to Light theme',
+      keywords: 'theme light',
+      onAction: () => {
+        setTheme('light')
+        onClose()
+      },
+      section: 'Themes',
+    })
+
+    items.push({
+      id: 'theme-dark',
+      label: 'Theme: Dark',
+      description: themeKey === 'dark' ? 'Currently active' : 'Switch to Dark theme',
+      keywords: 'theme dark',
+      onAction: () => {
+        setTheme('dark')
+        onClose()
+      },
+      section: 'Themes',
     })
 
     items.push({
@@ -73,7 +81,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
     })
 
     return items
-  }, [navigate, onClose, setTheme])
+  }, [navigate, onClose, setTheme, themeKey])
 
   const filtered = useMemo(() => {
     if (!query.trim()) return commands

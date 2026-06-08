@@ -6,6 +6,7 @@ import { AppHeader } from '../../framework/components/AppHeader'
 import { PlayerBar } from '../../framework/components/PlayerBar'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
 import { usePlayer } from '../../framework/PlayerContext'
+import { useTopbar } from '../../framework/TopbarContext'
 import { GfBadge } from '../../framework/components/Badge'
 import { GfEmptyState } from '../../framework/components/EmptyState'
 import type { Channel } from './types'
@@ -42,6 +43,12 @@ export default function SomafmApp() {
   const [search, setSearch] = useState('')
   const [favorites, setFavorites] = useAppStorage<string[]>(APP_ID, 'favorites', [])
   const [playError, setPlayError] = useState<string | null>(null)
+  const { setSearch: setTopbarSearch, clearConfig } = useTopbar()
+
+  useEffect(() => {
+    setTopbarSearch({ placeholder: 'Search channel...', value: search, onChange: setSearch })
+    return () => { clearConfig() }
+  }, [search, setTopbarSearch, clearConfig])
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const playerTypeRef = useRef(player.type)
 
@@ -144,14 +151,10 @@ export default function SomafmApp() {
   return (
     <div className="gf-somafm">
       <AppHeader
-        title="SomaFM"
         badge={`${channels.length} channels`}
         segments={genreSegments}
         segmentValue={genreFilter}
         onSegmentChange={setGenreFilter}
-        searchPlaceholder="Search channel..."
-        searchValue={search}
-        onSearchChange={setSearch}
       />
 
       {playError && (
