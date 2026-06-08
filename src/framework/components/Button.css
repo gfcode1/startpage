@@ -69,3 +69,42 @@
     border-color: var(--gf-border-accent);
   }
 }
+
+.gf-btn--toolbar {
+  background: transparent;
+  color: var(--gf-text-muted);
+  font-size: var(--gf-size-small);
+  padding: 4px 10px;
+  min-height: 32px;
+  border-radius: var(--gf-radius-md);
+  opacity: 0.7;
+}
+@media (hover: hover) {
+  .gf-btn--toolbar:hover {
+    opacity: 1;
+    color: var(--gf-text);
+    background: var(--gf-bg-hover);
+  }
+}
+
+.gf-btn--pill {
+  background: transparent;
+  color: var(--gf-text-muted);
+  font-size: var(--gf-size-small);
+  padding: 6px 14px;
+  min-height: 32px;
+  border-radius: var(--gf-radius-full);
+  border-color: var(--gf-border);
+  letter-spacing: 0.03em;
+}
+@media (hover: hover) {
+  .gf-btn--pill:hover {
+    border-color: var(--gf-text-muted);
+    color: var(--gf-text);
+  }
+}
+.gf-btn--pill.gf-btn--active {
+  background: var(--gf-accent);
+  color: var(--gf-text-inverse);
+  border-color: var(--gf-accent);
+}

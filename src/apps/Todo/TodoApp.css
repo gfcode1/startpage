@@ -466,27 +466,6 @@
   color: var(--gf-error);
 }
 
-.gf-todo__empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  padding: 3rem 1.5rem;
-  text-align: center;
-  opacity: 0.5;
-}
-
-.gf-todo__empty p {
-  margin: 0;
-  font-size: 0.95rem;
-}
-
-.gf-todo__empty-hint {
-  font-size: 0.8rem;
-  opacity: 0.6;
-}
-
 .gf-todo__footer {
   display: flex;
   justify-content: center;

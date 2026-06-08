@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { GfIcon } from '../../framework/iconSystem'
+import { GfEmptyState } from '../../framework/components/EmptyState'
 import { type SystemId, type ScannedGame, EXTENSION_TO_SYSTEM, ALL_EXTENSIONS } from './constants'
 import { SystemFilter } from './SystemFilter'
 import { GameCard } from './GameCard'
@@ -250,18 +251,19 @@ export default function EmulatorLauncherApp() {
       )}
 
       {!loading && !loadError && games.length === 0 && (
-        <div className="gf-emu__empty">
-          <p>No games loaded.</p>
-          <p className="gf-emu__empty-hint">
-            Drag & drop ROM files here, or click <strong>Load ROM</strong> to browse.
-          </p>
-        </div>
+        <GfEmptyState
+          icon={<GfIcon name="gamepad" size={24} />}
+          title="No games loaded"
+          description="Drag & drop ROM files here, or click the button below to browse."
+          action={{ label: 'Load ROM', onClick: () => fileInputRef.current?.click() }}
+        />
       )}
 
       {!loading && games.length > 0 && filteredGames.length === 0 && (
-        <div className="gf-emu__empty">
-          <p>No games match the selected filter.</p>
-        </div>
+        <GfEmptyState
+          title="No games match"
+          description="Try adjusting your search or filter"
+        />
       )}
 
       {filteredGames.length > 0 && (

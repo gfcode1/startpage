@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import { useNoiseGenerator } from '../hooks/useBinauralBeat'
+import { GfButton } from '../../../framework/components/Button'
 
 type NoiseColor = 'white' | 'pink' | 'brown'
 
@@ -69,12 +70,13 @@ export function NoisePanel() {
         />
       </div>
 
-      <button
-        className={`gf-moodist__btn ${active ? 'gf-moodist__btn--secondary' : ''}`}
+      <GfButton
+        variant={active ? 'secondary' : 'primary'}
+        size="sm"
         onClick={toggle}
       >
         {active ? 'Stop' : 'Start'}
-      </button>
+      </GfButton>
     </div>
   )
 }

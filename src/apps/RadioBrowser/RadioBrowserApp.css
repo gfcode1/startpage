@@ -40,14 +40,6 @@
   animation: gf-shake 0.4s ease;
 }
 
-.gf-radiobrowser__empty {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: var(--gf-space-3xl);
-  color: var(--gf-text-muted);
-  font-size: var(--gf-size-body);
-}
-
 .gf-radiobrowser__toolbar-row {
   display: flex;
   align-items: stretch;

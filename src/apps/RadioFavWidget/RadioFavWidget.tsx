@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { GfIcon } from '../../framework/iconSystem'
+import { GfWidgetAction } from '../../framework/components/WidgetAction'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
 import { fetchStationsByUuid } from '../RadioBrowser/api'
 import './RadioFavWidget.css'
@@ -23,10 +23,7 @@ export default function RadioFavWidget() {
   if (favorites.length === 0) {
     return (
       <div className="gf-widget-radiofav">
-        <button className="gf-widget-radiofav__action" onClick={() => navigate('/radiobrowser')}>
-          Add favorites in Radio Browser
-          <GfIcon name="chevron-right" size={12} />
-        </button>
+        <GfWidgetAction label="Add favorites in Radio Browser" onClick={() => navigate('/radiobrowser')} />
       </div>
     )
   }

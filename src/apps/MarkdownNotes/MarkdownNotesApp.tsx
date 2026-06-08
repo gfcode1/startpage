@@ -4,6 +4,7 @@ import { useAppStorage } from '../../framework/persistence/useAppStorage'
 import { useToast } from '../../framework/ToastContext'
 import { AppHeader } from '../../framework/components/AppHeader'
 import { GfConfirmDialog } from '../../framework/components/ConfirmDialog'
+import { GfEmptyState } from '../../framework/components/EmptyState'
 import { renderMarkdown, generateId, formatDate, getPreview, highlightSearch, getFoldersFromNotes } from './utils'
 import type { Note } from './types'
 import './MarkdownNotesApp.css'
@@ -386,27 +387,28 @@ export default function MarkdownNotesApp() {
               )}
 
               <div className="gf-markdown-notes__main">
-                {sortedNotes.length === 0 && (
-                  <div className="gf-markdown-notes__empty">
-                    <GfIcon name="document" size={48} />
-                    {search ? (
-                      <p>No notes match your search</p>
-                    ) : selectedFolder ? (
-                      <>
-                        <p>No notes in &ldquo;{selectedFolder}&rdquo;</p>
-                        <button className="gf-markdown-notes__btn gf-markdown-notes__btn--primary" onClick={handleNewNote}>
-                          Create note in this folder
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <p>No notes yet</p>
-                        <button className="gf-markdown-notes__btn gf-markdown-notes__btn--primary" onClick={handleNewNote}>
-                          Create your first note
-                        </button>
-                      </>
-                    )}
-                  </div>
+                {sortedNotes.length === 0 && search && (
+                  <GfEmptyState
+                    icon={<GfIcon name="search" size={24} />}
+                    title="No notes match your search"
+                    description="Try different keywords"
+                  />
+                )}
+                {sortedNotes.length === 0 && !search && selectedFolder && (
+                  <GfEmptyState
+                    icon={<GfIcon name="folder" size={24} />}
+                    title={`No notes in "${selectedFolder}"`}
+                    description="Create a note in this folder to get started"
+                    action={{ label: 'Create note', onClick: handleNewNote }}
+                  />
+                )}
+                {sortedNotes.length === 0 && !search && !selectedFolder && (
+                  <GfEmptyState
+                    icon={<GfIcon name="document" size={24} />}
+                    title="No notes yet"
+                    description="Create your first note to get started"
+                    action={{ label: 'Create your first note', onClick: handleNewNote }}
+                  />
                 )}
 
                 {sortedNotes.length > 0 && (

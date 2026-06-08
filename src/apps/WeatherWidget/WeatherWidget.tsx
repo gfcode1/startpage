@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { GfIcon, type IconName } from '../../framework/iconSystem'
+import { GfWidgetAction } from '../../framework/components/WidgetAction'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
 import { getWeatherInfo } from '../Weather/weatherCodes'
 import './WeatherWidget.css'
@@ -80,10 +81,7 @@ export default function WeatherWidget() {
   if (!city || !coords) {
     return (
       <div className="gf-widget-weather">
-        <button className="gf-widget-weather__action" onClick={() => navigate('/weather')}>
-          Set a city in Weather
-          <GfIcon name="chevron-right" size={12} />
-        </button>
+        <GfWidgetAction label="Set a city in Weather" onClick={() => navigate('/weather')} />
       </div>
     )
   }

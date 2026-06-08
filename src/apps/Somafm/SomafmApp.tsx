@@ -7,6 +7,7 @@ import { PlayerBar } from '../../framework/components/PlayerBar'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
 import { usePlayer } from '../../framework/PlayerContext'
 import { GfBadge } from '../../framework/components/Badge'
+import { GfEmptyState } from '../../framework/components/EmptyState'
 import type { Channel } from './types'
 import './SomafmApp.css'
 
@@ -185,10 +186,14 @@ export default function SomafmApp() {
             onFavorite={toggleFavorite}
           />
         ))}
-        {filteredChannels.length === 0 && (
-          <p className="gf-somafm__empty">No channels found</p>
-        )}
       </div>
+      {filteredChannels.length === 0 && (
+        <GfEmptyState
+          icon={<GfIcon name="music-note" size={24} />}
+          title="No channels found"
+          description="Try adjusting your search or filter"
+        />
+      )}
 
       {player.type === 'soma' && <PlayerBar
         isPlaying={player.isPlaying}

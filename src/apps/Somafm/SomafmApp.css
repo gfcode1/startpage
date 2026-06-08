@@ -39,10 +39,13 @@
   animation: gf-shake 0.4s ease;
 }
 
-.gf-somafm__empty {
-  grid-column: 1 / -1;
+.gf-somafm__error {
+  padding: var(--gf-space-sm) var(--gf-space-md);
+  margin-bottom: var(--gf-space-md);
+  background: var(--gf-error);
+  color: var(--gf-text-inverse);
+  border-radius: var(--gf-radius-md);
+  font-size: var(--gf-size-small);
   text-align: center;
-  padding: var(--gf-space-3xl);
-  color: var(--gf-text-muted);
-  font-size: var(--gf-size-body);
+  animation: gf-shake 0.4s ease;
 }

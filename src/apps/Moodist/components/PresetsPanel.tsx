@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { GfIcon } from '../../../framework/iconSystem'
+import { GfButton } from '../../../framework/components/Button'
 import { useAppStorage } from '../../../framework/persistence/useAppStorage'
 import type { Preset, SoundsState } from '../types'
 
@@ -68,13 +69,14 @@ export function PresetsPanel({ sounds, onApplyPreset }: PresetsPanelProps) {
           onChange={e => setNewLabel(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter') savePreset() }}
         />
-        <button
-          className="gf-moodist__btn"
+        <GfButton
+          variant="primary"
+          size="sm"
           disabled={!newLabel.trim() || !hasSelection}
           onClick={savePreset}
         >
           Save
-        </button>
+        </GfButton>
       </div>
 
       {presets.length === 0 && (

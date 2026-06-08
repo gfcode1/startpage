@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { GfIcon } from '../../framework/iconSystem'
+import { GfWidgetAction } from '../../framework/components/WidgetAction'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
 import './NewsWidget.css'
 
@@ -76,10 +76,7 @@ export default function NewsWidget() {
   if (feeds.length === 0) {
     return (
       <div className="gf-widget-news">
-        <button className="gf-widget-news__action" onClick={() => navigate('/rssreader')}>
-          Add feeds in RSS Reader
-          <GfIcon name="chevron-right" size={12} />
-        </button>
+        <GfWidgetAction label="Add feeds in RSS Reader" onClick={() => navigate('/rssreader')} />
       </div>
     )
   }

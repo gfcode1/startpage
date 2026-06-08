@@ -5,6 +5,7 @@ import { useToast } from '../../framework/ToastContext'
 import { AppHeader } from '../../framework/components/AppHeader'
 import { GfBottomSheet } from '../../framework/components/BottomSheet'
 import { GfConfirmDialog } from '../../framework/components/ConfirmDialog'
+import { GfEmptyState } from '../../framework/components/EmptyState'
 import { useAppBadge } from '../../framework/AppBadgeContext'
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragOverlay, type DragStartEvent, type DragEndEvent } from '@dnd-kit/core'
 import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
@@ -683,24 +684,33 @@ export default function TodoApp() {
         </button>
       </div>
 
-      {filteredItems.length === 0 && (
-        <div className="gf-todo__empty">
-          <GfIcon name="checklist" size={40} />
-          {search ? (
-            <p>No tasks match &ldquo;{search}&rdquo;</p>
-          ) : filter === 'completed' ? (
-            <p>No completed tasks yet</p>
-          ) : filter === 'active' ? (
-            <p>All tasks are done!</p>
-          ) : (
-            <>
-              <p>No tasks yet</p>
-              <span className="gf-todo__empty-hint">
-                Type above and press Enter to add a task
-              </span>
-            </>
-          )}
-        </div>
+      {filteredItems.length === 0 && search && (
+        <GfEmptyState
+          icon={<GfIcon name="search" size={24} />}
+          title={`No tasks match "${search}"`}
+          description="Try different keywords"
+        />
+      )}
+      {filteredItems.length === 0 && !search && filter === 'completed' && (
+        <GfEmptyState
+          icon={<GfIcon name="checkmark" size={24} />}
+          title="No completed tasks yet"
+          description="Complete a task to see it here"
+        />
+      )}
+      {filteredItems.length === 0 && !search && filter === 'active' && (
+        <GfEmptyState
+          icon={<GfIcon name="checklist" size={24} />}
+          title="All tasks are done!"
+          description="Great job! Add more tasks if needed."
+        />
+      )}
+      {filteredItems.length === 0 && !search && filter === 'all' && (
+        <GfEmptyState
+          icon={<GfIcon name="checklist" size={24} />}
+          title="No tasks yet"
+          description="Type above and press Enter to add a task"
+        />
       )}
 
       {filteredItems.length > 0 && (

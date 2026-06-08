@@ -6,6 +6,8 @@ import { PlayerBar } from '../../framework/components/PlayerBar'
 import { VideoPlayer } from './components/VideoPlayer'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
 import { usePlayer } from '../../framework/PlayerContext'
+import { GfEmptyState } from '../../framework/components/EmptyState'
+import { GfIcon } from '../../framework/iconSystem'
 import type { Stream } from './types'
 import './YouTubeLofiApp.css'
 
@@ -120,10 +122,14 @@ export default function YouTubeLofiApp() {
             }}
           />
         ))}
-        {filteredStreams.length === 0 && (
-          <p className="gf-youtubelofi__empty">No streams found</p>
-        )}
       </div>
+      {filteredStreams.length === 0 && (
+        <GfEmptyState
+          icon={<GfIcon name="music-note" size={24} />}
+          title="No streams found"
+          description="Try adjusting your search or filter"
+        />
+      )}
 
       {player.playingId && player.type === 'youtube' && (
         <>

@@ -166,12 +166,6 @@
   font-size: var(--gf-size-body);
 }
 
-.gf-emu__empty-hint {
-  margin-top: var(--gf-space-sm);
-  font-size: var(--gf-size-small);
-  opacity: 0.6;
-}
-
 /* Game View */
 .gf-emu__view {
   display: flex;

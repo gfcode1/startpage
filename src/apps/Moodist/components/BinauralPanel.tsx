@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import { useBinauralBeat } from '../hooks/useBinauralBeat'
+import { GfButton } from '../../../framework/components/Button'
 
 type BinauralFreq = 'delta' | 'theta' | 'alpha' | 'beta' | 'gamma'
 
@@ -90,12 +91,13 @@ export function BinauralPanel() {
         />
       </div>
 
-      <button
-        className={`gf-moodist__btn ${active ? 'gf-moodist__btn--secondary' : ''}`}
+      <GfButton
+        variant={active ? 'secondary' : 'primary'}
+        size="sm"
         onClick={toggle}
       >
         {active ? 'Stop' : 'Start'}
-      </button>
+      </GfButton>
     </div>
   )
 }

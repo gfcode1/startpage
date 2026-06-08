@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
+import { GfButton } from '../../../framework/components/Button'
 
 interface SleepTimerProps {
   onSleep: () => void
@@ -71,14 +72,14 @@ export function SleepTimer({ onSleep }: SleepTimerProps) {
             <span className="gf-moodist__timer-remaining">
               {formatTime(remaining)}
             </span>
-            <button className="gf-moodist__btn gf-moodist__btn--secondary" onClick={stop}>
+            <GfButton variant="secondary" size="sm" onClick={stop}>
               Cancel
-            </button>
+            </GfButton>
           </>
         ) : (
-          <button className="gf-moodist__btn gf-moodist__btn--secondary" onClick={start}>
+          <GfButton variant="secondary" size="sm" onClick={start}>
             Start
-          </button>
+          </GfButton>
         )}
       </div>
     </div>

@@ -54,13 +54,6 @@
   animation: gf-shake 0.4s ease;
 }
 
-.gf-youtubelofi__empty {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: var(--gf-space-3xl);
-  color: var(--gf-text-muted);
-  font-size: var(--gf-size-body);
-}
 
 .gf-youtubelofi__player-video {
   position: absolute;

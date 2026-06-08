@@ -3,6 +3,7 @@ import { GfIcon } from '../../framework/iconSystem'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
 import { AppHeader } from '../../framework/components/AppHeader'
 import { GfBadge } from '../../framework/components/Badge'
+import { GfEmptyState } from '../../framework/components/EmptyState'
 import { useToast } from '../../framework/ToastContext'
 import { fetchAndParseFeed, fetchAndParseArticle, parseOpml, downloadOpml, getCachedData, setCachedData, getCachedFeedKey, getCachedArticleKey, isOnline } from './rssParser'
 import type { Article, FeedResult, FeedConfig, DrawerContent } from './types'
@@ -444,17 +445,19 @@ export default function RssReaderApp() {
       )}
 
       {feeds.length === 0 && !showEditor && (
-        <div className="gf-rssreader__empty">
-          <GfIcon name="rss" size={48} />
-          <p>No feeds configured yet</p>
-          <button className="gf-rssreader__btn" onClick={openEditor}>Add your first feed</button>
-        </div>
+        <GfEmptyState
+          icon={<GfIcon name="rss" size={24} />}
+          title="No feeds configured yet"
+          description="Add an RSS feed to start reading"
+          action={{ label: 'Add your first feed', onClick: openEditor }}
+        />
       )}
 
       {feeds.length > 0 && !loading && filteredArticles.length === 0 && allArticles.length > 0 && (
-        <div className="gf-rssreader__empty">
-          <p>No articles match your filter</p>
-        </div>
+        <GfEmptyState
+          title="No articles match your filter"
+          description="Try a different category or check back later"
+        />
       )}
 
       {filteredArticles.length > 0 && (

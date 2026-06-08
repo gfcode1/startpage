@@ -1,0 +1,30 @@
+.gf-widget-action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gf-space-xs);
+  font-family: var(--gf-font-ui);
+  font-size: var(--gf-size-small);
+  font-weight: 600;
+  color: var(--gf-accent);
+  background: none;
+  border: none;
+  padding: var(--gf-space-xs) var(--gf-space-sm);
+  border-radius: var(--gf-radius-md);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+@media (hover: hover) {
+  .gf-widget-action:hover {
+    background: var(--gf-bg-hover);
+    color: var(--gf-accent-hover);
+  }
+}
+
+.gf-widget-action svg {
+  transition: transform 0.15s ease;
+}
+
+.gf-widget-action:hover svg {
+  transform: translateX(3px);
+}

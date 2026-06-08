@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { GfIcon } from '../../framework/iconSystem'
+import { GfWidgetAction } from '../../framework/components/WidgetAction'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
 import './TodoWidget.css'
 
@@ -22,10 +23,7 @@ export default function TodoWidget() {
   if (!data || data.items.length === 0) {
     return (
       <div className="gf-widget-todo">
-        <button className="gf-widget-todo__action" onClick={() => navigate('/todo')}>
-          Add tasks in Todo
-          <GfIcon name="chevron-right" size={12} />
-        </button>
+        <GfWidgetAction label="Add tasks in Todo" onClick={() => navigate('/todo')} />
       </div>
     )
   }

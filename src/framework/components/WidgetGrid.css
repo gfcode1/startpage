@@ -95,11 +95,7 @@
   border: 2px solid var(--gf-border);
   border-top-color: var(--gf-accent);
   border-radius: 50%;
-  animation: gf-widget-spin 0.6s linear infinite;
-}
-
-@keyframes gf-widget-spin {
-  to { transform: rotate(360deg); }
+  animation: gf-spin 0.6s linear infinite;
 }
 
 .gf-widget-card--dragging {

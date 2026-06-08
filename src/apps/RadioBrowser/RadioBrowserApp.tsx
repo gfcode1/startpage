@@ -3,6 +3,7 @@ import { MediaCard } from '../../framework/components/MediaCard'
 import { AppHeader } from '../../framework/components/AppHeader'
 import { PlayerBar } from '../../framework/components/PlayerBar'
 import { GfBadge } from '../../framework/components/Badge'
+import { GfEmptyState } from '../../framework/components/EmptyState'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
 import { usePlayer } from '../../framework/PlayerContext'
 import { fetchTopTags, fetchCountries, searchStations, clickStation, isHlsStream } from './api'
@@ -284,15 +285,21 @@ export default function RadioBrowserApp() {
         <p className="gf-radiobrowser__error">{playError}</p>
       )}
 
-      <div className="gf-radiobrowser__grid">
-        {loading ? (
-          Array.from({ length: 12 }).map((_, i) => (
+      {loading ? (
+        <div className="gf-radiobrowser__grid">
+          {Array.from({ length: 12 }).map((_, i) => (
             <div key={i} className="gf-radiobrowser__skeleton" />
-          ))
-        ) : stations.length === 0 ? (
-          <p className="gf-radiobrowser__empty">No stations found. Try a different search term, tag, or country.</p>
-        ) : (
-          stations.map((station, i) => (
+          ))}
+        </div>
+      ) : stations.length === 0 ? (
+        <GfEmptyState
+          icon={<GfIcon name="radio" size={24} />}
+          title="No stations found"
+          description="Try a different search term, tag, or country"
+        />
+      ) : (
+        <div className="gf-radiobrowser__grid">
+          {stations.map((station, i) => (
             <MediaCard
               key={station.stationuuid}
               id={station.stationuuid}
@@ -318,9 +325,9 @@ export default function RadioBrowserApp() {
               onPlay={() => handlePlay(station)}
               onFavorite={toggleFavorite}
             />
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
 
       {player.type === 'radiobrowser' && (
         <PlayerBar

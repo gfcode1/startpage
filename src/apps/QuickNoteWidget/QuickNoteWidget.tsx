@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { GfIcon } from '../../framework/iconSystem'
+import { GfWidgetAction } from '../../framework/components/WidgetAction'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
 import './QuickNoteWidget.css'
 
@@ -30,10 +31,7 @@ export default function QuickNoteWidget() {
   if (notes.length === 0) {
     return (
       <div className="gf-widget-quicknote">
-        <button className="gf-widget-quicknote__action" onClick={() => navigate('/markdownnotes')}>
-          Create a note in Markdown
-          <GfIcon name="chevron-right" size={12} />
-        </button>
+        <GfWidgetAction label="Create a note in Markdown" onClick={() => navigate('/markdownnotes')} />
       </div>
     )
   }
