@@ -15,6 +15,7 @@ const MAX_HIGH_SCORES = 10
 export default function Game2048App() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const engineRef = useRef<Game2048Engine | null>(null)
+  const audioRef = useRef<AudioEngine | null>(null)
 
   const [showResume, setShowResume] = useState(() => {
     const s = new StorageManager('game2048')
@@ -50,6 +51,8 @@ export default function Game2048App() {
     if (!canvas) return
 
     const audio = new AudioEngine()
+    audioRef.current = audio
+
     const s = new StorageManager('game2048')
 
     const engine = new Game2048Engine(canvas, {
@@ -94,6 +97,8 @@ export default function Game2048App() {
 
     return () => {
       engine.destroy()
+      audio.destroy()
+      audioRef.current = null
       window.removeEventListener('pointerdown', unlockAudio)
       document.removeEventListener('visibilitychange', onVisibility)
     }
@@ -108,14 +113,6 @@ export default function Game2048App() {
     engineStart(engine, (e) => e.loadGameFromState(saved))
     setScore(engine.score)
     setBestScore(engine.bestScore)
-    if (engine.gameOver) {
-      setGameOver(true)
-      setFinalScore(engine.score)
-    }
-    if (engine.won) {
-      setWon(true)
-      setFinalScore(engine.score)
-    }
     setShowResume(false)
   }, [engineStart])
 
@@ -155,6 +152,8 @@ export default function Game2048App() {
   }, [playerName, finalScore])
 
   const handleContinueAfterWin = useCallback(() => {
+    const engine = engineRef.current
+    engine?.continueAfterWin()
     setWon(false)
     setFinalScore(0)
   }, [])

@@ -28,9 +28,21 @@ export interface DailyWeather {
   sunset: string[]
 }
 
+export interface HistoricalDaily {
+  time: string[]
+  temperature_2m_max: number[]
+  temperature_2m_min: number[]
+  precipitation_sum: number[]
+}
+
+export interface HistoricalWeather {
+  daily: HistoricalDaily
+}
+
 export interface WeatherData {
   current: CurrentWeather
   daily: DailyWeather
+  historical?: HistoricalWeather
   timezone: string
 }
 

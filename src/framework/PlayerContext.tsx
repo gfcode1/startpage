@@ -1,5 +1,12 @@
-import { createContext, useContext, useState, useCallback, useMemo, ReactNode } from 'react'
+import { createContext, useContext, useState, useCallback, useMemo, useEffect, useRef, ReactNode } from 'react'
 import { useAppStorage } from './persistence/useAppStorage'
+
+export interface QueueItem {
+  id: string
+  title: string
+  subtitle?: string
+  type: string
+}
 
 interface PlayerState {
   volume: number
@@ -9,6 +16,8 @@ interface PlayerState {
   isPlaying: boolean
   isLoading: boolean
   type: string | null
+  queue: QueueItem[]
+  sleepTimer: number | null
 }
 
 interface PlayerActions {
@@ -18,6 +27,11 @@ interface PlayerActions {
   setPlayInfo: (title: string, subtitle?: string) => void
   stop: () => void
   setVolume: (volume: number) => void
+  addToQueue: (item: QueueItem) => void
+  removeFromQueue: (index: number) => void
+  playNextFromQueue: () => QueueItem | null
+  clearQueue: () => void
+  setSleepTimer: (minutes: number | null) => void
 }
 
 type PlayerContextValue = PlayerState & PlayerActions
@@ -33,7 +47,10 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     isLoading: false,
     subtitle: '',
     type: null,
+    queue: [],
+    sleepTimer: null,
   })
+  const sleepTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const play = useCallback(({ id, title, subtitle, type }: { id: string; title: string; subtitle?: string; type: string }) => {
     setTransient(prev => ({ ...prev, playingId: id, playingTitle: title, subtitle: subtitle || '', type, isPlaying: true, isLoading: true }))
@@ -59,6 +76,65 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     setTransient(prev => ({ ...prev, playingTitle: title, subtitle: subtitle || '' }))
   }, [])
 
+  const addToQueue = useCallback((item: QueueItem) => {
+    setTransient(prev => ({ ...prev, queue: [...prev.queue, item] }))
+  }, [])
+
+  const removeFromQueue = useCallback((index: number) => {
+    setTransient(prev => ({
+      ...prev,
+      queue: prev.queue.filter((_, i) => i !== index),
+    }))
+  }, [])
+
+  const playNextFromQueue = useCallback(() => {
+    let next: QueueItem | null = null
+    setTransient(prev => {
+      if (prev.queue.length === 0) return prev
+      next = prev.queue[0]
+      return { ...prev, queue: prev.queue.slice(1) }
+    })
+    return next
+  }, [])
+
+  const clearQueue = useCallback(() => {
+    setTransient(prev => ({ ...prev, queue: [] }))
+  }, [])
+
+  const setSleepTimer = useCallback((minutes: number | null) => {
+    setTransient(prev => ({
+      ...prev,
+      sleepTimer: minutes !== null ? Date.now() + minutes * 60 * 1000 : null,
+    }))
+  }, [])
+
+  useEffect(() => {
+    if (sleepTimerRef.current) {
+      clearInterval(sleepTimerRef.current)
+      sleepTimerRef.current = null
+    }
+
+    if (!transient.sleepTimer || !transient.playingId) return
+
+    sleepTimerRef.current = setInterval(() => {
+      if (Date.now() >= transient.sleepTimer!) {
+        stop()
+        setTransient(prev => ({ ...prev, sleepTimer: null }))
+        if (sleepTimerRef.current) {
+          clearInterval(sleepTimerRef.current)
+          sleepTimerRef.current = null
+        }
+      }
+    }, 10000)
+
+    return () => {
+      if (sleepTimerRef.current) {
+        clearInterval(sleepTimerRef.current)
+        sleepTimerRef.current = null
+      }
+    }
+  }, [transient.sleepTimer, transient.playingId, stop])
+
   const value = useMemo<PlayerContextValue>(() => ({
     ...transient,
     volume: playerPrefs.volume,
@@ -68,7 +144,12 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     setPlayInfo,
     stop,
     setVolume,
-  }), [transient, playerPrefs.volume, play, setPlaying, setLoading, setPlayInfo, stop, setVolume])
+    addToQueue,
+    removeFromQueue,
+    playNextFromQueue,
+    clearQueue,
+    setSleepTimer,
+  }), [transient, playerPrefs.volume, play, setPlaying, setLoading, setPlayInfo, stop, setVolume, addToQueue, removeFromQueue, playNextFromQueue, clearQueue, setSleepTimer])
 
   return (
     <PlayerContext.Provider value={value}>

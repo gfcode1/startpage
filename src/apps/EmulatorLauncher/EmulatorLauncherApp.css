@@ -172,13 +172,6 @@
   opacity: 0.6;
 }
 
-.gf-emu__empty code {
-  font-family: var(--gf-font-ui);
-  background: var(--gf-bg-hover);
-  padding: 2px 6px;
-  border-radius: var(--gf-radius-sm);
-}
-
 /* Game View */
 .gf-emu__view {
   display: flex;
@@ -286,19 +279,6 @@
   font-size: var(--gf-size-small);
 }
 
-/* Game view error */
-.gf-emu__view-error {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--gf-space-md);
-  flex: 1;
-  color: var(--gf-error);
-  font-family: var(--gf-font-ui);
-  font-size: var(--gf-size-body);
-}
-
 /* Actions */
 .gf-emu__actions {
   display: flex;
@@ -350,6 +330,77 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   pointer-events: none;
+}
+
+/* Card head (badge + delete) */
+.gf-emu__card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gf-space-xs);
+}
+
+.gf-emu__card-delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--gf-radius-full);
+  border: none;
+  background: transparent;
+  color: var(--gf-text-muted);
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s ease;
+}
+
+.gf-emu__card:hover .gf-emu__card-delete {
+  opacity: 1;
+}
+
+.gf-emu__card-delete:hover {
+  color: var(--gf-error);
+  background: color-mix(in srgb, var(--gf-error) 12%, transparent);
+}
+
+/* Search */
+.gf-emu__search {
+  flex: 1;
+  max-width: 280px;
+  padding: 8px 14px;
+  border-radius: var(--gf-radius-full);
+  border: 1px solid var(--gf-border);
+  background: var(--gf-bg-hover);
+  font-family: var(--gf-font-ui);
+  font-size: var(--gf-size-small);
+  color: var(--gf-text);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.gf-emu__search:focus {
+  border-color: var(--gf-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--gf-accent) 20%, transparent);
+}
+
+.gf-emu__search::placeholder {
+  color: var(--gf-text-muted);
+}
+
+/* Import progress */
+.gf-emu__import-progress {
+  text-align: center;
+  font-family: var(--gf-font-ui);
+  font-size: var(--gf-size-small);
+  color: var(--gf-text-muted);
+  padding: var(--gf-space-sm);
+  animation: gf-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes gf-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
 }
 
 @media (min-width: 640px) {

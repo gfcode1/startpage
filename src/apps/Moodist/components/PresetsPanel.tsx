@@ -13,6 +13,8 @@ interface PresetsPanelProps {
 export function PresetsPanel({ sounds, onApplyPreset }: PresetsPanelProps) {
   const [presets, setPresets] = useAppStorage<Preset[]>(APP_ID, 'presets', [])
   const [newLabel, setNewLabel] = useState('')
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editLabel, setEditLabel] = useState('')
 
   const hasSelection = Object.values(sounds).some(s => s.selected)
 
@@ -37,11 +39,21 @@ export function PresetsPanel({ sounds, onApplyPreset }: PresetsPanelProps) {
     setPresets(presets.filter(p => p.id !== id))
   }
 
-  const renamePreset = (id: string) => {
-    const label = prompt('New name:')
-    if (label?.trim()) {
-      setPresets(presets.map(p => p.id === id ? { ...p, label: label.trim() } : p))
+  const startRename = (p: Preset) => {
+    setEditingId(p.id)
+    setEditLabel(p.label)
+  }
+
+  const confirmRename = () => {
+    if (editingId && editLabel.trim()) {
+      setPresets(presets.map(p => p.id === editingId ? { ...p, label: editLabel.trim() } : p))
     }
+    setEditingId(null)
+    setEditLabel('')
+  }
+
+  const handleApply = (p: Preset) => {
+    onApplyPreset(p.sounds)
   }
 
   return (
@@ -66,23 +78,42 @@ export function PresetsPanel({ sounds, onApplyPreset }: PresetsPanelProps) {
       </div>
 
       {presets.length === 0 && (
-        <div style={{ fontSize: 13, color: 'var(--gf-text-muted, #888)', padding: '8px 0' }}>
+        <div className="gf-moodist__empty-state">
           Select sounds and save your mix as a preset.
         </div>
       )}
 
       {presets.map(p => (
         <div key={p.id} className="gf-moodist__preset-item">
-          <span
-            className="gf-moodist__preset-name"
-            onClick={() => onApplyPreset(p.sounds)}
-          >
-            {p.label}
-          </span>
+          {editingId === p.id ? (
+            <input
+              className="gf-moodist__input"
+              value={editLabel}
+              onChange={e => setEditLabel(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter') confirmRename()
+                if (e.key === 'Escape') setEditingId(null)
+              }}
+              onBlur={confirmRename}
+              autoFocus
+            />
+          ) : (
+            <span
+              className="gf-moodist__preset-name"
+              onClick={() => handleApply(p)}
+              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') handleApply(p) }}
+              tabIndex={0}
+              role="button"
+              aria-label={`Apply preset ${p.label}`}
+            >
+              {p.label}
+            </span>
+          )}
           <button
             className="gf-moodist__preset-btn"
-            onClick={() => renamePreset(p.id)}
+            onClick={() => startRename(p)}
             title="Rename"
+            aria-label={`Rename preset ${p.label}`}
           >
             <GfIcon name="rename" size={14} />
           </button>
@@ -90,6 +121,7 @@ export function PresetsPanel({ sounds, onApplyPreset }: PresetsPanelProps) {
             className="gf-moodist__preset-btn gf-moodist__preset-btn--danger"
             onClick={() => deletePreset(p.id)}
             title="Delete"
+            aria-label={`Delete preset ${p.label}`}
           >
             <GfIcon name="delete" size={14} />
           </button>

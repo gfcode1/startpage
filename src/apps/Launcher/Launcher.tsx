@@ -128,7 +128,7 @@ export function Launcher() {
     <div className="gf-launcher">
       <h1 className="gf-sr-only">GFcode</h1>
       <div className="gf-launcher__search">
-        <GfIcon name="search" size={18} />
+        <GfIcon name="search" size={18} className="gf-launcher__search-icon" />
         <input
           className="gf-launcher__search-input"
           type="text"

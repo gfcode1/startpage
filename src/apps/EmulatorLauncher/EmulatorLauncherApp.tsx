@@ -4,7 +4,7 @@ import { type SystemId, type ScannedGame, EXTENSION_TO_SYSTEM, ALL_EXTENSIONS } 
 import { SystemFilter } from './SystemFilter'
 import { GameCard } from './GameCard'
 import { GameView } from './GameView'
-import { saveRom, getRom, getAllRomMetas } from './romStorage'
+import { saveRom, getRom, getAllRomMetas, deleteRom } from './romStorage'
 import { scanBundledRoms } from './romScanner'
 import './EmulatorLauncherApp.css'
 
@@ -28,9 +28,12 @@ export default function EmulatorLauncherApp() {
   const [activeGame, setActiveGame] = useState<GameEntry | null>(null)
   const [activeRomData, setActiveRomData] = useState<ArrayBuffer | undefined>()
   const [filter, setFilter] = useState<SystemId | null>(null)
+  const [search, setSearch] = useState('')
   const [dragging, setDragging] = useState(false)
+  const [importProgress, setImportProgress] = useState<{ current: number; total: number } | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const dragTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const mountedRef = useRef(true)
 
   useEffect(() => {
     let cancelled = false
@@ -72,6 +75,16 @@ export default function EmulatorLauncherApp() {
     return () => { cancelled = true }
   }, [])
 
+  useEffect(() => {
+    mountedRef.current = true
+    return () => {
+      mountedRef.current = false
+      if (dragTimerRef.current !== null) {
+        clearTimeout(dragTimerRef.current)
+      }
+    }
+  }, [])
+
   async function handleFile(file: File) {
     const dotIdx = file.name.lastIndexOf('.')
     if (dotIdx < 0) return
@@ -83,7 +96,12 @@ export default function EmulatorLauncherApp() {
     const id = `browser:${system}:${file.name}`
 
     const data = await file.arrayBuffer()
-    await saveRom({ id, title, system, fileName: file.name, data, addedAt: Date.now(), romSize: file.size })
+    try {
+      await saveRom({ id, title, system, fileName: file.name, data, addedAt: Date.now(), romSize: file.size })
+    } catch (err) {
+      console.warn('Failed to save ROM to IndexedDB — storage may be full', err)
+      return
+    }
 
     setGames(prev => prev.some(g => g.id === id) ? prev : [...prev, { id, title, system, fileName: file.name, storedRomId: id }])
   }
@@ -91,9 +109,13 @@ export default function EmulatorLauncherApp() {
   const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files) return
-    for (const file of Array.from(files)) {
-      await handleFile(file)
+    const list = Array.from(files)
+    setImportProgress({ current: 0, total: list.length })
+    for (let i = 0; i < list.length; i++) {
+      await handleFile(list[i])
+      if (mountedRef.current) setImportProgress({ current: i + 1, total: list.length })
     }
+    if (mountedRef.current) setImportProgress(null)
     e.target.value = ''
   }, [])
 
@@ -108,7 +130,7 @@ export default function EmulatorLauncherApp() {
     e.preventDefault()
     e.stopPropagation()
     if (dragTimerRef.current !== null) clearTimeout(dragTimerRef.current)
-    dragTimerRef.current = setTimeout(() => setDragging(false), 50)
+    dragTimerRef.current = setTimeout(() => { if (mountedRef.current) setDragging(false) }, 50)
   }
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -123,9 +145,19 @@ export default function EmulatorLauncherApp() {
     setDragging(false)
     const files = e.dataTransfer.files
     if (!files) return
-    for (const file of Array.from(files)) {
-      await handleFile(file)
+    const list = Array.from(files)
+    setImportProgress({ current: 0, total: list.length })
+    for (let i = 0; i < list.length; i++) {
+      await handleFile(list[i])
+      if (mountedRef.current) setImportProgress({ current: i + 1, total: list.length })
     }
+    if (mountedRef.current) setImportProgress(null)
+  }
+
+  async function handleDelete(entry: GameEntry) {
+    if (!entry.storedRomId) return
+    await deleteRom(entry.storedRomId)
+    setGames(prev => prev.filter(g => g.id !== entry.id))
   }
 
   async function handlePlay(entry: GameEntry) {
@@ -142,7 +174,9 @@ export default function EmulatorLauncherApp() {
     }
   }
 
-  const filteredGames = filter ? games.filter(g => g.system === filter) : games
+  const filteredGames = games
+    .filter(g => (filter ? g.system === filter : true))
+    .filter(g => !search || g.title.toLowerCase().includes(search.toLowerCase()))
 
   if (activeGame) {
     return (
@@ -184,11 +218,25 @@ export default function EmulatorLauncherApp() {
           onChange={handleFileSelect}
           hidden
         />
-        <button className="gf-emu__load-btn" onClick={() => fileInputRef.current?.click()}>
+        <input
+          className="gf-emu__search"
+          type="search"
+          placeholder="Search games…"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          aria-label="Search games"
+        />
+        <button className="gf-emu__load-btn" type="button" onClick={() => fileInputRef.current?.click()}>
           <GfIcon name="plus" size={16} />
           Load ROM
         </button>
       </div>
+
+      {importProgress && (
+        <div className="gf-emu__import-progress">
+          Importing {importProgress.current} of {importProgress.total}…
+        </div>
+      )}
 
       {dragging && <div className="gf-emu__dropzone">Drop ROM files here</div>}
 
@@ -224,6 +272,7 @@ export default function EmulatorLauncherApp() {
               game={toScannedGame(game)}
               index={i}
               onClick={() => handlePlay(game)}
+              onDelete={game.storedRomId ? () => handleDelete(game) : undefined}
             />
           ))}
         </div>

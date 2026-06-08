@@ -11,11 +11,10 @@
 .gf-snake__header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   width: 100%;
   gap: var(--gf-space-md);
   flex-wrap: wrap;
-  justify-content: center;
 }
 
 .gf-snake__scores {
@@ -169,6 +168,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--gf-space-xs);
+  padding: 0;
+  list-style: none;
 }
 
 .gf-snake__highscores-item {

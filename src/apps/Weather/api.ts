@@ -1,7 +1,8 @@
-import type { CityResult, WeatherData } from './types'
+import type { CityResult, WeatherData, HistoricalWeather } from './types'
 
 const GEO_BASE = 'https://geocoding-api.open-meteo.com/v1/search'
 const WEATHER_BASE = 'https://api.open-meteo.com/v1/forecast'
+const ARCHIVE_BASE = 'https://archive-api.open-meteo.com/v1/archive'
 
 export async function searchCity(
   query: string,
@@ -42,6 +43,34 @@ export async function fetchWeather(
   }
 
   return res.json() as Promise<WeatherData>
+}
+
+export async function fetchHistoricalWeather(
+  lat: number,
+  lon: number,
+  signal?: AbortSignal,
+): Promise<HistoricalWeather> {
+  const endDate = new Date()
+  const startDate = new Date(endDate)
+  startDate.setDate(startDate.getDate() - 7)
+
+  const params = new URLSearchParams({
+    latitude: lat.toString(),
+    longitude: lon.toString(),
+    start_date: startDate.toISOString().split('T')[0],
+    end_date: endDate.toISOString().split('T')[0],
+    daily: 'temperature_2m_max,temperature_2m_min,precipitation_sum',
+    timezone: 'auto',
+  })
+
+  const url = `${ARCHIVE_BASE}?${params}`
+  const res = await fetch(url, { signal })
+
+  if (!res.ok) {
+    throw new Error(`Historical API error: ${res.status}`)
+  }
+
+  return res.json() as Promise<HistoricalWeather>
 }
 
 export function getPosition(): Promise<GeolocationPosition> {

@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { GfIcon } from '../../framework/iconSystem'
+import { GfIcon, type IconName } from '../../framework/iconSystem'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
+import { getWeatherInfo } from '../Weather/weatherCodes'
 import './WeatherWidget.css'
 
 const WEATHER_BASE = 'https://api.open-meteo.com/v1/forecast'
@@ -25,32 +26,23 @@ interface WeatherData {
   daily: DailyWeather
 }
 
-
-function getWeatherLabel(code: number): string {
-  if (code === 0) return 'Clear'
-  if (code === 1) return 'Mostly clear'
-  if (code === 2) return 'Partly cloudy'
-  if (code === 3) return 'Overcast'
-  if (code >= 45 && code <= 48) return 'Fog'
-  if (code >= 51 && code <= 55) return 'Drizzle'
-  if (code >= 61 && code <= 65) return 'Rain'
-  if (code >= 71 && code <= 75) return 'Snow'
-  if (code >= 80 && code <= 82) return 'Showers'
-  if (code >= 95) return 'Thunderstorm'
-  return 'Clear'
-}
-
 export default function WeatherWidget() {
   const navigate = useNavigate()
   const [city] = useAppStorage<string>('weather', 'city', '')
   const [coords] = useAppStorage<{ lat: number; lon: number } | null>('weather', 'coords', null)
   const [data, setData] = useState<WeatherData | null>(null)
   const [error, setError] = useState(false)
+  const [retryKey, setRetryKey] = useState(0)
+
+  const abortRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
     if (!coords) return
 
-    let cancelled = false
+    abortRef.current?.abort()
+    const controller = new AbortController()
+    abortRef.current = controller
+
     const fetchData = async () => {
       try {
         const params = new URLSearchParams({
@@ -60,22 +52,30 @@ export default function WeatherWidget() {
           daily: 'temperature_2m_max,temperature_2m_min,precipitation_probability_max',
           forecast_days: '1',
         })
-        const res = await fetch(`${WEATHER_BASE}?${params}`)
+        const res = await fetch(`${WEATHER_BASE}?${params}`, { signal: controller.signal })
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         const json = await res.json()
-        if (!cancelled) {
+        if (!controller.signal.aborted) {
           setData(json)
           setError(false)
         }
-      } catch {
-        if (!cancelled) setError(true)
+      } catch (err) {
+        if (
+          !controller.signal.aborted &&
+          !(err instanceof DOMException && err.name === 'AbortError')
+        ) {
+          setError(true)
+        }
       }
     }
 
     fetchData()
     const id = setInterval(fetchData, 10 * 60 * 1000)
-    return () => { cancelled = true; clearInterval(id) }
-  }, [coords])
+    return () => {
+      controller.abort()
+      clearInterval(id)
+    }
+  }, [coords, retryKey])
 
   if (!city || !coords) {
     return (
@@ -90,30 +90,48 @@ export default function WeatherWidget() {
 
   if (error && !data) {
     return (
-      <div className="gf-widget-weather">
+      <div className="gf-widget-weather gf-widget-weather--loading">
         <span className="gf-widget-weather__empty">Weather unavailable</span>
+        <button className="gf-widget-weather__retry" onClick={() => setRetryKey(k => k + 1)}>
+          Retry
+        </button>
       </div>
     )
   }
 
   if (!data) {
-    return <div className="gf-widget-weather gf-widget-weather--loading">—</div>
+    return (
+      <div className="gf-widget-weather">
+        <div className="gf-widget-weather__skeleton">
+          <div className="gf-widget-weather__skeleton-row">
+            <div className="gf-widget-weather__skeleton-circle" />
+            <div className="gf-widget-weather__skeleton-line gf-widget-weather__skeleton-line--lg" />
+            <div className="gf-widget-weather__skeleton-line gf-widget-weather__skeleton-line--sm" />
+          </div>
+          <div className="gf-widget-weather__skeleton-details">
+            <div className="gf-widget-weather__skeleton-line" />
+            <div className="gf-widget-weather__skeleton-line" />
+            <div className="gf-widget-weather__skeleton-line" />
+          </div>
+        </div>
+      </div>
+    )
   }
 
   const { current, daily } = data
   const temp = Math.round(current.temperature_2m)
   const feels = Math.round(current.apparent_temperature)
-  const label = getWeatherLabel(current.weather_code)
+  const info = getWeatherInfo(current.weather_code, false)
 
   return (
     <div className="gf-widget-weather">
       <div className="gf-widget-weather__main">
-        <span className="gf-widget-weather__emoji"><GfIcon name="sun" size={28} /></span>
+        <span className="gf-widget-weather__emoji"><GfIcon name={info.icon as IconName} size={28} /></span>
         <span className="gf-widget-weather__temp">{temp}°</span>
         <span className="gf-widget-weather__city">{city}</span>
       </div>
       <span className="gf-widget-weather__condition">
-        {label} · Feels {feels}°
+        {info.label} · Feels {feels}°
       </span>
       <div className="gf-widget-weather__details">
         <span className="gf-widget-weather__detail">

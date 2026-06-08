@@ -9,7 +9,6 @@ interface CategorySectionProps {
   category: Category
   soundsState: SoundsState
   isGloballyPlaying: boolean
-  isLocked: boolean
   onSelect: (id: string) => void
   onUnselect: (id: string) => void
   onSetVolume: (id: string, volume: number) => void
@@ -20,7 +19,6 @@ export function CategorySection({
   category,
   soundsState,
   isGloballyPlaying,
-  isLocked,
   onSelect,
   onUnselect,
   onSetVolume,
@@ -44,7 +42,6 @@ export function CategorySection({
             sound={sound}
             state={soundsState[sound.id]}
             isGloballyPlaying={isGloballyPlaying}
-            isLocked={isLocked}
             hidden={!showAll && i >= VISIBLE_COUNT}
             onSelect={() => onSelect(sound.id)}
             onUnselect={() => onUnselect(sound.id)}

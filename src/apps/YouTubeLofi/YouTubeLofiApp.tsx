@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import streamData from './data/streams.json'
 import { MediaCard } from '../../framework/components/MediaCard'
 import { AppHeader } from '../../framework/components/AppHeader'
@@ -24,21 +24,19 @@ const SOURCE_META: Record<string, { label: string; color: string }> = {
 
 export default function YouTubeLofiApp() {
   const player = usePlayer()
-  const streams = useMemo(() => streamData as Stream[], [])
+  const streams = streamData as Stream[]
   const [sourceFilter, setSourceFilter] = useState('all')
   const [search, setSearch] = useState('')
   const [favorites, setFavorites] = useAppStorage<string[]>(APP_ID, 'favorites', [])
   const [playError, setPlayError] = useState<string | null>(null)
 
-  const filteredStreams = useMemo(() => {
-    return streams.filter(s => {
-      const matchSource = sourceFilter === 'all' || s.source === sourceFilter
-      const matchSearch = !search ||
-        s.title.toLowerCase().includes(search.toLowerCase()) ||
-        s.description.toLowerCase().includes(search.toLowerCase())
-      return matchSource && matchSearch
-    })
-  }, [streams, sourceFilter, search])
+  const filteredStreams = streams.filter(s => {
+    const matchSource = sourceFilter === 'all' || s.source === sourceFilter
+    const matchSearch = !search ||
+      s.title.toLowerCase().includes(search.toLowerCase()) ||
+      s.description.toLowerCase().includes(search.toLowerCase())
+    return matchSource && matchSearch
+  })
 
   const toggleFavorite = useCallback((id: string) => {
     setFavorites(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id])
@@ -56,8 +54,13 @@ export default function YouTubeLofiApp() {
     }
 
     setPlayError(null)
-    player.setLoading(true)
-    player.play({ id: stream.id, title: stream.title, subtitle: '', type: 'youtube' })
+    const sourceMeta = SOURCE_META[stream.source]
+    player.play({
+      id: stream.id,
+      title: stream.title,
+      subtitle: sourceMeta ? `${sourceMeta.label} · ${stream.genre}` : stream.genre,
+      type: 'youtube',
+    })
   }, [player, stopPlayback])
 
   const handlePlayerError = useCallback(() => {
@@ -126,6 +129,7 @@ export default function YouTubeLofiApp() {
         <>
           <div className="gf-youtubelofi__player-video">
             <VideoPlayer
+              key={currentStream?.youtubeId}
               youtubeId={currentStream?.youtubeId}
               volume={player.volume}
               isPlaying={player.isPlaying}
@@ -134,11 +138,16 @@ export default function YouTubeLofiApp() {
           </div>
           <PlayerBar
             isPlaying={player.isPlaying}
+            isLoading={player.isLoading}
             title={player.playingTitle}
             volume={player.volume}
+            queue={player.queue}
+            sleepTimer={player.sleepTimer}
             onVolumeChange={player.setVolume}
             onStop={stopPlayback}
             onPlayPause={() => player.setPlaying(!player.isPlaying)}
+            onRemoveFromQueue={player.removeFromQueue}
+            onSetSleepTimer={player.setSleepTimer}
           />
         </>
       )}

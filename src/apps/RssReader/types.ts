@@ -8,6 +8,8 @@ export interface Article {
   pubDate: string
   pubDateParsed: number
   mediaThumbnail?: string
+  cachedContent?: string
+  cachedAt?: number
 }
 
 export interface FeedInfo {
@@ -21,4 +23,17 @@ export interface FeedResult {
   feed: FeedInfo
   articles: Article[]
   error?: string
+}
+
+export interface DrawerContent {
+  title: string
+  content: string
+  excerpt: string
+  byline: string | null
+}
+
+export interface FeedConfig {
+  url: string
+  category: string
+  title?: string
 }

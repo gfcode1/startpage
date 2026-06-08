@@ -11,7 +11,7 @@ export interface Channel {
   genre: string
   image: string
   largeimage: string
-  listeners: string
+  listeners: number
   lastPlaying: string
   playlists: ChannelPlaylist[]
 }

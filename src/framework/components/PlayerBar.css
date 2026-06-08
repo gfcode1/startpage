@@ -105,8 +105,71 @@
 .gf-playerbar__right {
   display: flex;
   align-items: center;
-  gap: var(--gf-space-md);
+  gap: var(--gf-space-sm);
   flex-shrink: 0;
+}
+
+.gf-playerbar__extras {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.gf-playerbar__extra-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--gf-radius-md);
+  background: transparent;
+  color: var(--gf-text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  opacity: 0.5;
+}
+
+@media (hover: hover) {
+  .gf-playerbar__extra-btn:hover {
+    opacity: 1;
+    background: var(--gf-bg-hover);
+  }
+}
+
+.gf-playerbar__extra-btn--has-items,
+.gf-playerbar__extra-btn--active {
+  opacity: 1;
+  color: var(--gf-accent);
+}
+
+.gf-playerbar__extra-count {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
+  border-radius: 999px;
+  background: var(--gf-accent);
+  color: var(--gf-text-inverse);
+  font-size: 0.55rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.gf-playerbar__extra-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gf-accent);
 }
 
 .gf-playerbar__play {
@@ -164,6 +227,146 @@
 .gf-playerbar__vol-icon {
   flex-shrink: 0;
   color: var(--gf-text-muted);
+}
+
+/* ── Queue Sheet ── */
+.gf-playerbar__queue-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  padding: 0.5rem 0;
+}
+
+.gf-playerbar__queue-empty {
+  text-align: center;
+  opacity: 0.4;
+  font-size: 0.85rem;
+  padding: 1.5rem 0;
+}
+
+.gf-playerbar__queue-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--gf-radius-md);
+  border: 1px solid var(--gf-border);
+  background: var(--gf-bg);
+  transition: background 0.15s;
+}
+
+.gf-playerbar__queue-item:hover {
+  background: var(--gf-bg-hover);
+}
+
+.gf-playerbar__queue-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.gf-playerbar__queue-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gf-playerbar__queue-sub {
+  font-size: 0.7rem;
+  opacity: 0.5;
+}
+
+.gf-playerbar__queue-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--gf-radius-sm);
+  background: transparent;
+  color: var(--gf-text-muted);
+  cursor: pointer;
+  opacity: 0.4;
+  transition: opacity 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+
+.gf-playerbar__queue-remove:hover {
+  opacity: 1;
+  background: var(--gf-bg-hover);
+  color: var(--gf-error);
+}
+
+/* ── Sleep Timer Sheet ── */
+.gf-playerbar__sleep-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0.5rem 0;
+}
+
+.gf-playerbar__sleep-hint {
+  text-align: center;
+  font-size: 0.85rem;
+  opacity: 0.5;
+}
+
+.gf-playerbar__sleep-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.gf-playerbar__sleep-option {
+  padding: 0.75rem;
+  border: 1px solid var(--gf-border);
+  border-radius: var(--gf-radius-md);
+  background: var(--gf-bg);
+  color: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+
+.gf-playerbar__sleep-option:hover {
+  background: var(--gf-bg-hover);
+  border-color: var(--gf-accent);
+}
+
+.gf-playerbar__sleep-active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 0;
+}
+
+.gf-playerbar__sleep-active p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.gf-playerbar__sleep-cancel {
+  padding: 0.5rem 1.25rem;
+  border: 1px solid var(--gf-error);
+  border-radius: var(--gf-radius-md);
+  background: transparent;
+  color: var(--gf-error);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.gf-playerbar__sleep-cancel:hover {
+  background: color-mix(in srgb, var(--gf-error) 12%, transparent);
 }
 
 @media (min-width: 640px) {

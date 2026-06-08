@@ -38,7 +38,7 @@ export function moodistReducer(state: MoodistState, action: MoodistAction): Mood
         ...state,
         sounds: {
           ...state.sounds,
-          [action.id]: { ...state.sounds[action.id], selected: false, volume: 0.5 },
+          [action.id]: { ...state.sounds[action.id], selected: false },
         },
       }
     case 'SET_VOLUME':
@@ -60,28 +60,28 @@ export function moodistReducer(state: MoodistState, action: MoodistAction): Mood
     case 'SET_PLAYING':
       return { ...state, isPlaying: action.playing }
     case 'SHUFFLE': {
-      const newSounds: SoundsState = {}
-      for (const id of Object.keys(state.sounds)) {
-        newSounds[id] = { ...state.sounds[id], selected: false, volume: 0.5 }
-      }
-      const ids = Object.keys(newSounds)
+      const ids = Object.keys(state.sounds)
       const picked = pickMany(ids, 5)
+      const newSounds: SoundsState = { ...state.sounds }
+      for (const id of ids) {
+        newSounds[id] = { ...newSounds[id], selected: false }
+      }
       for (const id of picked) {
         newSounds[id] = { ...newSounds[id], selected: true, volume: 0.2 + Math.random() * 0.8 }
       }
-      return { isPlaying: true, sounds: newSounds }
+      return { ...state, sounds: newSounds }
     }
     case 'UNSELECT_ALL': {
       const newSounds: SoundsState = {}
       for (const [id, s] of Object.entries(state.sounds)) {
-        newSounds[id] = { ...s, selected: false, volume: 0.5 }
+        newSounds[id] = { ...s, selected: false }
       }
       return { ...state, sounds: newSounds }
     }
     case 'OVERRIDE': {
-      const newSounds: SoundsState = {}
-      for (const [id, s] of Object.entries(state.sounds)) {
-        newSounds[id] = { ...s, selected: false, volume: 0.5 }
+      const newSounds: SoundsState = { ...state.sounds }
+      for (const [id, s] of Object.entries(newSounds)) {
+        newSounds[id] = { ...s, selected: false }
       }
       for (const [id, vol] of Object.entries(action.sounds)) {
         if (newSounds[id]) {

@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 import './Badge.css'
 
 interface BadgeProps {
-  variant?: string
+  variant?: 'default' | 'accent' | 'success' | 'listeners' | 'warning'
   children?: ReactNode
   className?: string
   [key: string]: unknown

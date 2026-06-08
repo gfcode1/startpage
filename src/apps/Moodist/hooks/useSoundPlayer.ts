@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useCallback, useRef, useState } from 'react'
+import { useCallback, useRef, useState, useEffect } from 'react'
 import { Howl } from 'howler'
 
 const FADE_DURATION = 250
@@ -6,25 +6,31 @@ const FADE_DURATION = 250
 export function useSoundPlayer(src: string) {
   const [isLoading, setIsLoading] = useState(false)
   const [hasLoaded, setHasLoaded] = useState(false)
+  const [hasError, setHasError] = useState(false)
   const targetVolume = useRef(0.5)
   const fadeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
   const isFadingOut = useRef(false)
+  const howlRef = useRef<Howl | null>(null)
 
-  const howl = useMemo<Howl | null>(() => {
-    const h = new Howl({
-      src: [src],
-      loop: true,
-      preload: false,
-      html5: true,
-      onload: () => {
-        setIsLoading(false)
-        setHasLoaded(true)
-      },
-      onloaderror: () => {
-        setIsLoading(false)
-      },
-    })
-    return h
+  const getHowl = useCallback(() => {
+    if (!howlRef.current) {
+      const h = new Howl({
+        src: [src],
+        loop: true,
+        preload: false,
+        html5: true,
+        onload: () => {
+          setIsLoading(false)
+          setHasLoaded(true)
+        },
+        onloaderror: () => {
+          setIsLoading(false)
+          setHasError(true)
+        },
+      })
+      howlRef.current = h
+    }
+    return howlRef.current
   }, [src])
 
   const clearFade = useCallback(() => {
@@ -35,9 +41,11 @@ export function useSoundPlayer(src: string) {
   }, [])
 
   const play = useCallback(() => {
+    const howl = getHowl()
     if (!howl) return
     isFadingOut.current = false
     clearFade()
+    setHasError(false)
 
     if (!hasLoaded && !isLoading) {
       setIsLoading(true)
@@ -53,9 +61,10 @@ export function useSoundPlayer(src: string) {
     if (currentVol !== nextVol) {
       howl.fade(currentVol, nextVol, FADE_DURATION)
     }
-  }, [howl, hasLoaded, isLoading, clearFade])
+  }, [getHowl, hasLoaded, isLoading, clearFade])
 
   const pause = useCallback((duration = FADE_DURATION) => {
+    const howl = howlRef.current
     if (!howl) return
     isFadingOut.current = true
     clearFade()
@@ -80,36 +89,34 @@ export function useSoundPlayer(src: string) {
       isFadingOut.current = false
       howl.volume(targetVolume.current)
     }, duration)
-  }, [howl, clearFade])
+  }, [clearFade])
 
   const stop = useCallback(() => {
     isFadingOut.current = false
     clearFade()
+    const howl = howlRef.current
     if (howl) {
       howl.stop()
       howl.volume(targetVolume.current)
     }
-  }, [howl, clearFade])
-
-  useEffect(() => {
-    targetVolume.current = 0.5
-  }, [])
+  }, [clearFade])
 
   const setVolume = useCallback((vol: number) => {
     targetVolume.current = vol
+    const howl = howlRef.current
     if (howl && !isFadingOut.current) {
       howl.volume(vol)
     }
-  }, [howl])
+  }, [])
 
   useEffect(() => {
     return () => {
       clearFade()
-      if (howl) {
-        howl.unload()
+      if (howlRef.current) {
+        howlRef.current.unload()
       }
     }
-  }, [howl, clearFade])
+  }, [clearFade])
 
-  return { play, pause, stop, setVolume, isLoading, hasLoaded }
+  return { play, pause, stop, setVolume, isLoading, hasLoaded, hasError }
 }

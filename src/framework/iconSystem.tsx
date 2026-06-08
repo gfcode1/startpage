@@ -67,6 +67,12 @@ const iconDefs: Record<string, IconOverride> = {
   sparkles: { tabler: 'sparkles', lucide: 'sparkles', solar: 'stars-line-duotone', ph: 'sparkle', mdi: 'auto-fix' },
   popup: { tabler: 'arrows-maximize', lucide: 'maximize-2', solar: 'maximize-line-duotone', ph: 'arrows-out', mdi: 'fullscreen' },
   gear: { tabler: 'settings', lucide: 'settings', solar: 'settings-line-duotone', ph: 'gear', mdi: 'cog' },
+  queue: { tabler: 'playlist', lucide: 'list', solar: 'playlist-line-duotone', ph: 'queue', mdi: 'playlist-music' },
+  moon: { tabler: 'moon', lucide: 'moon', solar: 'moon-line-duotone', ph: 'moon', mdi: 'weather-night' },
+  folder: { tabler: 'folder', lucide: 'folder', solar: 'folder-line-duotone', ph: 'folder', mdi: 'folder' },
+  calendar: { tabler: 'calendar', lucide: 'calendar', solar: 'calendar-line-duotone', ph: 'calendar', mdi: 'calendar' },
+  tag: { tabler: 'tag', lucide: 'tag', solar: 'tag-line-duotone', ph: 'tag', mdi: 'tag' },
+  'cloud-off': { tabler: 'cloud-off', lucide: 'cloud-off', solar: 'cloud-minus-line-duotone', ph: 'cloud-slash', mdi: 'cloud-off-outline' },
 
   // Weather details
   droplet: { tabler: 'droplet', lucide: 'droplet', solar: 'waterdrops-line-duotone', ph: 'drop', mdi: 'water-percent' },
@@ -109,6 +115,7 @@ const iconDefs: Record<string, IconOverride> = {
   loading: { tabler: 'loader-2', lucide: 'loader-circle', solar: 'spinner-line-duotone', ph: 'spinner', mdi: 'loading' },
   shuffle: { tabler: 'arrows-shuffle', lucide: 'shuffle', solar: 'shuffle-line-duotone', ph: 'shuffle', mdi: 'shuffle' },
   clear: { tabler: 'trash', lucide: 'trash-2', solar: 'trash-bin-trash-line-duotone', ph: 'trash', mdi: 'delete' },
+  alert: { tabler: 'alert-circle', lucide: 'alert-circle', solar: 'danger-circle-line-duotone', ph: 'warning-circle', mdi: 'alert-circle-outline' },
 
   // Weather code mapped icons (simplified)
   'weather-code-sunny': { tabler: 'sun', lucide: 'sun', solar: 'sun-line-duotone', ph: 'sun', mdi: 'weather-sunny' },

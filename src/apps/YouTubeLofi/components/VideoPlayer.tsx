@@ -70,7 +70,12 @@ interface YTPlayer {
 export function VideoPlayer({ youtubeId, volume, isPlaying, onError }: VideoPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const playerRef = useRef<YTPlayer | null>(null)
+  const isPlayingRef = useRef(isPlaying)
+  const volumeRef = useRef(volume)
   const [apiTimedOut, setApiTimedOut] = useState(false)
+
+  useEffect(() => { isPlayingRef.current = isPlaying }, [isPlaying])
+  useEffect(() => { volumeRef.current = volume }, [volume])
 
   const destroyPlayer = useCallback(() => {
     if (playerRef.current) {
@@ -85,7 +90,6 @@ export function VideoPlayer({ youtubeId, volume, isPlaying, onError }: VideoPlay
 
   useEffect(() => {
     if (!youtubeId) return
-
     let cancelled = false
     const timeoutId = setTimeout(() => {
       if (!cancelled) {
@@ -106,7 +110,7 @@ export function VideoPlayer({ youtubeId, volume, isPlaying, onError }: VideoPlay
           width: '100%',
           videoId: youtubeId,
           playerVars: {
-            autoplay: isPlaying ? 1 : 0,
+            autoplay: isPlayingRef.current ? 1 : 0,
             controls: 1,
             modestbranding: 1,
             rel: 0,
@@ -117,10 +121,10 @@ export function VideoPlayer({ youtubeId, volume, isPlaying, onError }: VideoPlay
           events: {
             onReady: () => {
               if (cancelled) return
-              if (isPlaying) {
+              if (isPlayingRef.current) {
                 player.playVideo()
               }
-              player.setVolume(volume * 100)
+              player.setVolume(volumeRef.current * 100)
             },
             onError: () => {
               onError?.()
@@ -158,7 +162,7 @@ export function VideoPlayer({ youtubeId, volume, isPlaying, onError }: VideoPlay
       } else {
         playerRef.current.pauseVideo()
       }
-      } catch (e) { console.warn('VideoPlayer: play/pause failed', e) }
+    } catch { console.warn('VideoPlayer: play/pause failed') }
   }, [isPlaying])
 
   return (

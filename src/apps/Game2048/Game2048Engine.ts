@@ -72,6 +72,10 @@ export class Game2048Engine extends GameEngine {
   get gameOver(): boolean { return this._gameOver }
 
   init(): void {
+    if (this.animRafId) {
+      cancelAnimationFrame(this.animRafId)
+      this.animRafId = 0
+    }
     this.readTheme()
     resetIdCounter()
     this.grid = createGrid()
@@ -114,6 +118,11 @@ export class Game2048Engine extends GameEngine {
       console.warn('Game2048Engine: deserialize failed', e)
       this.init()
     }
+  }
+
+  continueAfterWin(): void {
+    this._wonContinued = true
+    this._won = false
   }
 
   newGame(): void {
@@ -173,7 +182,6 @@ export class Game2048Engine extends GameEngine {
 
   protected render(ctx: CanvasRenderingContext2D): void {
     if (!this.initialised) return
-    this.readTheme()
     this.cls()
     this.computeLayout()
 

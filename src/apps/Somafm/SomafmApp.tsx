@@ -35,7 +35,7 @@ function parseStreamUrl(playlistUrl: string) {
 
 export default function SomafmApp() {
   const player = usePlayer()
-  const channels = useMemo(() => [...channelData].sort((a, b) => Number(b.listeners) - Number(a.listeners)), [])
+  const channels = useMemo(() => [...channelData].sort((a, b) => b.listeners - a.listeners), [])
   const genres = useMemo(() => getGenres(channels), [channels])
   const [genreFilter, setGenreFilter] = useState('all')
   const [search, setSearch] = useState('')
@@ -56,6 +56,18 @@ export default function SomafmApp() {
     setFavorites(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id])
   }, [setFavorites])
 
+  const togglePlayPause = useCallback(() => {
+    if (!audioRef.current) return
+    if (player.isPlaying) {
+      audioRef.current.pause()
+      player.setPlaying(false)
+    } else {
+      audioRef.current.play()
+        .then(() => player.setPlaying(true))
+        .catch(() => {})
+    }
+  }, [player])
+
   const stopPlayback = useCallback(() => {
     if (audioRef.current) {
       audioRef.current.pause()
@@ -74,6 +86,7 @@ export default function SomafmApp() {
     if (!streamUrl || !audioRef.current) return
 
     setPlayError(null)
+    audioRef.current.pause()
     player.play({ id: channel.id, title: channel.title, subtitle: channel.lastPlaying, type: 'soma' })
 
     audioRef.current.src = streamUrl
@@ -90,13 +103,20 @@ export default function SomafmApp() {
       })
   }, [player, stopPlayback])
 
+  const handleAudioError = useCallback(() => {
+    player.stop()
+    setPlayError('Stream lost. Try again.')
+  }, [player])
+
   useEffect(() => {
     const audio = new Audio()
+    audio.addEventListener('error', handleAudioError)
     audioRef.current = audio
     return () => {
       audio.pause()
       audio.removeAttribute('src')
       audio.load()
+      audio.removeEventListener('error', handleAudioError)
       audioRef.current = null
       if (playerTypeRef.current === 'soma') {
         player.stop()
@@ -150,8 +170,8 @@ export default function SomafmApp() {
               <>
                 <GfBadge variant="listeners">
                   <GfIcon name="headphones" size={10} />
-                  {Number(channel.listeners) >= 1000
-                    ? `${(Number(channel.listeners) / 1000).toFixed(1)}k`
+                  {channel.listeners >= 1000
+                    ? `${(channel.listeners / 1000).toFixed(1)}k`
                     : channel.listeners}
                 </GfBadge>
                 <span className="gf-somafm__genre">{channel.genre.split('|')[0]}</span>
@@ -176,8 +196,13 @@ export default function SomafmApp() {
         title={player.playingTitle}
         subtitle={player.subtitle}
         volume={player.volume}
+        queue={player.queue}
+        sleepTimer={player.sleepTimer}
         onVolumeChange={player.setVolume}
+        onPlayPause={togglePlayPause}
         onStop={stopPlayback}
+        onRemoveFromQueue={player.removeFromQueue}
+        onSetSleepTimer={player.setSleepTimer}
       />}
     </div>
   )

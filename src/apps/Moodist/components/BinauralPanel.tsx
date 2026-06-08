@@ -51,7 +51,6 @@ export function BinauralPanel() {
           className="gf-moodist__select"
           value={frequency}
           onChange={e => handleFreqChange(e.target.value as BinauralFreq)}
-          style={{ flex: 1 }}
         >
           {Object.entries(FREQ_LABELS).map(([k, v]) => (
             <option key={k} value={k}>{v}</option>
@@ -60,7 +59,7 @@ export function BinauralPanel() {
       </div>
 
       <div className="gf-moodist__row">
-        <span style={{ fontSize: 12, color: 'var(--gf-text-muted)' }}>Carrier: {carrier} Hz</span>
+        <span className="gf-moodist__label">Carrier: {carrier} Hz</span>
         <input
           className="gf-moodist__sound-vol"
           type="range"
@@ -68,7 +67,6 @@ export function BinauralPanel() {
           max={400}
           step={10}
           value={carrier}
-          style={{ flex: 1 }}
           onChange={e => {
             const v = Number(e.target.value)
             setCarrier(v)
@@ -79,7 +77,7 @@ export function BinauralPanel() {
       </div>
 
       <div className="gf-moodist__row">
-        <span style={{ fontSize: 12, color: 'var(--gf-text-muted)' }}>Volume</span>
+        <span className="gf-moodist__label">Volume</span>
         <input
           className="gf-moodist__sound-vol"
           type="range"
@@ -87,7 +85,6 @@ export function BinauralPanel() {
           max={1}
           step={0.01}
           value={volume}
-          style={{ flex: 1 }}
           onChange={e => handleVolChange(Number(e.target.value))}
           aria-label="Binaural volume"
         />

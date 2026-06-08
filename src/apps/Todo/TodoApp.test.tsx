@@ -62,6 +62,9 @@ describe('TodoApp', () => {
 
     const deleteBtn = screen.getByLabelText('Delete task')
     fireEvent.click(deleteBtn)
+
+    const confirmBtn = screen.getByText('Delete')
+    fireEvent.click(confirmBtn)
     expect(screen.queryByText('Delete me')).not.toBeInTheDocument()
   })
 
@@ -73,7 +76,7 @@ describe('TodoApp', () => {
     fireEvent.change(input, { target: { value: 'Beta' } })
     fireEvent.keyDown(input, { key: 'Enter' })
 
-    const searchInput = screen.getByPlaceholderText('Search tasks...')
+    const searchInput = screen.getByPlaceholderText('Search tasks or tags...')
     fireEvent.change(searchInput, { target: { value: 'Alpha' } })
     expect(screen.getByText('Alpha')).toBeInTheDocument()
     expect(screen.queryByText('Beta')).not.toBeInTheDocument()
@@ -95,11 +98,144 @@ describe('TodoApp', () => {
     fireEvent.keyDown(input, { key: 'Enter' })
 
     const checkboxes = screen.getAllByLabelText('Mark complete')
-    fireEvent.click(checkboxes[1])
+    fireEvent.click(checkboxes[0])
 
     const clearBtn = screen.getByText(/Clear.*completed/)
     fireEvent.click(clearBtn)
     expect(screen.queryByText('Task one')).not.toBeInTheDocument()
     expect(screen.getByText('Task two')).toBeInTheDocument()
+  })
+
+  it('can add a subtask', () => {
+    renderWithProviders()
+    const input = screen.getByPlaceholderText('Add a new task...')
+    fireEvent.change(input, { target: { value: 'Parent task' } })
+    fireEvent.keyDown(input, { key: 'Enter' })
+
+    const subtaskBtn = screen.getByLabelText('Add subtask')
+    fireEvent.click(subtaskBtn)
+
+    const subtaskInput = screen.getByPlaceholderText('Add a subtask...')
+    fireEvent.change(subtaskInput, { target: { value: 'Child task' } })
+    fireEvent.keyDown(subtaskInput, { key: 'Enter' })
+
+    expect(screen.getByText('Child task')).toBeInTheDocument()
+  })
+
+  it('cycles priority on click', () => {
+    renderWithProviders()
+    const input = screen.getByPlaceholderText('Add a new task...')
+    fireEvent.change(input, { target: { value: 'Priority task' } })
+    fireEvent.keyDown(input, { key: 'Enter' })
+
+    const priorityBtn = screen.getByLabelText('Priority: medium. Click to change.')
+    fireEvent.click(priorityBtn)
+    expect(screen.getByLabelText('Priority: high. Click to change.')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByLabelText('Priority: high. Click to change.'))
+    expect(screen.getByLabelText('Priority: low. Click to change.')).toBeInTheDocument()
+  })
+
+  it('can cancel deletion', () => {
+    renderWithProviders()
+    const input = screen.getByPlaceholderText('Add a new task...')
+    fireEvent.change(input, { target: { value: 'Keep me' } })
+    fireEvent.keyDown(input, { key: 'Enter' })
+
+    const deleteBtn = screen.getByLabelText('Delete task')
+    fireEvent.click(deleteBtn)
+
+    const cancelBtn = screen.getByText('Cancel')
+    fireEvent.click(cancelBtn)
+    expect(screen.getByText('Keep me')).toBeInTheDocument()
+  })
+
+  it('does not render clear button when no tasks completed', () => {
+    renderWithProviders()
+    expect(screen.queryByText(/Clear.*completed/)).not.toBeInTheDocument()
+  })
+
+  it('renders tags button in toolbar', () => {
+    renderWithProviders()
+    expect(screen.getByText('Tags')).toBeInTheDocument()
+  })
+
+  it('renders active count badge in header', () => {
+    renderWithProviders()
+    expect(screen.getByText('0 active')).toBeInTheDocument()
+  })
+
+  it('can create and use tags', () => {
+    renderWithProviders()
+    const input = screen.getByPlaceholderText('Add a new task...')
+    fireEvent.change(input, { target: { value: 'Tagged task' } })
+    fireEvent.keyDown(input, { key: 'Enter' })
+
+    const tagsBtn = screen.getByText('Tags')
+    fireEvent.click(tagsBtn)
+
+    const tagInput = screen.getByPlaceholderText('New tag name...')
+    fireEvent.change(tagInput, { target: { value: 'urgent' } })
+    fireEvent.keyDown(tagInput, { key: 'Enter' })
+
+    expect(screen.getByText('urgent')).toBeInTheDocument()
+
+    const closeBtn = screen.getByLabelText('Close')
+    fireEvent.click(closeBtn)
+  })
+
+  it('shows sort button in toolbar', () => {
+    renderWithProviders()
+    expect(screen.getByText('Manual')).toBeInTheDocument()
+  })
+
+  it('cycles sort mode on click', () => {
+    renderWithProviders()
+    const sortBtn = screen.getByText('Manual')
+    fireEvent.click(sortBtn)
+    expect(screen.getByText('Due date')).toBeInTheDocument()
+    fireEvent.click(screen.getByText('Due date'))
+    expect(screen.getByText('Priority')).toBeInTheDocument()
+    fireEvent.click(screen.getByText('Priority'))
+    expect(screen.getByText('Created')).toBeInTheDocument()
+    fireEvent.click(screen.getByText('Created'))
+    expect(screen.getByText('Manual')).toBeInTheDocument()
+  })
+
+  it('handles corrupted localStorage gracefully', () => {
+    localStorage.setItem('gf:todo:list', JSON.stringify({ items: 'not-an-array', tags: null }))
+    renderWithProviders()
+    expect(screen.getByText('My Todo List')).toBeInTheDocument()
+    expect(screen.getByText('No tasks yet')).toBeInTheDocument()
+  })
+
+  it('filters by completed segment', () => {
+    renderWithProviders()
+    const input = screen.getByPlaceholderText('Add a new task...')
+    fireEvent.change(input, { target: { value: 'Active task' } })
+    fireEvent.keyDown(input, { key: 'Enter' })
+
+    const doneSegment = screen.getByText(/^Done/)
+    fireEvent.click(doneSegment)
+    expect(screen.queryByText('Active task')).not.toBeInTheDocument()
+    expect(screen.getByText('No completed tasks yet')).toBeInTheDocument()
+
+    const allSegment = screen.getByText(/^All/)
+    fireEvent.click(allSegment)
+    expect(screen.getByText('Active task')).toBeInTheDocument()
+  })
+
+  it('shows empty state when all tasks are completed', () => {
+    renderWithProviders()
+    const input = screen.getByPlaceholderText('Add a new task...')
+    fireEvent.change(input, { target: { value: 'Task' } })
+    fireEvent.keyDown(input, { key: 'Enter' })
+
+    const checkbox = screen.getByLabelText('Mark complete')
+    fireEvent.click(checkbox)
+
+    const activeSegment = screen.getByText(/^Active/)
+    fireEvent.click(activeSegment)
+    expect(screen.getByText('All tasks are done!')).toBeInTheDocument()
   })
 })

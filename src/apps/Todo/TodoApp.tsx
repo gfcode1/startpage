@@ -3,10 +3,14 @@ import { GfIcon } from '../../framework/iconSystem'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
 import { useToast } from '../../framework/ToastContext'
 import { AppHeader } from '../../framework/components/AppHeader'
-import { useFlipAnimation } from '../../framework/hooks/useFlipAnimation'
+import { GfBottomSheet } from '../../framework/components/BottomSheet'
+import { GfConfirmDialog } from '../../framework/components/ConfirmDialog'
 import { useAppBadge } from '../../framework/AppBadgeContext'
-import { generateId, formatRelativeTime, formatDate } from './utils'
-import type { TodoItem, FilterMode, Priority } from './types'
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragOverlay, type DragStartEvent, type DragEndEvent } from '@dnd-kit/core'
+import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import { generateId, formatRelativeTime, formatDate, formatDueDate, isOverdue } from './utils'
+import type { TodoItem, FilterMode, Priority, SortMode, TagDef, TodoList } from './types'
 import './TodoApp.css'
 
 const APP_ID = 'todo'
@@ -18,26 +22,294 @@ const PRIORITY_CYCLE: Record<Priority, Priority> = {
   high: 'low',
 }
 
-function initialList() {
+const TAG_COLORS = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#8b5cf6', '#ec4899', '#14b8a6']
+
+function initialList(): TodoList {
   return {
     name: 'My Todo List',
-    items: [] as TodoItem[],
+    items: [],
+    tags: [],
     createdAt: Date.now(),
     updatedAt: Date.now(),
   }
 }
 
+function normalizeItem(raw: unknown): TodoItem {
+  const i = (raw || {}) as Record<string, unknown>
+  return {
+    id: typeof i.id === 'string' ? i.id : '',
+    text: typeof i.text === 'string' ? i.text : '',
+    completed: !!i.completed,
+    priority: (i.priority === 'low' || i.priority === 'medium' || i.priority === 'high') ? i.priority : 'medium',
+    tags: Array.isArray(i.tags) ? i.tags as string[] : [],
+    parentId: typeof i.parentId === 'string' ? i.parentId : null,
+    dueDate: typeof i.dueDate === 'number' ? i.dueDate : null,
+    order: typeof i.order === 'number' ? i.order : 0,
+    createdAt: typeof i.createdAt === 'number' ? i.createdAt : Date.now(),
+    completedAt: typeof i.completedAt === 'number' ? i.completedAt : null,
+  }
+}
+
+function normalizeList(raw: unknown): TodoList {
+  const data = (raw || {}) as Record<string, unknown>
+  return {
+    name: typeof data.name === 'string' ? data.name : 'My Todo List',
+    items: Array.isArray(data.items) ? (data.items as TodoItem[]).map(normalizeItem) : [],
+    tags: Array.isArray(data.tags) ? data.tags as TagDef[] : [],
+    createdAt: typeof data.createdAt === 'number' ? data.createdAt : Date.now(),
+    updatedAt: typeof data.updatedAt === 'number' ? data.updatedAt : Date.now(),
+  }
+}
+
+function SortableItem({
+  item,
+  isChild,
+  editingId,
+  editText,
+  onToggle,
+  onDelete,
+  onStartEdit,
+  onFinishEdit,
+  onEditKeyDown,
+  onEditTextChange,
+  onSetPriority,
+  onAddSubtask,
+  onTagClick,
+  onSetDueDate,
+  tags,
+  childrenIds,
+}: {
+  item: TodoItem
+  isChild: boolean
+  editingId: string | null
+  editText: string
+  onToggle: (id: string) => void
+  onDelete: (e: React.MouseEvent, id: string) => void
+  onStartEdit: (item: TodoItem) => void
+  onFinishEdit: () => void
+  onEditKeyDown: (e: React.KeyboardEvent) => void
+  onEditTextChange: (text: string) => void
+  onSetPriority: (id: string, priority: Priority) => void
+  onAddSubtask: (parentId: string) => void
+  onTagClick: (tag: string) => void
+  onSetDueDate: (id: string, dueDate: number | null) => void
+  tags: TagDef[]
+  childrenIds: string[]
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: item.id })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
+  const tagLookup = useMemo(() => {
+    const map = new Map(tags.map(t => [t.name, t]))
+    return map
+  }, [tags])
+
+  const overdue = item.dueDate && !item.completed && isOverdue(item.dueDate)
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={
+        `gf-todo__item ${item.completed ? 'gf-todo__item--completed' : ''} ` +
+        `gf-todo__item--${item.priority} ${isChild ? 'gf-todo__item--child' : ''} ` +
+        `${isDragging ? 'gf-todo__item--dragging' : ''} ` +
+        `${overdue ? 'gf-todo__item--overdue' : ''}`
+      }
+    >
+      <div className="gf-todo__drag-handle" {...attributes} {...listeners} aria-label="Drag to reorder">
+        <GfIcon name="drag-handle" size={12} />
+      </div>
+
+      <button
+        className="gf-todo__checkbox"
+        onClick={() => onToggle(item.id)}
+        aria-label={item.completed ? 'Mark incomplete' : 'Mark complete'}
+      >
+        {item.completed ? <GfIcon name="check" size={18} /> : <span className="gf-todo__checkbox-empty" />}
+      </button>
+
+      <div className="gf-todo__body">
+        {editingId === item.id ? (
+          <input
+            className="gf-todo__edit-input"
+            type="text"
+            value={editText}
+            onChange={e => onEditTextChange(e.target.value)}
+            onKeyDown={onEditKeyDown}
+            onBlur={onFinishEdit}
+            autoFocus
+          />
+        ) : (
+          <span
+            className="gf-todo__text"
+            onDoubleClick={() => onStartEdit(item)}
+          >
+            {item.text}
+          </span>
+        )}
+
+        <div className="gf-todo__item-footer">
+          {item.tags.length > 0 && (
+            <div className="gf-todo__tags">
+              {item.tags.map(tag => {
+                const def = tagLookup.get(tag)
+                return (
+                  <button
+                    key={tag}
+                    className="gf-todo__tag-chip"
+                    style={{ '--tag-color': def?.color || '#888' } as React.CSSProperties}
+                    onClick={() => onTagClick(tag)}
+                    title={`Filter by "${tag}"`}
+                  >
+                    {tag}
+                  </button>
+                )
+              })}
+            </div>
+          )}
+
+          {item.dueDate && (
+            <span
+              className={`gf-todo__due ${overdue ? 'gf-todo__due--overdue' : ''}`}
+              title={formatDate(item.dueDate)}
+            >
+              <GfIcon name="calendar" size={10} />
+              {formatDueDate(item.dueDate)}
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div className="gf-todo__meta">
+        <button
+          className={`gf-todo__due-btn`}
+          onClick={() => {
+            const current = new Date()
+            const existing = item.dueDate ? new Date(item.dueDate) : current
+            const dateStr = existing.toISOString().split('T')[0]
+            const input = document.createElement('input')
+            input.type = 'date'
+            input.value = dateStr
+            input.style.position = 'fixed'
+            input.style.opacity = '0'
+            input.style.pointerEvents = 'none'
+            document.body.appendChild(input)
+
+            const cleanup = () => {
+              if (input.parentNode) document.body.removeChild(input)
+            }
+
+            input.addEventListener('input', () => {
+              if (input.value) {
+                const d = new Date(input.value + 'T12:00:00')
+                onSetDueDate(item.id, d.getTime())
+              }
+              cleanup()
+            })
+            input.addEventListener('blur', cleanup)
+
+            try {
+              input.showPicker()
+            } catch {
+              cleanup()
+            }
+          }}
+          aria-label="Set due date"
+          title="Set due date"
+        >
+          {item.dueDate ? <GfIcon name="calendar" size={12} /> : <GfIcon name="calendar" size={12} />}
+        </button>
+
+        <button
+          className="gf-todo__subtask-btn"
+          onClick={() => onAddSubtask(item.id)}
+          aria-label="Add subtask"
+          title="Add subtask"
+        >
+          <GfIcon name="plus" size={12} />
+        </button>
+
+        {childrenIds.length > 0 && (
+          <span className="gf-todo__children-count" title={`${childrenIds.length} subtask${childrenIds.length > 1 ? 's' : ''}`}>
+            {childrenIds.length}
+          </span>
+        )}
+
+        <button
+          className={`gf-todo__priority-btn gf-todo__priority-btn--${item.priority}`}
+          onClick={() => onSetPriority(item.id, PRIORITY_CYCLE[item.priority])}
+          title={`Priority: ${item.priority}`}
+          aria-label={`Priority: ${item.priority}. Click to change.`}
+        >
+          {item.priority === 'high'
+            ? '!!'
+            : item.priority === 'medium'
+              ? '!'
+              : '\u00B7'}
+        </button>
+
+        <span
+          className="gf-todo__time"
+          title={formatDate(item.createdAt)}
+        >
+          {item.completedAt
+            ? `Done ${formatRelativeTime(item.completedAt)}`
+            : formatRelativeTime(item.createdAt)}
+        </span>
+
+        <button
+          className="gf-todo__delete-btn"
+          onClick={e => onDelete(e, item.id)}
+          aria-label="Delete task"
+        >
+          <GfIcon name="close" size={12} />
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export default function TodoApp() {
-  const [list, setList] = useAppStorage(APP_ID, STORAGE_KEY, initialList())
+  const [rawList, setList] = useAppStorage(APP_ID, STORAGE_KEY, initialList())
+  const list = useMemo(() => normalizeList(rawList), [rawList])
   const [newTodoText, setNewTodoText] = useState('')
   const [filter, setFilter] = useState<FilterMode>('all')
   const [search, setSearch] = useState('')
+  const [sortMode, setSortMode] = useState<SortMode>('manual')
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editText, setEditText] = useState('')
+  const editingIdRef = useRef<string | null>(null)
+  const [activeDragId, setActiveDragId] = useState<string | null>(null)
+  const [showTagManager, setShowTagManager] = useState(false)
+  const [newTagName, setNewTagName] = useState('')
+  const [subtaskParentId, setSubtaskParentId] = useState<string | null>(null)
+  const [subtaskText, setSubtaskText] = useState('')
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
   const { addToast } = useToast()
   const inputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
+  const subtaskInputRef = useRef<HTMLInputElement>(null)
   const { setBadge } = useAppBadge('todo')
+
+  useEffect(() => { editingIdRef.current = editingId }, [editingId])
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 8 },
+    }),
+  )
 
   const filteredItems = useMemo(() => {
     let items = list.items
@@ -45,13 +317,41 @@ export default function TodoApp() {
     if (filter === 'completed') items = items.filter(i => i.completed)
     if (search) {
       const q = search.toLowerCase()
-      items = items.filter(i => i.text.toLowerCase().includes(q))
+      items = items.filter(i =>
+        i.text.toLowerCase().includes(q) ||
+        i.tags.some(t => t.toLowerCase().includes(q)),
+      )
     }
-    return [...items].sort((a, b) => {
+    const sorted = [...items].sort((a, b) => {
       if (a.completed !== b.completed) return a.completed ? 1 : -1
-      return b.createdAt - a.createdAt
+
+      if (sortMode === 'dueDate') {
+        if (a.dueDate !== b.dueDate) return (a.dueDate ?? Infinity) - (b.dueDate ?? Infinity)
+      }
+      if (sortMode === 'priority') {
+        const p = { high: 0, medium: 1, low: 2 }
+        if (a.priority !== b.priority) return p[a.priority] - p[b.priority]
+      }
+      if (sortMode === 'createdAt') {
+        if (a.createdAt !== b.createdAt) return a.createdAt - b.createdAt
+      }
+
+      return a.order - b.order
     })
-  }, [list.items, filter, search])
+    return sorted
+  }, [list.items, filter, search, sortMode])
+
+  const childMap = useMemo(() => {
+    const map = new Map<string, string[]>()
+    for (const item of list.items) {
+      if (item.parentId) {
+        const existing = map.get(item.parentId) || []
+        existing.push(item.id)
+        map.set(item.parentId, existing)
+      }
+    }
+    return map
+  }, [list.items])
 
   const stats = useMemo(() => {
     const total = list.items.length
@@ -59,8 +359,6 @@ export default function TodoApp() {
     const active = total - completed
     return { total, completed, active }
   }, [list.items])
-
-  useFlipAnimation(listRef, [filteredItems])
 
   useEffect(() => {
     setBadge(stats.active > 0 ? stats.active : null)
@@ -77,18 +375,36 @@ export default function TodoApp() {
     [setList],
   )
 
+  const updateTags = useCallback(
+    (updater: (prev: TagDef[]) => TagDef[]) => {
+      setList(prev => ({
+        ...prev,
+        tags: updater(prev.tags),
+        updatedAt: Date.now(),
+      }))
+    },
+    [setList],
+  )
+
   const handleAdd = useCallback(() => {
     const text = newTodoText.trim()
     if (!text) return
-    const item: TodoItem = {
-      id: generateId(),
-      text,
-      completed: false,
-      priority: 'medium',
-      createdAt: Date.now(),
-      completedAt: null,
-    }
-    updateItems(prev => [item, ...prev])
+    updateItems(prev => {
+      const maxOrder = prev.reduce((max, i) => Math.max(max, i.order), 0)
+      const item: TodoItem = {
+        id: generateId(),
+        text,
+        completed: false,
+        priority: 'medium',
+        tags: [],
+        parentId: null,
+        dueDate: null,
+        order: maxOrder + 1,
+        createdAt: Date.now(),
+        completedAt: null,
+      }
+      return [...prev, item]
+    })
     setNewTodoText('')
     inputRef.current?.focus()
     addToast('Task added', 'success')
@@ -121,11 +437,17 @@ export default function TodoApp() {
   const handleDelete = useCallback(
     (e: React.MouseEvent, id: string) => {
       e.stopPropagation()
-      updateItems(prev => prev.filter(i => i.id !== id))
-      addToast('Task deleted', 'error')
+      setDeleteConfirmId(id)
     },
-    [updateItems, addToast],
+    [],
   )
+
+  const handleConfirmDelete = useCallback(() => {
+    if (!deleteConfirmId) return
+    updateItems(prev => prev.filter(i => i.id !== deleteConfirmId && i.parentId !== deleteConfirmId))
+    addToast('Task deleted', 'error')
+    setDeleteConfirmId(null)
+  }, [deleteConfirmId, updateItems, addToast])
 
   const handleStartEdit = useCallback((item: TodoItem) => {
     setEditingId(item.id)
@@ -133,16 +455,17 @@ export default function TodoApp() {
   }, [])
 
   const handleFinishEdit = useCallback(() => {
-    if (editingId && editText.trim()) {
+    const eid = editingIdRef.current
+    if (eid && editText.trim()) {
       updateItems(prev =>
         prev.map(i =>
-          i.id === editingId ? { ...i, text: editText.trim() } : i,
+          i.id === eid ? { ...i, text: editText.trim() } : i,
         ),
       )
     }
     setEditingId(null)
     setEditText('')
-  }, [editingId, editText, updateItems])
+  }, [editText, updateItems])
 
   const handleEditKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -168,11 +491,119 @@ export default function TodoApp() {
     addToast(`Cleared ${count} completed task${count > 1 ? 's' : ''}`, 'info')
   }, [list.items, updateItems, addToast])
 
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    setActiveDragId(null)
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+
+    const oldIndex = filteredItems.findIndex(i => i.id === String(active.id))
+    const newIndex = filteredItems.findIndex(i => i.id === String(over.id))
+    if (oldIndex === -1 || newIndex === -1) return
+
+    const reorderedVisible = arrayMove(filteredItems, oldIndex, newIndex)
+
+    updateItems(prev => {
+      const allSorted = [...prev].sort((a, b) => a.order - b.order)
+      const visibleSet = new Set(reorderedVisible.map(i => i.id))
+      const hiddenItems = allSorted.filter(i => !visibleSet.has(i.id))
+
+      const result: TodoItem[] = []
+      let hi = 0
+
+      for (const vis of reorderedVisible) {
+        while (hi < hiddenItems.length) {
+          const origHiddenIdx = allSorted.indexOf(hiddenItems[hi])
+          const origVisIdx = allSorted.findIndex(s => s.id === vis.id)
+          if (origHiddenIdx < origVisIdx) {
+            result.push({ ...hiddenItems[hi], order: result.length })
+            hi++
+          } else {
+            break
+          }
+        }
+        result.push({ ...vis, order: result.length })
+      }
+      while (hi < hiddenItems.length) {
+        result.push({ ...hiddenItems[hi], order: result.length })
+        hi++
+      }
+
+      return result
+    })
+  }, [filteredItems, updateItems])
+
+  const handleAddSubtask = useCallback((parentId: string) => {
+    setSubtaskParentId(parentId)
+    setSubtaskText('')
+    setTimeout(() => subtaskInputRef.current?.focus(), 50)
+  }, [])
+
+  const handleSubmitSubtask = useCallback(() => {
+    if (!subtaskParentId || !subtaskText.trim()) return
+    updateItems(prev => {
+      const parent = prev.find(i => i.id === subtaskParentId)
+      if (!parent) return prev
+      const maxOrder = prev.reduce((max, i) => Math.max(max, i.order), 0)
+      const child: TodoItem = {
+        id: generateId(),
+        text: subtaskText.trim(),
+        completed: false,
+        priority: 'medium',
+        tags: [],
+        parentId: subtaskParentId,
+        dueDate: null,
+        order: maxOrder + 1,
+        createdAt: Date.now(),
+        completedAt: null,
+      }
+      return [...prev, child]
+    })
+    setSubtaskParentId(null)
+    setSubtaskText('')
+    addToast('Subtask added', 'success')
+  }, [subtaskParentId, subtaskText, updateItems, addToast])
+
+  const handleSetDueDate = useCallback((id: string, dueDate: number | null) => {
+    updateItems(prev =>
+      prev.map(i => (i.id === id ? { ...i, dueDate } : i)),
+    )
+  }, [updateItems])
+
+  const handleAddTag = useCallback(() => {
+    const name = newTagName.trim()
+    if (!name || list.tags.some(t => t.name === name)) return
+    const color = TAG_COLORS[list.tags.length % TAG_COLORS.length]
+    updateTags(prev => [...prev, { name, color }])
+    setNewTagName('')
+  }, [newTagName, list.tags, updateTags])
+
+  const handleDeleteTag = useCallback((tagName: string) => {
+    updateTags(prev => prev.filter(t => t.name !== tagName))
+    updateItems(prev =>
+      prev.map(i => ({
+        ...i,
+        tags: i.tags.filter(t => t !== tagName),
+      })),
+    )
+  }, [updateTags, updateItems])
+
+  const handleTagClick = useCallback((tag: string) => {
+    setSearch(tag)
+    setFilter('all')
+  }, [])
+
+  const subtaskParentIdRef = useRef<string | null>(null)
+  useEffect(() => { subtaskParentIdRef.current = subtaskParentId }, [subtaskParentId])
+
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') {
-        if (editingId) {
+        if (editingIdRef.current) {
           setEditingId(null)
+          return
+        }
+        if (subtaskParentIdRef.current) {
+          setSubtaskParentId(null)
           return
         }
         inputRef.current?.blur()
@@ -180,13 +611,15 @@ export default function TodoApp() {
     }
     document.addEventListener('keydown', onKeyDown)
     return () => document.removeEventListener('keydown', onKeyDown)
-  }, [editingId])
+  }, [])
 
   const segmentOptions = [
     { value: 'all', label: `All (${stats.total})` },
     { value: 'active', label: `Active (${stats.active})` },
     { value: 'completed', label: `Done (${stats.completed})` },
   ]
+
+  const activeDragItem = activeDragId ? list.items.find(i => i.id === activeDragId) : null
 
   return (
     <div className="gf-todo">
@@ -196,10 +629,37 @@ export default function TodoApp() {
         segments={segmentOptions}
         segmentValue={filter}
         onSegmentChange={v => setFilter(v as FilterMode)}
-        searchPlaceholder="Search tasks..."
+        searchPlaceholder="Search tasks or tags..."
         searchValue={search}
         onSearchChange={setSearch}
       />
+
+      <div className="gf-todo__toolbar">
+        <button
+          className="gf-todo__btn gf-todo__btn--tag-manager"
+          onClick={() => setShowTagManager(true)}
+          aria-label="Manage tags"
+          title="Manage tags"
+        >
+          <GfIcon name="tag" size={14} />
+          Tags
+          {list.tags.length > 0 && <span className="gf-todo__tag-count">{list.tags.length}</span>}
+        </button>
+
+        <button
+          className="gf-todo__btn"
+          onClick={() => {
+            const modes: SortMode[] = ['manual', 'dueDate', 'priority', 'createdAt']
+            const idx = modes.indexOf(sortMode)
+            setSortMode(modes[(idx + 1) % modes.length])
+          }}
+          aria-label={`Sort by ${sortMode}`}
+          title={`Sort: ${sortMode}`}
+        >
+          <GfIcon name="refresh" size={14} />
+          {sortMode === 'manual' ? 'Manual' : sortMode === 'dueDate' ? 'Due date' : sortMode === 'priority' ? 'Priority' : 'Created'}
+        </button>
+      </div>
 
       <div className="gf-todo__add">
         <input
@@ -244,76 +704,73 @@ export default function TodoApp() {
       )}
 
       {filteredItems.length > 0 && (
-        <div className="gf-todo__list" ref={listRef}>
-          {filteredItems.map(item => (
-            <div
-              key={item.id}
-              data-flip-id={item.id}
-              className={`gf-todo__item ${item.completed ? 'gf-todo__item--completed' : ''} gf-todo__item--${item.priority}`}
-            >
-              <button
-                className="gf-todo__checkbox"
-                onClick={() => handleToggle(item.id)}
-                aria-label={item.completed ? 'Mark incomplete' : 'Mark complete'}
-              >
-                {item.completed ? <GfIcon name="check" size={18} /> : <span className="gf-todo__checkbox-empty" />}
-              </button>
-
-              {editingId === item.id ? (
-                <input
-                  className="gf-todo__edit-input"
-                  type="text"
-                  value={editText}
-                  onChange={e => setEditText(e.target.value)}
-                  onKeyDown={handleEditKeyDown}
-                  onBlur={handleFinishEdit}
-                  autoFocus
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragStart={(event: DragStartEvent) => setActiveDragId(String(event.active.id))}
+          onDragEnd={handleDragEnd}
+          onDragCancel={() => setActiveDragId(null)}
+        >
+          <SortableContext items={filteredItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
+            <div className="gf-todo__list" ref={listRef}>
+              {filteredItems.map(item => (
+                <SortableItem
+                  key={item.id}
+                  item={item}
+                  isChild={!!item.parentId}
+                  editingId={editingId}
+                  editText={editText}
+                  onToggle={handleToggle}
+                  onDelete={handleDelete}
+                  onStartEdit={handleStartEdit}
+                  onFinishEdit={handleFinishEdit}
+                  onEditKeyDown={handleEditKeyDown}
+                  onEditTextChange={setEditText}
+                  onSetPriority={handleSetPriority}
+                  onAddSubtask={handleAddSubtask}
+                  onTagClick={handleTagClick}
+                  onSetDueDate={handleSetDueDate}
+                  tags={list.tags}
+                  childrenIds={childMap.get(item.id) || []}
                 />
-              ) : (
-                <span
-                  className="gf-todo__text"
-                  onDoubleClick={() => handleStartEdit(item)}
-                >
-                  {item.text}
-                </span>
-              )}
-
-              <div className="gf-todo__meta">
-                <button
-                  className={`gf-todo__priority-btn gf-todo__priority-btn--${item.priority}`}
-                  onClick={() =>
-                    handleSetPriority(item.id, PRIORITY_CYCLE[item.priority])
-                  }
-                  title={`Priority: ${item.priority}`}
-                  aria-label={`Priority: ${item.priority}. Click to change.`}
-                >
-                  {item.priority === 'high'
-                    ? '!!'
-                    : item.priority === 'medium'
-                      ? '!'
-                      : '\u00B7'}
-                </button>
-
-                <span
-                  className="gf-todo__time"
-                  title={formatDate(item.createdAt)}
-                >
-                  {item.completedAt
-                    ? `Done ${formatRelativeTime(item.completedAt)}`
-                    : formatRelativeTime(item.createdAt)}
-                </span>
-
-                <button
-                  className="gf-todo__delete-btn"
-                  onClick={e => handleDelete(e, item.id)}
-                  aria-label="Delete task"
-                >
-                  <GfIcon name="close" size={12} />
-                </button>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </SortableContext>
+
+          <DragOverlay>
+            {activeDragItem ? (
+              <div className={`gf-todo__item gf-todo__item--${activeDragItem.priority} gf-todo__item--overlay ${activeDragItem.completed ? 'gf-todo__item--completed' : ''}`}>
+                <div className="gf-todo__checkbox">
+                  {activeDragItem.completed ? <GfIcon name="check" size={18} /> : <span className="gf-todo__checkbox-empty" />}
+                </div>
+                <div className="gf-todo__body">
+                  <span className="gf-todo__text">{activeDragItem.text}</span>
+                  <div className="gf-todo__item-footer">
+                    {activeDragItem.tags.length > 0 && (
+                      <div className="gf-todo__tags">
+                        {activeDragItem.tags.slice(0, 2).map(tag => (
+                          <span key={tag} className="gf-todo__tag-chip" style={{ '--tag-color': '#888' } as React.CSSProperties}>
+                            {tag}
+                          </span>
+                        ))}
+                        {activeDragItem.tags.length > 2 && <span className="gf-todo__tag-chip">+{activeDragItem.tags.length - 2}</span>}
+                      </div>
+                    )}
+                    {activeDragItem.dueDate && (
+                      <span className={`gf-todo__due ${isOverdue(activeDragItem.dueDate) && !activeDragItem.completed ? 'gf-todo__due--overdue' : ''}`}>
+                        <GfIcon name="calendar" size={10} />
+                        {formatDueDate(activeDragItem.dueDate)}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <span className={`gf-todo__priority-btn gf-todo__priority-btn--${activeDragItem.priority}`}>
+                  {activeDragItem.priority === 'high' ? '!!' : activeDragItem.priority === 'medium' ? '!' : '\u00B7'}
+                </span>
+              </div>
+            ) : null}
+          </DragOverlay>
+        </DndContext>
       )}
 
       {stats.completed > 0 && (
@@ -326,6 +783,106 @@ export default function TodoApp() {
           </button>
         </div>
       )}
+
+      {subtaskParentId && (
+        <div className="gf-todo__subtask-input-wrap">
+          <div className="gf-todo__subtask-input-inner">
+            <GfIcon name="chevron-right" size={14} className="gf-todo__subtask-arrow" />
+            <input
+              ref={subtaskInputRef}
+              className="gf-todo__subtask-input"
+              type="text"
+              value={subtaskText}
+              onChange={e => setSubtaskText(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter') handleSubmitSubtask()
+                if (e.key === 'Escape') setSubtaskParentId(null)
+              }}
+              placeholder="Add a subtask..."
+              aria-label="Add a subtask"
+            />
+            <button
+              className="gf-todo__btn gf-todo__btn--primary gf-todo__subtask-submit"
+              onClick={handleSubmitSubtask}
+              disabled={!subtaskText.trim()}
+              aria-label="Submit subtask"
+            >
+              <GfIcon name="check" size={14} />
+            </button>
+            <button
+              className="gf-todo__btn gf-todo__subtask-cancel"
+              onClick={() => setSubtaskParentId(null)}
+              aria-label="Cancel subtask"
+            >
+              <GfIcon name="close" size={14} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      <GfBottomSheet
+        open={showTagManager}
+        onClose={() => setShowTagManager(false)}
+        title="Manage Tags"
+      >
+        <div className="gf-todo__tag-manager">
+          <div className="gf-todo__tag-input-row">
+            <input
+              className="gf-todo__tag-input"
+              type="text"
+              value={newTagName}
+              onChange={e => setNewTagName(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') handleAddTag() }}
+              placeholder="New tag name..."
+              aria-label="New tag name"
+            />
+            <button
+              className="gf-todo__btn gf-todo__btn--primary"
+              onClick={handleAddTag}
+              disabled={!newTagName.trim() || list.tags.some(t => t.name === newTagName.trim())}
+              aria-label="Add tag"
+            >
+              <GfIcon name="plus" size={14} />
+            </button>
+          </div>
+
+          {list.tags.length === 0 && (
+            <p className="gf-todo__tag-empty">No tags yet. Create one above.</p>
+          )}
+
+          <div className="gf-todo__tag-list">
+            {list.tags.map(tag => (
+              <div key={tag.name} className="gf-todo__tag-item">
+                <span
+                  className="gf-todo__tag-dot"
+                  style={{ background: tag.color }}
+                />
+                <span className="gf-todo__tag-name">{tag.name}</span>
+                <span className="gf-todo__tag-usage">
+                  {list.items.filter(i => i.tags.includes(tag.name)).length}
+                </span>
+                <button
+                  className="gf-todo__tag-delete"
+                  onClick={() => handleDeleteTag(tag.name)}
+                  aria-label={`Delete tag ${tag.name}`}
+                >
+                  <GfIcon name="close" size={12} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </GfBottomSheet>
+
+      <GfConfirmDialog
+        open={deleteConfirmId !== null}
+        onClose={() => setDeleteConfirmId(null)}
+        onConfirm={handleConfirmDelete}
+        title="Delete task?"
+        message="This will also delete all its subtasks. This cannot be undone."
+        confirmLabel="Delete"
+        variant="danger"
+      />
     </div>
   )
 }

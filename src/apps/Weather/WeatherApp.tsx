@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { GfIcon, type IconName } from '../../framework/iconSystem'
-import { searchCity, fetchWeather, getPosition } from './api'
+import { searchCity, fetchWeather, fetchHistoricalWeather, getPosition } from './api'
 import { getWeatherInfo, isNightTime } from './weatherCodes'
 import type { CityResult, WeatherData } from './types'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
@@ -46,10 +46,17 @@ export default function WeatherApp() {
   const [searchResults, setSearchResults] = useState<CityResult[]>([])
   const [searching, setSearching] = useState(false)
   const [showResults, setShowResults] = useState(false)
+  const [searchIndex, setSearchIndex] = useState(-1)
 
   const [retryKey, setRetryKey] = useState(0)
 
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(() =>
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  )
+
   const searchRef = useRef<HTMLDivElement>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
   const abortRef = useRef<AbortController | null>(null)
 
   const isNight = useMemo(() => {
@@ -72,23 +79,29 @@ export default function WeatherApp() {
   useEffect(() => {
     const ctrl = new AbortController()
 
-    fetchWeather(coords.lat, coords.lon, ctrl.signal)
-      .then(result => {
+    async function load() {
+      try {
+        const [result, historical] = await Promise.all([
+          fetchWeather(coords.lat, coords.lon, ctrl.signal),
+          fetchHistoricalWeather(coords.lat, coords.lon, ctrl.signal),
+        ])
         if (!ctrl.signal.aborted) {
-          setData(result)
+          setData({ ...result, historical })
           setLoading(false)
           setSearchQuery('')
         }
-      })
-      .catch(err => {
+      } catch (err) {
         if (
           !ctrl.signal.aborted &&
           !(err instanceof DOMException && err.name === 'AbortError')
         ) {
-          setError('Weather service temporarily unavailable (502). Open-Meteo API may be under maintenance.')
+          setError('Weather service temporarily unavailable. Open-Meteo API may be under maintenance.')
           setLoading(false)
         }
-      })
+      }
+    }
+
+    load()
     return () => ctrl.abort()
   }, [coords.lat, coords.lon, retryKey])
 
@@ -114,6 +127,7 @@ export default function WeatherApp() {
         if (!controller.signal.aborted) {
           setSearchResults(results)
           setShowResults(results.length > 0)
+          setSearchIndex(-1)
           setSearching(false)
         }
       } catch (err) {
@@ -121,6 +135,7 @@ export default function WeatherApp() {
         if (!controller.signal.aborted) {
           setSearchResults([])
           setShowResults(false)
+          setSearchIndex(-1)
           setSearching(false)
         }
       }
@@ -140,6 +155,13 @@ export default function WeatherApp() {
     }
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
+  }, [])
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
   }, [])
 
   const handleGeoRequest = useCallback(async () => {
@@ -174,7 +196,45 @@ export default function WeatherApp() {
     setShowResults(false)
   }, [setSavedCoords, setSavedCity])
 
-  const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const handleSearchKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (!showResults || searchResults.length === 0) {
+      if (e.key === 'Escape') {
+        setShowResults(false)
+        setSearchQuery('')
+        searchInputRef.current?.blur()
+      }
+      return
+    }
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault()
+        setSearchIndex(prev => Math.min(prev + 1, searchResults.length - 1))
+        break
+      case 'ArrowUp':
+        e.preventDefault()
+        setSearchIndex(prev => Math.max(prev - 1, 0))
+        break
+      case 'Enter':
+        e.preventDefault()
+        if (searchIndex >= 0 && searchIndex < searchResults.length) {
+          selectCity(searchResults[searchIndex])
+        }
+        break
+      case 'Escape':
+        e.preventDefault()
+        setShowResults(false)
+        setSearchIndex(-1)
+        break
+    }
+  }, [showResults, searchResults, searchIndex, selectCity])
+
+  useEffect(() => {
+    if (searchIndex < 0 || !dropdownRef.current) return
+    const items = dropdownRef.current.querySelectorAll<HTMLButtonElement>('.gf-weather__search-item')
+    items[searchIndex]?.scrollIntoView({ block: 'nearest' })
+  }, [searchIndex])
+
   const showRain = data && data.current.weather_code >= 61 && data.current.weather_code <= 82 && !prefersReducedMotion
   const showLightning = data && data.current.weather_code >= 95
 
@@ -185,8 +245,9 @@ export default function WeatherApp() {
       <div className="gf-weather">
         <div className="gf-weather__search" ref={searchRef}>
           <div className="gf-weather__search-bar">
-            <GfIcon name="search" size={16} />
+            <GfIcon name="search" size={16} className="gf-weather__search-icon" />
             <input
+              ref={searchInputRef}
               className="gf-weather__search-input"
               type="text"
               placeholder="Search city..."
@@ -194,7 +255,17 @@ export default function WeatherApp() {
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               onFocus={() => searchResults.length > 0 && setShowResults(true)}
+              onKeyDown={handleSearchKeyDown}
             />
+            {searchQuery && (
+              <button
+                className="gf-weather__clear-btn"
+                onClick={() => { setSearchQuery(''); setShowResults(false); setSearchIndex(-1); searchInputRef.current?.focus() }}
+                aria-label="Clear search"
+              >
+                <GfIcon name="close" size={14} />
+              </button>
+            )}
             <button
               className={`gf-weather__geo-btn ${geoLoading ? 'gf-weather__geo-btn--loading' : ''}`}
               onClick={handleGeoRequest}
@@ -209,12 +280,13 @@ export default function WeatherApp() {
               </div>
             )}
             {!searching && searchResults.length > 0 && showResults && (
-              <div className="gf-weather__search-dropdown">
-                {searchResults.map(r => (
+              <div className="gf-weather__search-dropdown" ref={dropdownRef}>
+                {searchResults.map((r, i) => (
                   <button
                     key={r.id}
-                    className="gf-weather__search-item"
+                    className={`gf-weather__search-item${i === searchIndex ? ' gf-weather__search-item--active' : ''}`}
                     onClick={() => selectCity(r)}
+                    onMouseEnter={() => setSearchIndex(i)}
                   >
                     <span className="gf-weather__search-item-name">
                       {r.name}{r.admin1 ? `, ${r.admin1}` : ''}
@@ -244,11 +316,9 @@ export default function WeatherApp() {
       <h1 className="gf-sr-only">Weather</h1>
       <div className="gf-weather__search" ref={searchRef}>
         <div className="gf-weather__search-bar">
-          <svg className="gf-weather__search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.5"/>
-            <path d="M11 11l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-          </svg>
+          <GfIcon name="search" size={16} className="gf-weather__search-icon" />
           <input
+            ref={searchInputRef}
             className="gf-weather__search-input"
             type="text"
             placeholder="Search city..."
@@ -256,7 +326,17 @@ export default function WeatherApp() {
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             onFocus={() => searchResults.length > 0 && setShowResults(true)}
+            onKeyDown={handleSearchKeyDown}
           />
+            {searchQuery && (
+              <button
+                className="gf-weather__clear-btn"
+                onClick={() => { setSearchQuery(''); setShowResults(false); setSearchIndex(-1); searchInputRef.current?.focus() }}
+                aria-label="Clear search"
+              >
+                <GfIcon name="close" size={14} />
+              </button>
+            )}
             <button
               className={`gf-weather__geo-btn ${geoLoading ? 'gf-weather__geo-btn--loading' : ''}`}
               onClick={handleGeoRequest}
@@ -271,12 +351,13 @@ export default function WeatherApp() {
               </div>
             )}
             {!searching && searchResults.length > 0 && showResults && (
-              <div className="gf-weather__search-dropdown">
-                {searchResults.map(r => (
+              <div className="gf-weather__search-dropdown" ref={dropdownRef}>
+                {searchResults.map((r, i) => (
                   <button
                     key={r.id}
-                    className="gf-weather__search-item"
+                    className={`gf-weather__search-item${i === searchIndex ? ' gf-weather__search-item--active' : ''}`}
                     onClick={() => selectCity(r)}
+                    onMouseEnter={() => setSearchIndex(i)}
                   >
                     <span className="gf-weather__search-item-name">
                       {r.name}{r.admin1 ? `, ${r.admin1}` : ''}
@@ -425,6 +506,98 @@ export default function WeatherApp() {
               })}
             </div>
           </div>
+
+          {data.historical && (
+            <div className="gf-weather__history">
+              <h3 className="gf-weather__history-title">Last 7 Days</h3>
+              <div className="gf-weather__history-chart">
+                {data.historical.daily.time.map((dateStr, i) => {
+                  const maxT = Math.round(data.historical!.daily.temperature_2m_max[i])
+                  const minT = Math.round(data.historical!.daily.temperature_2m_min[i])
+                  const precip = data.historical!.daily.precipitation_sum[i] || 0
+                  const allMax = Math.max(...data.historical!.daily.temperature_2m_max)
+                  const allMin = Math.min(...data.historical!.daily.temperature_2m_min)
+                  const range = allMax - allMin || 1
+                  const barHeight = ((maxT - minT) / range) * 100
+                  const barBottom = ((minT - allMin) / range) * 100
+                  const midTemp = (minT + maxT) / 2
+                  const coldWarm = Math.min(Math.max((midTemp - allMin) / (allMax - allMin || 1), 0), 1)
+                  const r = Math.round(50 + coldWarm * 205)
+                  const g = Math.round(130 - coldWarm * 80)
+                  const b = Math.round(220 - coldWarm * 180)
+                  const barColor = `rgb(${r}, ${g}, ${b})`
+
+                  return (
+                    <div key={dateStr} className="gf-weather__history-day">
+                      <span className="gf-weather__history-label">
+                        {new Date(dateStr + 'T12:00:00').toLocaleDateString(undefined, { weekday: 'short' })}
+                      </span>
+                      <div className="gf-weather__history-bar-track">
+                        <div
+                          className="gf-weather__history-bar"
+                          style={{
+                            height: `${Math.max(barHeight, 8)}%`,
+                            bottom: `${barBottom}%`,
+                            background: barColor,
+                          }}
+                        >
+                          <span className="gf-weather__history-bar-temp">{maxT}°</span>
+                        </div>
+                        {precip > 0 && (
+                          <div
+                            className="gf-weather__history-precip"
+                            style={{ height: `${Math.min(precip, 100)}%` }}
+                            title={`${precip}mm precipitation`}
+                          />
+                        )}
+                      </div>
+                      <span className="gf-weather__history-min">{minT}°</span>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          {data.daily.sunrise[0] && data.daily.sunset[0] && (
+            <div className="gf-weather__timeline">
+              <h3 className="gf-weather__timeline-title">Sun & Moon</h3>
+              <div className="gf-weather__timeline-bar">
+                {(() => {
+                  const now = new Date()
+                  const sunrise = new Date(data.daily.sunrise[0])
+                  const sunset = new Date(data.daily.sunset[0])
+                  const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+                  const dayEnd = new Date(dayStart.getTime() + 86400000)
+                  const total = dayEnd.getTime() - dayStart.getTime()
+                  const sunrisePct = ((sunrise.getTime() - dayStart.getTime()) / total) * 100
+                  const sunsetPct = ((sunset.getTime() - dayStart.getTime()) / total) * 100
+                  const nowPct = ((now.getTime() - dayStart.getTime()) / total) * 100
+                  const dayLength = Math.round((sunset.getTime() - sunrise.getTime()) / 60000)
+                  const hours = Math.floor(dayLength / 60)
+                  const mins = dayLength % 60
+
+                  return (
+                    <>
+                      <div className="gf-weather__timeline-night" style={{ left: 0, width: `${sunrisePct}%` }} />
+                      <div className="gf-weather__timeline-daylight" style={{ left: `${sunrisePct}%`, width: `${sunsetPct - sunrisePct}%` }} />
+                      <div className="gf-weather__timeline-night" style={{ left: `${sunsetPct}%`, width: `${100 - sunsetPct}%` }} />
+                      <div className="gf-weather__timeline-sunrise" style={{ left: `${sunrisePct}%` }} title={`Sunrise ${formatTime(data.daily.sunrise[0])}`} />
+                      <div className="gf-weather__timeline-sunset" style={{ left: `${sunsetPct}%` }} title={`Sunset ${formatTime(data.daily.sunset[0])}`} />
+                      {nowPct >= sunrisePct && nowPct <= sunsetPct && (
+                        <div className="gf-weather__timeline-now" style={{ left: `${nowPct}%` }} />
+                      )}
+                      <div className="gf-weather__timeline-times">
+                        <span>{formatTime(data.daily.sunrise[0])}</span>
+                        <span className="gf-weather__timeline-daylength">{hours}h {mins}m</span>
+                        <span>{formatTime(data.daily.sunset[0])}</span>
+                      </div>
+                    </>
+                  )
+                })()}
+              </div>
+            </div>
+          )}
         </>
       ) : null}
     </div>

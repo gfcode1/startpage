@@ -3,7 +3,6 @@ import { GfIcon } from '../../../framework/iconSystem'
 interface PlayerControlsProps {
   isPlaying: boolean
   hasSelection: boolean
-  locked: boolean
   onTogglePlay: () => void
   onShuffle: () => void
   onUnselectAll: () => void
@@ -12,7 +11,6 @@ interface PlayerControlsProps {
 export function PlayerControls({
   isPlaying,
   hasSelection,
-  locked,
   onTogglePlay,
   onShuffle,
   onUnselectAll,
@@ -21,7 +19,7 @@ export function PlayerControls({
     <div className="gf-moodist__controls">
       <button
         className="gf-moodist__btn"
-        disabled={!hasSelection || locked}
+        disabled={!hasSelection}
         onClick={onTogglePlay}
         title={hasSelection ? (isPlaying ? 'Pause' : 'Play') : 'Select a sound first'}
       >
@@ -31,7 +29,6 @@ export function PlayerControls({
 
       <button
         className="gf-moodist__btn gf-moodist__btn--secondary"
-        disabled={locked}
         onClick={onShuffle}
         title="Shuffle — pick 5 random sounds"
       >
@@ -41,7 +38,7 @@ export function PlayerControls({
 
       <button
         className="gf-moodist__btn gf-moodist__btn--secondary"
-        disabled={!hasSelection || locked}
+        disabled={!hasSelection}
         onClick={onUnselectAll}
         title="Unselect all sounds"
       >

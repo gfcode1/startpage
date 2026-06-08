@@ -50,7 +50,6 @@ export class SnakeEngine extends GameEngine {
   private textMuted = ''
   private foodColor = ''
   private headColor = ''
-  private bodyColor = ''
 
   constructor(canvas: HTMLCanvasElement, options?: GameEngineOptions) {
     super(canvas, options)
@@ -94,13 +93,14 @@ export class SnakeEngine extends GameEngine {
   loadGameFromState(data: unknown): void {
     try {
       const saved = data as SavedState
-      if (!saved?.snake?.length) { this.init(); return }
+      if (!saved?.snake?.length || !saved?.food) { this.init(); return }
       this.readTheme()
       this.snake = saved.snake
       this.food = saved.food
       this.direction = saved.direction
       this._score = saved.score
       this._bestScore = saved.bestScore
+      this.callbacks?.onBestScoreChange?.(this._bestScore)
       this.stepInterval = saved.stepInterval
       this.dirQueue = []
       this._gameOver = false
@@ -241,7 +241,6 @@ export class SnakeEngine extends GameEngine {
     this.textMuted = this.getCssVar('--gf-text-muted') || '#888'
     this.foodColor = this.getCssVar('--gf-border-accent') || '#ef4444'
     this.headColor = this.accentColor
-    this.bodyColor = this.getCssVar('--gf-accent-muted') || 'rgba(34,197,94,0.5)'
   }
 
   private computeLayout(): void {

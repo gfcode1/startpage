@@ -48,7 +48,6 @@ export function NoisePanel() {
           className="gf-moodist__select"
           value={color}
           onChange={e => handleColorChange(e.target.value as NoiseColor)}
-          style={{ flex: 1 }}
         >
           {Object.entries(NOISE_LABELS).map(([k, v]) => (
             <option key={k} value={k}>{v}</option>
@@ -57,7 +56,7 @@ export function NoisePanel() {
       </div>
 
       <div className="gf-moodist__row">
-        <span style={{ fontSize: 12, color: 'var(--gf-text-muted)' }}>Volume</span>
+        <span className="gf-moodist__label">Volume</span>
         <input
           className="gf-moodist__sound-vol"
           type="range"
@@ -65,7 +64,6 @@ export function NoisePanel() {
           max={1}
           step={0.01}
           value={volume}
-          style={{ flex: 1 }}
           onChange={e => handleVolChange(Number(e.target.value))}
           aria-label="Noise volume"
         />

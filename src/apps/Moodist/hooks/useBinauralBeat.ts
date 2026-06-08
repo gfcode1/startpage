@@ -11,18 +11,18 @@ const BINAURAL_MAP: Record<BinauralFreq, number> = {
   gamma: 40,
 }
 
+function getAudioCtx(ctxRef: React.MutableRefObject<AudioContext | null>) {
+  if (!ctxRef.current || ctxRef.current.state === 'closed') {
+    ctxRef.current = new AudioContext()
+  }
+  return ctxRef.current
+}
+
 export function useNoiseGenerator() {
   const ctxRef = useRef<AudioContext | null>(null)
   const sourceRef = useRef<AudioBufferSourceNode | null>(null)
   const gainRef = useRef<GainNode | null>(null)
   const isPlaying = useRef(false)
-
-  const getCtx = useCallback(() => {
-    if (!ctxRef.current) {
-      ctxRef.current = new AudioContext()
-    }
-    return ctxRef.current
-  }, [])
 
   const stopNoise = useCallback(() => {
     try { sourceRef.current?.stop() } catch { /* ignore */ }
@@ -35,7 +35,7 @@ export function useNoiseGenerator() {
 
   const startNoise = useCallback((color: NoiseColor, volume: number) => {
     stopNoise()
-    const ctx = getCtx()
+    const ctx = getAudioCtx(ctxRef)
     if (ctx.state === 'suspended') ctx.resume()
 
     const sr = ctx.sampleRate
@@ -90,7 +90,7 @@ export function useNoiseGenerator() {
     sourceRef.current = source
     gainRef.current = gain
     isPlaying.current = true
-  }, [getCtx, stopNoise])
+  }, [stopNoise])
 
   const setNoiseVolume = useCallback((vol: number) => {
     if (gainRef.current) {
@@ -99,7 +99,8 @@ export function useNoiseGenerator() {
   }, [])
 
   useEffect(() => {
-    return () => { stopNoise(); ctxRef.current?.close() }
+    const ctx = ctxRef.current
+    return () => { stopNoise(); ctx?.close() }
   }, [stopNoise])
 
   return { startNoise, stopNoise, setNoiseVolume, isPlaying }
@@ -113,13 +114,6 @@ export function useBinauralBeat() {
   const gainRight = useRef<GainNode | null>(null)
   const gainOut = useRef<GainNode | null>(null)
   const isPlaying = useRef(false)
-
-  const getCtx = useCallback(() => {
-    if (!ctxRef.current) {
-      ctxRef.current = new AudioContext()
-    }
-    return ctxRef.current
-  }, [])
 
   const stop = useCallback(() => {
     try { oscLeft.current?.stop() } catch { /* ignore */ }
@@ -139,7 +133,7 @@ export function useBinauralBeat() {
 
   const start = useCallback((freq: BinauralFreq, carrierHz: number, volume: number) => {
     stop()
-    const ctx = getCtx()
+    const ctx = getAudioCtx(ctxRef)
     if (ctx.state === 'suspended') ctx.resume()
 
     const beatHz = BINAURAL_MAP[freq]
@@ -179,7 +173,7 @@ export function useBinauralBeat() {
     gainRight.current = gR
     gainOut.current = out
     isPlaying.current = true
-  }, [getCtx, stop])
+  }, [stop])
 
   const setVolume = useCallback((vol: number) => {
     if (gainOut.current) {
@@ -188,7 +182,8 @@ export function useBinauralBeat() {
   }, [])
 
   useEffect(() => {
-    return () => { stop(); ctxRef.current?.close() }
+    const ctx = ctxRef.current
+    return () => { stop(); ctx?.close() }
   }, [stop])
 
   return { start, stop, setVolume, isPlaying }

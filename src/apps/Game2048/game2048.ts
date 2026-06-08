@@ -228,8 +228,3 @@ export function tileAlpha(value: number): number {
   return 1.0
 }
 
-export function tileGlow(value: number): number {
-  if (value >= 2048) return 1.0
-  if (value >= 128) return 0.5
-  return 0
-}

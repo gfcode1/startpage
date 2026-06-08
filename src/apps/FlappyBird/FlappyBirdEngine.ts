@@ -112,6 +112,7 @@ export class FlappyBirdEngine extends GameEngine {
       this.pipes = (saved.pipes ?? []).map(p => ({ ...p }))
       this._score = saved.score ?? 0
       this._bestScore = saved.bestScore ?? 0
+      this.callbacks?.onBestScoreChange?.(this._bestScore)
       this._gameOver = saved.gameOver ?? false
       this._started = saved.started ?? false
       this.groundOffset = 0
@@ -182,8 +183,8 @@ export class FlappyBirdEngine extends GameEngine {
     this.groundOffset = (this.groundOffset + PIPE_SPEED) % 24
 
     if (!this._started) {
-      this.idleTimer += dt * 0.0024
-      this.birdY += Math.sin(this.idleTimer) * 0.3
+      this.idleTimer += dt * 0.004
+      this.birdY += Math.sin(this.idleTimer) * 3
       return
     }
 
@@ -199,21 +200,22 @@ export class FlappyBirdEngine extends GameEngine {
 
     this.pipes = this.pipes.filter(p => p.x > -PIPE_WIDTH * 2)
 
-    if (this.pipes.length === 0 || this.pipes[this.pipes.length - 1].x < this.width - PIPE_SPAWN_DIST) {
-      this.spawnPipe()
-    }
-
     if (!this._gameOver) {
+      if (this.pipes.length === 0 || this.pipes[this.pipes.length - 1].x < this.width - PIPE_SPAWN_DIST) {
+        this.spawnPipe()
+      }
+
+      let scoredThisFrame = false
       for (const p of this.pipes) {
         if (!p.scored && p.x + PIPE_WIDTH < BIRD_X) {
           p.scored = true
           this._score++
+          scoredThisFrame = true
           this.callbacks?.onScoreChange?.(this._score)
           if (this._score > this._bestScore) {
             this._bestScore = this._score
             this.callbacks?.onBestScoreChange?.(this._bestScore)
           }
-          this.playScoreSound()
         }
       }
 
@@ -221,6 +223,8 @@ export class FlappyBirdEngine extends GameEngine {
         this._gameOver = true
         this.playGameOverSound()
         this.callbacks?.onGameOver?.(this._score)
+      } else if (scoredThisFrame) {
+        this.playScoreSound()
       }
     } else {
       this.birdY = Math.min(this.birdY, groundLevel - BIRD_R)

@@ -1,5 +1,140 @@
 import { Readability } from '@mozilla/readability'
-import type { Article, FeedInfo, FeedResult } from './types'
+import type { Article, FeedInfo, FeedResult, FeedConfig } from './types'
+
+const CACHE_PREFIX = 'gf:rssreader:cache'
+const CACHE_TTL = 24 * 60 * 60 * 1000
+
+function cacheKeyEncode(url: string): string {
+  return url.replace(/[^a-zA-Z0-9:_./-]/g, c => encodeURIComponent(c))
+}
+
+export function getCachedFeedKey(url: string): string {
+  return `${CACHE_PREFIX}:feed:${cacheKeyEncode(url)}`
+}
+
+export function getCachedArticleKey(url: string): string {
+  return `${CACHE_PREFIX}:article:${cacheKeyEncode(url)}`
+}
+
+export function getCachedData<T>(key: string): T | null {
+  try {
+    const raw = localStorage.getItem(key)
+    if (!raw) return null
+    const { data, timestamp } = JSON.parse(raw)
+    if (Date.now() - timestamp > CACHE_TTL) {
+      localStorage.removeItem(key)
+      return null
+    }
+    return data as T
+  } catch {
+    return null
+  }
+}
+
+export function setCachedData<T>(key: string, data: T): void {
+  try {
+    localStorage.setItem(key, JSON.stringify({ data, timestamp: Date.now() }))
+  } catch {
+    /* quota exceeded */
+  }
+}
+
+export function isOnline(): boolean {
+  return navigator.onLine
+}
+
+export function parseOpml(opmlText: string): FeedConfig[] {
+  const xml = opmlText.includes('<?xml') ? opmlText : '<?xml version="1.0" encoding="UTF-8"?>\n' + opmlText
+  const doc = new DOMParser().parseFromString(xml, 'text/xml')
+
+  const parseError = doc.querySelector('parsererror')
+  if (parseError) {
+    throw new Error('Invalid OPML: ' + (parseError.textContent?.slice(0, 100) ?? ''))
+  }
+
+  const feeds: FeedConfig[] = []
+
+  function getAttr(el: Element, ...attrs: string[]): string {
+    for (const a of attrs) {
+      const v = el.getAttribute(a)
+      if (v) return v
+    }
+    return ''
+  }
+
+  function walkOutlines(parent: Element, inheritedCategory: string): void {
+    for (const el of parent.children) {
+      if (el.tagName.toLowerCase() !== 'outline') continue
+      const xmlUrl = getAttr(el, 'xmlUrl', 'url')
+      if (xmlUrl.startsWith('http')) {
+        const category = getAttr(parent, 'text', 'title') || inheritedCategory
+        feeds.push({
+          url: xmlUrl,
+          category: category || 'Uncategorized',
+          title: getAttr(el, 'text', 'title'),
+        })
+      } else {
+        walkOutlines(el, getAttr(el, 'text', 'title') || inheritedCategory)
+      }
+    }
+  }
+
+  const body = doc.querySelector('body')
+  if (body) {
+    walkOutlines(body, 'Uncategorized')
+  }
+
+  if (feeds.length === 0) {
+    const allOutlines = doc.querySelectorAll('outline')
+    allOutlines.forEach(el => {
+      const xmlUrl = getAttr(el, 'xmlUrl', 'url')
+      if (xmlUrl.startsWith('http')) {
+        feeds.push({
+          url: xmlUrl,
+          category: 'Uncategorized',
+          title: getAttr(el, 'text', 'title'),
+        })
+      }
+    })
+  }
+
+  return feeds
+}
+
+export function generateOpml(feeds: FeedConfig[]): string {
+  const categories = new Map<string, FeedConfig[]>()
+  for (const f of feeds) {
+    const cat = f.category || 'Uncategorized'
+    if (!categories.has(cat)) categories.set(cat, [])
+    categories.get(cat)!.push(f)
+  }
+
+  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<opml version="2.0">\n<head>\n<title>GFcode RSS Feeds</title>\n</head>\n<body>\n'
+
+  for (const [cat, catFeeds] of categories) {
+    xml += `<outline text="${escapeXml(cat)}">\n`
+    for (const f of catFeeds) {
+      xml += `  <outline type="rss" text="${escapeXml(f.title || f.url)}" xmlUrl="${escapeXml(f.url)}" />\n`
+    }
+    xml += `</outline>\n`
+  }
+
+  xml += '</body>\n</opml>'
+  return xml
+}
+
+export function downloadOpml(feeds: FeedConfig[]): void {
+  const opml = generateOpml(feeds)
+  const blob = new Blob([opml], { type: 'text/xml;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'feeds.opml'
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+}
 
 const PROXIES: string[] = [
   'https://api.rss2json.com/v1/api.json?rss_url=',
@@ -42,9 +177,19 @@ async function fetchViaProxy(url: string, signal?: AbortSignal): Promise<string>
       if (proxy.includes('rss2json')) {
         const json = JSON.parse(text)
         if (json?.status === 'ok' && json?.feed) {
-          return json.feed.title
-            ? `<?xml version="1.0"?><rss version="2.0"><channel><title>${escapeXml(json.feed.title)}</title><description>${escapeXml(json.feed.description || '')}</description>${(json.items || []).map((item: Record<string, string | undefined>) => `<item><title>${escapeXml(item.title || '')}</title><link>${escapeXml(item.link || '')}</link><description>${escapeXml(item.description || '')}</description><pubDate>${escapeXml(item.pubDate || '')}</pubDate></item>`).join('')}</channel></rss>`
-            : text
+          if (!json.feed.title) return text
+          const items = (json.items || []).map((item: Record<string, unknown>) => {
+            const enclosure = item.enclosure as Record<string, string> | undefined
+            const enclosureXml = enclosure?.link && enclosure.type?.startsWith('image/')
+              ? `<enclosure url="${escapeXml(enclosure.link)}" type="${escapeXml(enclosure.type)}" />`
+              : ''
+            const thumbnail = item.thumbnail as string | undefined
+            const mediaXml = thumbnail
+              ? `<media:thumbnail url="${escapeXml(thumbnail)}" />`
+              : ''
+            return `<item><title>${escapeXml(String(item.title || ''))}</title><link>${escapeXml(String(item.link || ''))}</link><description>${escapeXml(String(item.description || ''))}</description><pubDate>${escapeXml(String(item.pubDate || ''))}</pubDate>${enclosureXml}${mediaXml}</item>`
+          }).join('')
+          return `<?xml version="1.0"?><rss version="2.0"><channel><title>${escapeXml(json.feed.title)}</title><description>${escapeXml(json.feed.description || '')}</description>${items}</channel></rss>`
         }
         if (json?.error) throw new Error(json.error)
         throw new Error('Invalid rss2json response')
@@ -74,10 +219,19 @@ function escapeXml(str: string): string {
 
 function cleanHtml(text: string): string {
   if (!text) return ''
-  return text
+  const decoded = text
     .replace(/<[^>]*>/g, '')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&#x27;/g, "'")
+    .replace(/&#x2F;/g, '/')
+    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
     .replace(/\s+/g, ' ')
     .trim()
+  return decoded
 }
 
 function getChildText(parent: Element, selector: string): string {
@@ -225,8 +379,6 @@ export async function fetchAndParseFeed(url: string): Promise<FeedResult> {
 
     const isAtom = doc.querySelector('feed') !== null
     const result = isAtom ? parseAtom(doc, url) : parseRss(doc, url)
-
-    result.articles.sort((a, b) => b.pubDateParsed - a.pubDateParsed)
 
     return { ...result, error: undefined }
   } catch (err) {

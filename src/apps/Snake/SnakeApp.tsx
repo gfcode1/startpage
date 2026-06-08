@@ -1,7 +1,6 @@
 import { useRef, useEffect, useState, useCallback } from 'react'
 import { GfIcon } from '../../framework/iconSystem'
 import { StorageManager } from '../../framework/storage/StorageManager'
-import { persistenceService } from '../../framework/persistence/PersistenceService'
 import type { HighScoreEntry } from '../../framework/storage/types'
 import { AudioEngine } from '../../framework/engine/AudioEngine'
 import { SnakeEngine } from './SnakeEngine'
@@ -30,12 +29,6 @@ export default function SnakeApp() {
   const [finalScore, setFinalScore] = useState(0)
   const [playerName, setPlayerName] = useState('')
   const [showNameInput, setShowNameInput] = useState(false)
-
-  useEffect(() => {
-    persistenceService.registerNamespace(
-      'snake', BEST_SCORE_KEY, HIGH_SCORES_KEY, 'gameState'
-    )
-  }, [])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -86,6 +79,7 @@ export default function SnakeApp() {
 
     return () => {
       engine.destroy()
+      audio.destroy()
       window.removeEventListener('pointerdown', unlockAudio)
       document.removeEventListener('visibilitychange', onVisibility)
     }
@@ -98,6 +92,7 @@ export default function SnakeApp() {
     s.remove('gameState')
     setScore(0)
     setGameOver(false)
+    setPaused(false)
     setFinalScore(0)
     setShowNameInput(false)
     engine.newGame()

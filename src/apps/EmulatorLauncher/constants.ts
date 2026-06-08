@@ -40,6 +40,7 @@ export interface ScannedGame {
 }
 
 export const ALL_SYSTEMS: SystemId[] = Object.keys(SYSTEM_MAP) as SystemId[]
+export const VALID_SYSTEMS: ReadonlySet<SystemId> = new Set(ALL_SYSTEMS)
 
 const _extMap: Record<string, SystemId> = {}
 const _allExts: string[] = []

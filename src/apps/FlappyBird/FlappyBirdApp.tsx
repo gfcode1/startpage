@@ -36,6 +36,15 @@ export default function FlappyBirdApp() {
   }, [])
 
   useEffect(() => {
+    if (gameOver || showNameInput) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [gameOver, showNameInput])
+
+  useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
 
@@ -84,6 +93,7 @@ export default function FlappyBirdApp() {
 
     return () => {
       engine.destroy()
+      audio.destroy()
       window.removeEventListener('pointerdown', unlockAudio)
       document.removeEventListener('visibilitychange', onVisibility)
     }
@@ -221,7 +231,7 @@ export default function FlappyBirdApp() {
           <h3 className="gf-flappy__highscores-title">High Scores</h3>
           <ol className="gf-flappy__highscores-list">
             {highScores.slice(0, MAX_HIGH_SCORES).map((entry, i) => (
-              <li key={entry.date + entry.name} className="gf-flappy__highscores-item">
+              <li key={entry.date + entry.name + i} className="gf-flappy__highscores-item">
                 <span className="gf-flappy__highscores-rank">#{i + 1}</span>
                 <span className="gf-flappy__highscores-name">{entry.name}</span>
                 <span className="gf-flappy__highscores-score">{entry.score}</span>

@@ -68,7 +68,7 @@ export function SleepTimer({ onSleep }: SleepTimerProps) {
 
         {isActive ? (
           <>
-            <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--gf-accent)' }}>
+            <span className="gf-moodist__timer-remaining">
               {formatTime(remaining)}
             </span>
             <button className="gf-moodist__btn gf-moodist__btn--secondary" onClick={stop}>

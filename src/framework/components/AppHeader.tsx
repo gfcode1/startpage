@@ -54,7 +54,7 @@ export function AppHeader({
           <GfSegmentedControl segments={segments} value={segmentValue} onChange={onSegmentChange} />
         )}
         <div className="gf-app-header__search">
-          <GfIcon name="search" size={14} />
+          <GfIcon name="search" size={14} className="gf-app-header__search-icon" />
           <input
             className="gf-app-header__search-input"
             type="text"

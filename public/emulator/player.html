@@ -36,7 +36,7 @@ function loadRom(c){
 window.EJS_player='#player';
 window.EJS_core=c.core;
 window.EJS_gameName=c.title||'';
-window.EJS_pathtodata='https://cdn.emulatorjs.org/stable/data/';
+window.EJS_pathtodata=c.emulatorjsDataUrl||'https://cdn.emulatorjs.org/stable/data/';
 window.EJS_startOnLoaded=true;
 if(c.romUrl){
 window.EJS_gameUrl=c.romUrl;

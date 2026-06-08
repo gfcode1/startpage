@@ -7,7 +7,6 @@ interface SoundCardProps {
   sound: Sound
   state: SoundState
   isGloballyPlaying: boolean
-  isLocked: boolean
   onSelect: () => void
   onUnselect: () => void
   onSetVolume: (volume: number) => void
@@ -19,7 +18,6 @@ export const SoundCard = memo(function SoundCard({
   sound,
   state,
   isGloballyPlaying,
-  isLocked,
   onSelect,
   onUnselect,
   onSetVolume,
@@ -29,33 +27,32 @@ export const SoundCard = memo(function SoundCard({
   const player = useSoundPlayer(sound.src)
 
   useEffect(() => {
-    if (isLocked) return
     if (state.selected && isGloballyPlaying) {
       player.play()
     } else {
       player.pause()
     }
-  }, [state.selected, player, isGloballyPlaying, isLocked])
+  }, [state.selected, player, isGloballyPlaying])
 
   useEffect(() => {
     player.setVolume(state.volume)
   }, [state.volume, player])
 
   const handleToggle = useCallback(() => {
-    if (isLocked) return
     if (state.selected) onUnselect()
     else onSelect()
-  }, [state.selected, onSelect, onUnselect, isLocked])
+  }, [state.selected, onSelect, onUnselect])
 
   const handleVolChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    if (isLocked) return
     const vol = Number(e.target.value)
     onSetVolume(vol)
-  }, [onSetVolume, isLocked])
+  }, [onSetVolume])
+
+  const isActive = state.selected && isGloballyPlaying
 
   return (
     <div
-      className={`gf-moodist__sound ${state.selected ? 'gf-moodist__sound--selected' : ''} ${hidden ? 'gf-moodist__sound--hidden' : ''}`}
+      className={`gf-moodist__sound ${state.selected ? 'gf-moodist__sound--selected' : ''} ${isActive ? 'gf-moodist__sound--playing' : ''} ${hidden ? 'gf-moodist__sound--hidden' : ''}`}
       role="button"
       tabIndex={0}
       aria-label={`${sound.label} sound`}
@@ -71,9 +68,19 @@ export const SoundCard = memo(function SoundCard({
         {state.favorite ? <GfIcon name="heart" size={12} /> : <GfIcon name="heart-outline" size={12} />}
       </button>
 
-      <div className="gf-moodist__sound-label" style={{ position: 'absolute', top: 4, left: 6, fontSize: 9, opacity: 0.5 }}>
-        {player.isLoading ? <GfIcon name="loading" size={10} /> : ''}
-      </div>
+      {player.isLoading && (
+        <div className="gf-moodist__sound-loading">
+          <GfIcon name="loading" size={10} />
+        </div>
+      )}
+
+      {player.hasError && (
+        <div className="gf-moodist__sound-error" title="Failed to load sound">
+          <GfIcon name="alert" size={10} />
+        </div>
+      )}
+
+      {isActive && <div className="gf-moodist__sound-indicator" />}
 
       <input
         className="gf-moodist__sound-vol"

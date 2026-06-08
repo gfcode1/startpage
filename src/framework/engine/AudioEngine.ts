@@ -34,6 +34,14 @@ export class AudioEngine {
     this.master!.gain.value = m ? 0 : this._volume
   }
 
+  destroy(): void {
+    if (this.ctx && this.ctx.state !== 'closed') {
+      this.ctx.close()
+    }
+    this.ctx = null
+    this.master = null
+  }
+
   setVolume(v: number): void {
     this._volume = Math.max(0, Math.min(1, v))
     if (this.master && !this._muted) this.master.gain.value = this._volume

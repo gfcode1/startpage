@@ -22,3 +22,25 @@ export function formatRelativeTime(ts: number): string {
   const days = Math.floor(hours / 24)
   return `${days}d ago`
 }
+
+export function formatDueDate(ts: number): string {
+  const now = new Date()
+  const due = new Date(ts)
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const dueDay = new Date(due.getFullYear(), due.getMonth(), due.getDate())
+  const diffDays = Math.round((dueDay.getTime() - today.getTime()) / 86400000)
+
+  if (diffDays < 0) return `Overdue ${Math.abs(diffDays)}d`
+  if (diffDays === 0) return 'Today'
+  if (diffDays === 1) return 'Tomorrow'
+  if (diffDays < 7) return due.toLocaleDateString(undefined, { weekday: 'short' })
+  return due.toLocaleDateString(undefined, { day: 'numeric', month: 'short' })
+}
+
+export function isOverdue(dueDate: number): boolean {
+  const now = new Date()
+  const due = new Date(dueDate)
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const dueDay = new Date(due.getFullYear(), due.getMonth(), due.getDate())
+  return dueDay.getTime() < today.getTime()
+}

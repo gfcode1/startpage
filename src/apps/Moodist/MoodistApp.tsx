@@ -122,7 +122,6 @@ export default function MoodistApp() {
       <PlayerControls
         isPlaying={state.isPlaying}
         hasSelection={hasSelection}
-        locked={false}
         onTogglePlay={handleTogglePlay}
         onShuffle={handleShuffle}
         onUnselectAll={handleUnselectAll}
@@ -134,7 +133,6 @@ export default function MoodistApp() {
           category={cat}
           soundsState={state.sounds}
           isGloballyPlaying={state.isPlaying}
-          isLocked={false}
           onSelect={handleSelect}
           onUnselect={handleUnselect}
           onSetVolume={handleSetVolume}
