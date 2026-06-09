@@ -7,6 +7,9 @@ import { ErrorBoundary } from './framework/ErrorBoundary'
 import { PlayerProvider } from './framework/PlayerContext'
 import { ToastProvider } from './framework/ToastContext'
 import { AppBadgeProvider } from './framework/AppBadgeContext'
+import { AuthProvider, useAuth } from './framework/auth/AuthContext'
+import { SyncProvider } from './framework/sync/SyncContext'
+import { LoginPage } from './framework/auth/LoginPage'
 import { apps } from './framework/appRegistry'
 import { Launcher } from './apps/Launcher/Launcher'
 import { SkeletonGrid } from './framework/components/Skeleton'
@@ -48,6 +51,24 @@ function useViewTransitionLocation() {
   return displayLocation
 }
 
+function AuthGate({ children }: { children: ReactNode }) {
+  const { user, loading } = useAuth()
+
+  if (loading) {
+    return (
+      <div className="gf-login" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--gf-bg)' }}>
+        <div style={{ color: 'var(--gf-text-muted)' }}>Loading...</div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return <LoginPage />
+  }
+
+  return <>{children}</>
+}
+
 function AnimatedRoutes() {
   const displayLocation = useViewTransitionLocation()
 
@@ -76,9 +97,20 @@ function AnimatedRoutes() {
   )
 }
 
-export default function App() {
+function AppInner() {
   const { open: cmdkOpen, close: cmdkClose } = useCommandPalette()
 
+  return (
+    <AuthGate>
+      <SyncProvider>
+        <AnimatedRoutes />
+        <CommandPalette open={cmdkOpen} onClose={cmdkClose} />
+      </SyncProvider>
+    </AuthGate>
+  )
+}
+
+export default function App() {
   return (
     <BrowserRouter basename="/startpage">
       <GfThemeProvider>
@@ -86,8 +118,9 @@ export default function App() {
         <ToastProvider>
         <ErrorBoundary>
         <AppBadgeProvider>
-        <AnimatedRoutes />
-        <CommandPalette open={cmdkOpen} onClose={cmdkClose} />
+        <AuthProvider>
+          <AppInner />
+        </AuthProvider>
         </AppBadgeProvider>
         </ErrorBoundary>
         </ToastProvider>

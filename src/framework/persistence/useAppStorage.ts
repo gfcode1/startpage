@@ -1,11 +1,9 @@
-import { useState, useCallback, useEffect, useRef, Dispatch, SetStateAction } from 'react'
-import { persistenceService } from './PersistenceService'
+import { useState, useCallback, Dispatch, SetStateAction } from 'react'
+import { storageEngine } from '../storage/StorageEngine'
 import type { GameSaveData } from '../storage/types'
 
-const PREFIX = 'gf'
-
 function storageKey(appId: string, key: string): string {
-  return `${PREFIX}:${appId}:${key}`
+  return `gf:${appId}:${key}`
 }
 
 function tryMigrate(appId: string, key: string): void {
@@ -27,34 +25,16 @@ export function useAppStorage<T>(
   key: string,
   initialValue: T,
 ): [T, Dispatch<SetStateAction<T>>] {
-  const registered = useRef(false)
-
-  useEffect(() => {
-    if (!registered.current) {
-      persistenceService.registerNamespace(appId, key)
-      registered.current = true
-    }
-    return () => {
-      persistenceService.unregisterKey(appId, key)
-      registered.current = false
-    }
-  }, [appId, key])
-
   const [storedValue, setStoredValue] = useState<T>(() => {
     tryMigrate(appId, key)
-    const raw = localStorage.getItem(storageKey(appId, key))
-    if (raw !== null) {
-      try { return JSON.parse(raw) as T } catch (e) { console.warn(`useAppStorage: parse failed for ${appId}:${key}`, e) }
-    }
-    return initialValue
+    const val = storageEngine.get<T>(appId, key)
+    return val !== undefined ? val : initialValue
   })
 
   const setValue = useCallback((value: T | ((prev: T) => T)) => {
     setStoredValue(prev => {
       const next = typeof value === 'function' ? (value as (prev: T) => T)(prev) : value
-      try {
-        localStorage.setItem(storageKey(appId, key), JSON.stringify(next))
-      } catch (e) { console.warn(`useAppStorage: set failed for ${appId}:${key}`, e) }
+      storageEngine.set(appId, key, next)
       return next
     })
   }, [appId, key])

@@ -4,6 +4,23 @@ import { SettingsModal } from './SettingsModal'
 import { GfThemeProvider } from '../ThemeProvider'
 import { ToastProvider } from '../ToastContext'
 
+vi.mock('../auth/AuthContext', () => ({
+  useAuth: () => ({
+    user: { email: 'test@example.com' },
+    profile: { display_name: 'Test User', state: {} },
+    signOut: vi.fn(),
+    updateProfile: vi.fn(),
+  }),
+}))
+
+vi.mock('../sync/SyncContext', () => ({
+  useSync: () => ({
+    status: 'synced',
+    syncNow: vi.fn(),
+    lastSynced: Date.now(),
+  }),
+}))
+
 function renderWithProviders(open: boolean, onClose = vi.fn()) {
   return render(
     <ToastProvider>
@@ -34,6 +51,12 @@ describe('SettingsModal', () => {
     expect(screen.getByLabelText('Close')).toBeInTheDocument()
   })
 
+  it('renders profile section with email', () => {
+    renderWithProviders(true)
+    expect(screen.getByText('Profile')).toBeInTheDocument()
+    expect(screen.getByText('test@example.com')).toBeInTheDocument()
+  })
+
   it('renders theme section', () => {
     renderWithProviders(true)
     expect(screen.getByText('Theme')).toBeInTheDocument()
@@ -45,9 +68,9 @@ describe('SettingsModal', () => {
     expect(screen.getByText('Dark')).toBeInTheDocument()
   })
 
-  it('renders backup section', () => {
+  it('renders data backup section', () => {
     renderWithProviders(true)
-    expect(screen.getByText('Profile Backup')).toBeInTheDocument()
+    expect(screen.getByText('Data Backup')).toBeInTheDocument()
   })
 
   it('renders download and upload buttons', () => {

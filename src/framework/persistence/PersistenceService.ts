@@ -1,6 +1,5 @@
 import { BACKUP_VERSION, type BackupData, type NamespaceEntry, type BackupResult } from './types'
-
-const PREFIX = 'gf'
+import { storageEngine } from '../storage/StorageEngine'
 
 function isBrowser(): boolean {
   return typeof window !== 'undefined' && typeof document !== 'undefined'
@@ -8,7 +7,6 @@ function isBrowser(): boolean {
 
 export class PersistenceService {
   private static instance: PersistenceService
-  private namespaces = new Map<string, Set<string>>()
 
   static getInstance(): PersistenceService {
     if (!PersistenceService.instance) {
@@ -18,59 +16,25 @@ export class PersistenceService {
   }
 
   registerNamespace(appId: string, ...keys: string[]): void {
-    let entry = this.namespaces.get(appId)
-    if (!entry) {
-      entry = new Set()
-      this.namespaces.set(appId, entry)
+    for (const k of keys) {
+      storageEngine.register(appId, k)
     }
-    for (const k of keys) entry.add(k)
   }
 
-  unregisterNamespace(appId: string): void {
-    this.namespaces.delete(appId)
+  unregisterNamespace(_appId: string): void {
+    // no-op: StorageEngine auto-registers on write; unregistration is not supported
   }
 
-  unregisterKey(appId: string, key: string): void {
-    const entry = this.namespaces.get(appId)
-    if (entry) {
-      entry.delete(key)
-      if (entry.size === 0) {
-        this.namespaces.delete(appId)
-      }
-    }
+  unregisterKey(_appId: string, _key: string): void {
+    // no-op: StorageEngine auto-registers on write; unregistration is not supported
   }
 
   getRegisteredNamespaces(): NamespaceEntry[] {
-    const result: NamespaceEntry[] = []
-    for (const [appId, keys] of this.namespaces) {
-      result.push({ appId, keys: [...keys] })
-    }
-    return result
-  }
-
-  private key(appId: string, k: string): string {
-    return `${PREFIX}:${appId}:${k}`
+    return storageEngine.getRegisteredNamespaces()
   }
 
   exportAll(): BackupData {
-    const data: Record<string, Record<string, unknown>> = {}
-
-    for (const [appId, keys] of this.namespaces) {
-      const appData: Record<string, unknown> = {}
-      for (const k of keys) {
-        try {
-          const raw = localStorage.getItem(this.key(appId, k))
-          if (raw !== null) {
-            appData[k] = JSON.parse(raw)
-          }
-        } catch (e) {
-          console.warn(`PersistenceService: corrupt entry for ${appId}:${k}`, e)
-        }
-      }
-      if (Object.keys(appData).length > 0) {
-        data[appId] = appData
-      }
-    }
+    const data = storageEngine.getAllState()
 
     const pkg = this.getPackageJson()
 
@@ -93,14 +57,13 @@ export class PersistenceService {
     for (const [appId, entries] of Object.entries(appData)) {
       if (!entries || typeof entries !== 'object') continue
       for (const [k, value] of Object.entries(entries)) {
-        const fullKey = this.key(appId, k)
         try {
           const serialized = JSON.stringify(value)
           totalBytes += serialized.length
-          localStorage.setItem(fullKey, serialized)
+          storageEngine.set(appId, k, value)
         } catch (e) {
-          console.warn(`PersistenceService: cannot save ${fullKey}`, e)
-          return { success: false, error: `Cannot save ${fullKey}: storage full?` }
+          console.warn(`PersistenceService: cannot save ${appId}:${k}`, e)
+          return { success: false, error: `Cannot save ${appId}:${k}: storage full?` }
         }
       }
     }

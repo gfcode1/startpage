@@ -1,8 +1,10 @@
-import { useRef, useEffect, useCallback } from 'react'
+import { useRef, useEffect, useCallback, useState } from 'react'
 import { useGfTheme } from '../ThemeProvider'
 import { GfIcon } from '../iconSystem'
 import { persistenceService } from '../persistence/PersistenceService'
 import { useToast } from '../ToastContext'
+import { useAuth } from '../auth/AuthContext'
+import { useSync } from '../sync/SyncContext'
 import './SettingsModal.css'
 
 interface SettingsModalProps {
@@ -13,6 +15,9 @@ interface SettingsModalProps {
 export function SettingsModal({ open, onClose }: SettingsModalProps) {
   const { themeKey, setTheme } = useGfTheme()
   const { addToast } = useToast()
+  const { user, profile, signOut, updateProfile } = useAuth()
+  const { status, lastSynced, syncNow } = useSync()
+  const [displayName, setDisplayName] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
   const overlayRef = useRef<HTMLDivElement>(null)
   const modalRef = useRef<HTMLDivElement>(null)
@@ -66,6 +71,13 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
 
   if (!open) return null
 
+  const syncLabel = status === 'idle' ? 'Waiting...'
+    : status === 'syncing' ? 'Syncing...'
+    : status === 'synced' ? 'Synced'
+    : 'Sync error'
+
+  const syncIcon = status === 'syncing' ? 'refresh' : status === 'synced' ? 'check' : status === 'error' ? 'exclamation' : 'refresh'
+
   const handleExport = () => {
     try {
       persistenceService.downloadBackup()
@@ -89,6 +101,13 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
     if (fileRef.current) fileRef.current.value = ''
   }
 
+  const handleSaveDisplayName = async () => {
+    const trimmed = displayName.trim()
+    if (!trimmed) return
+    await updateProfile({ display_name: trimmed })
+    addToast('Display name updated', 'success')
+  }
+
   return (
     <div
       className="gf-settings-overlay"
@@ -107,6 +126,54 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
           </div>
 
         <div className="gf-settings-modal__body">
+          <section className="gf-settings-section">
+            <h3 className="gf-settings-section__title">Profile</h3>
+            <div className="gf-settings-field-row">
+              <label className="gf-settings-label">Email</label>
+              <span className="gf-settings-value">{user?.email ?? '-'}</span>
+            </div>
+            <div className="gf-settings-field-row">
+              <label className="gf-settings-label" htmlFor="settings-display-name">Display name</label>
+              <div className="gf-settings-inline">
+                <input
+                  id="settings-display-name"
+                  className="gf-settings-input"
+                  type="text"
+                  value={displayName}
+                  onChange={e => setDisplayName(e.target.value)}
+                  placeholder={profile?.display_name || 'Enter name'}
+                  onKeyDown={e => { if (e.key === 'Enter') handleSaveDisplayName() }}
+                />
+                <button className="gf-settings-btn gf-settings-btn--sm" onClick={handleSaveDisplayName}>
+                  Save
+                </button>
+              </div>
+            </div>
+            <div className="gf-settings-field-row">
+              <label className="gf-settings-label">Sync</label>
+              <div className="gf-settings-inline">
+                <span className={`gf-settings-sync ${status === 'error' ? 'gf-settings-sync--error' : status === 'synced' ? 'gf-settings-sync--ok' : ''}`}>
+                  <GfIcon name={syncIcon} size={14} />
+                  {syncLabel}
+                </span>
+                <button className="gf-settings-btn gf-settings-btn--sm" onClick={syncNow}>
+                  Sync now
+                </button>
+              </div>
+            </div>
+            {lastSynced && (
+              <div className="gf-settings-field-row">
+                <label className="gf-settings-label">Last synced</label>
+                <span className="gf-settings-value">{new Date(lastSynced).toLocaleString()}</span>
+              </div>
+            )}
+            <div className="gf-settings-actions" style={{ marginTop: '0.5rem' }}>
+              <button className="gf-settings-btn gf-settings-btn--danger" onClick={signOut}>
+                Sign out
+              </button>
+            </div>
+          </section>
+
           <section className="gf-settings-section">
             <h3 className="gf-settings-section__title">Theme</h3>
             <div className="gf-settings-toggle">
@@ -130,7 +197,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
           </section>
 
           <section className="gf-settings-section">
-            <h3 className="gf-settings-section__title">Profile Backup</h3>
+            <h3 className="gf-settings-section__title">Data Backup</h3>
             <p className="gf-settings-section__desc">
               Download all app data or restore from a previous backup.
             </p>

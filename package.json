@@ -23,6 +23,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@iconify/react": "^6.0.2",
     "@mozilla/readability": "^0.6.0",
+    "@supabase/supabase-js": "^2.108.1",
     "highlight.js": "^11.11.1",
     "howler": "^2.2.4",
     "html2pdf.js": "^0.14.0",

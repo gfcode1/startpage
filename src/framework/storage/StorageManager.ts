@@ -1,49 +1,27 @@
 import type { StorageProvider, GameSaveData } from './types'
-
-const PREFIX = 'gf'
+import { storageEngine } from './StorageEngine'
 
 export class StorageManager {
   constructor(private namespace: string) {}
 
-  private key(k: string): string {
-    return `${PREFIX}:${this.namespace}:${k}`
-  }
-
   get<T>(key: string, fallback?: T): T | undefined {
-    try {
-      const raw = localStorage.getItem(this.key(key))
-      if (raw === null) return fallback
-      return JSON.parse(raw) as T
-    } catch (e) {
-      console.warn(`StorageManager[${this.namespace}]: get failed for "${key}"`, e)
-      return fallback
-    }
+    return storageEngine.get<T>(this.namespace, key, fallback)
   }
 
-  set<T>(key: string, value: T): boolean {
-    try {
-      localStorage.setItem(this.key(key), JSON.stringify(value))
-      return true
-    } catch (e) {
-      console.warn(`StorageManager[${this.namespace}]: set failed for "${key}"`, e)
-      return false
-    }
+  set<T>(key: string, value: T): void {
+    storageEngine.set(this.namespace, key, value)
   }
 
   remove(key: string): void {
-    try {
-      localStorage.removeItem(this.key(key))
-    } catch (e) {
-      console.warn(`StorageManager[${this.namespace}]: remove failed for "${key}"`, e)
-    }
+    storageEngine.remove(this.namespace, key)
   }
 
   getSaveData<T>(key: string): GameSaveData<T> | null {
     return this.get<GameSaveData<T>>(key) ?? null
   }
 
-  setSaveData<T>(key: string, state: T): boolean {
-    return this.set<GameSaveData<T>>(key, {
+  setSaveData<T>(key: string, state: T): void {
+    this.set<GameSaveData<T>>(key, {
       version: 1,
       timestamp: Date.now(),
       state,

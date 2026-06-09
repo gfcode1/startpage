@@ -5,10 +5,10 @@ interface Quote { content: string; author: string }
 const FALLBACK: Quote = { content: 'The only way to do great work is to love what you do.', author: 'Steve Jobs' }
 
 async function fetchQuote(): Promise<Quote> {
-  const res = await fetch('https://api.quotable.io/random')
+  const res = await fetch('https://dummyjson.com/quotes/random')
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   const json = await res.json()
-  return { content: json.content, author: json.author || 'Unknown' }
+  return { content: json.quote, author: json.author }
 }
 
 export default function QuoteWidget() {

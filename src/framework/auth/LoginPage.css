@@ -1,0 +1,118 @@
+.gf-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 2rem;
+  background: var(--gf-bg);
+  color: var(--gf-text);
+}
+
+.gf-login__card {
+  width: 100%;
+  max-width: 400px;
+  background: var(--gf-bg-elevated);
+  border-radius: 16px;
+  border: 1px solid var(--gf-border);
+  padding: 2rem;
+  box-shadow: var(--gf-shadow-lg);
+}
+
+.gf-login__title {
+  font-family: var(--gf-font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin: 0 0 0.25rem;
+}
+
+.gf-login__subtitle {
+  text-align: center;
+  color: var(--gf-text-muted);
+  font-size: 0.875rem;
+  margin: 0 0 1.5rem;
+}
+
+.gf-login__error {
+  background: color-mix(in srgb, var(--gf-error) 15%, transparent);
+  color: var(--gf-error);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.gf-login__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.gf-login__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.gf-login__label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--gf-text-muted);
+}
+
+.gf-login__input {
+  background: var(--gf-bg-input);
+  border: 1px solid var(--gf-border);
+  border-radius: 8px;
+  padding: 0.625rem 0.75rem;
+  font-size: 0.9375rem;
+  color: var(--gf-text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.gf-login__input:focus {
+  border-color: var(--gf-accent);
+}
+
+.gf-login__submit {
+  background: var(--gf-accent);
+  color: var(--gf-text-inverse);
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-top: 0.25rem;
+}
+
+.gf-login__submit:active {
+  transform: scale(0.97);
+}
+
+.gf-login__submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.gf-login__footer {
+  text-align: center;
+  margin-top: 1.25rem;
+  font-size: 0.8125rem;
+  color: var(--gf-text-muted);
+}
+
+.gf-login__link {
+  color: var(--gf-accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: inherit;
+  padding: 0;
+  text-decoration: underline;
+}

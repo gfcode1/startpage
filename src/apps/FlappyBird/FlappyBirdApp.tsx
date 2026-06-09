@@ -1,6 +1,5 @@
 import { useRef, useEffect, useState, useCallback } from 'react'
 import { StorageManager } from '../../framework/storage/StorageManager'
-import { persistenceService } from '../../framework/persistence/PersistenceService'
 import type { HighScoreEntry } from '../../framework/storage/types'
 import { AudioEngine } from '../../framework/engine/AudioEngine'
 import { FlappyBirdEngine } from './FlappyBirdEngine'
@@ -31,10 +30,6 @@ export default function FlappyBirdApp() {
   const [playerName, setPlayerName] = useState('')
   const [showNameInput, setShowNameInput] = useState(false)
   const { setActions, clearConfig } = useTopbar()
-
-  useEffect(() => {
-    persistenceService.registerNamespace('flappybird', BEST_SCORE_KEY, HIGH_SCORES_KEY, 'gameState')
-  }, [])
 
   useEffect(() => {
     if (gameOver || showNameInput) {

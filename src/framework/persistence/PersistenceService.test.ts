@@ -26,10 +26,11 @@ describe('PersistenceService', () => {
     expect(namespaces[0].keys).toEqual(expect.arrayContaining(['key1', 'key2']))
   })
 
-  it('unregisterNamespace removes app', () => {
+  it('unregisterNamespace is a no-op with StorageEngine', () => {
     service.registerNamespace('testapp', 'key1')
     service.unregisterNamespace('testapp')
-    expect(service.getRegisteredNamespaces()).toHaveLength(0)
+    // StorageEngine keeps registrations from writes; unregisterNamespace is now a no-op
+    expect(service.getRegisteredNamespaces()).toHaveLength(1)
   })
 
   it('exportAll returns empty data for no namespaces', () => {

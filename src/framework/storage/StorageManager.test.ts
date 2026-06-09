@@ -72,10 +72,10 @@ describe('StorageManager', () => {
     expect(storage.get('corrupt', 'fallback')).toBe('fallback')
   })
 
-  it('returns false when localStorage.setItem throws', () => {
+  it('does not throw when localStorage.setItem throws', () => {
     const orig = localStorage.setItem
     localStorage.setItem = vi.fn(() => { throw new Error('error') })
-    expect(storage.set('key', 'val')).toBe(false)
+    expect(() => storage.set('key', 'val')).not.toThrow()
     localStorage.setItem = orig
   })
 })

@@ -1,6 +1,5 @@
 import { useRef, useEffect, useState, useCallback } from 'react'
 import { StorageManager } from '../../framework/storage/StorageManager'
-import { persistenceService } from '../../framework/persistence/PersistenceService'
 import type { HighScoreEntry } from '../../framework/storage/types'
 import { AudioEngine } from '../../framework/engine/AudioEngine'
 import { Game2048Engine } from './Game2048Engine'
@@ -37,10 +36,6 @@ export default function Game2048App() {
   const [playerName, setPlayerName] = useState('')
   const [showNameInput, setShowNameInput] = useState(false)
   const { setActions, clearConfig } = useTopbar()
-
-  useEffect(() => {
-    persistenceService.registerNamespace('game2048', BEST_SCORE_KEY, HIGH_SCORES_KEY, 'gameState')
-  }, [])
 
   const engineStart = useCallback((engine: Game2048Engine, fn: (e: Game2048Engine) => void) => {
     fn(engine)
