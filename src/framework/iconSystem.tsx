@@ -91,6 +91,8 @@ const iconDefs: Record<string, string> = {
   games: 'gamepad-2',
   productivity: 'clipboard-check',
   utilities: 'wrench',
+  news: 'newspaper',
+  'message-circle': 'message-circle',
 }
 
 export type IconName = keyof typeof iconDefs

@@ -276,6 +276,17 @@ export const apps: AppDef[] = [
     component: lazy(() => import('../apps/FifteenPuzzle/FifteenPuzzleApp')),
   },
   {
+    id: 'hackernews',
+    name: 'Hacker News',
+    description: 'Browse top stories from Y Combinator — points, comments, saves & search',
+    path: '/hackernews',
+    color: '#ff6600',
+    gradient: 'linear-gradient(135deg, #ff6600, #f97316)',
+    icon: 'tabler:news',
+    category: 'utilities',
+    component: lazy(() => import('../apps/HackerNews/HackerNewsApp')),
+  },
+  {
     id: 'moodist',
     name: 'Moodist',
     description: '84 ambient sounds — focus, relax, and sleep with layered soundscapes',
