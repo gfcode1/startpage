@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react'
 import type { User, Session } from '@supabase/supabase-js'
-import { supabase } from '../supabase/client'
+import { supabase, isSupabaseEnabled } from '../supabase/client'
 
 const AUTH_ERROR_MAP: Record<string, string> = {
   InvalidLoginCredentials: 'Invalid email or password',
@@ -45,6 +45,15 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null)
 
+const NOOP_CONTEXT: AuthContextValue = {
+  user: null, session: null, profile: null, loading: false,
+  signIn: async () => 'Supabase is not configured',
+  signUp: async () => 'Supabase is not configured',
+  signOut: async () => {},
+  refreshProfile: async () => {},
+  updateProfile: async () => {},
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
@@ -52,6 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   const fetchProfile = useCallback(async (userId: string) => {
+    if (!supabase) return
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
@@ -77,6 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   useEffect(() => {
+    if (!supabase) return
     supabase.auth.getSession().then(({ data: { session: s } }) => {
       setSession(s)
       setUser(s?.user ?? null)
@@ -100,16 +111,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [fetchProfile])
 
   const signIn = useCallback(async (email: string, password: string): Promise<string | null> => {
+    if (!supabase) return 'Supabase is not configured'
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     return mapAuthError(error)
   }, [])
 
   const signUp = useCallback(async (email: string, password: string): Promise<string | null> => {
+    if (!supabase) return 'Supabase is not configured'
     const { error } = await supabase.auth.signUp({ email, password })
     return mapAuthError(error)
   }, [])
 
   const signOut = useCallback(async () => {
+    if (!supabase) return
     await supabase.auth.signOut()
     setProfile(null)
   }, [])
@@ -119,7 +133,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user, fetchProfile])
 
   const updateProfile = useCallback(async (updates: Partial<Profile>) => {
-    if (!user) return
+    if (!user || !supabase) return
     const { error } = await supabase
       .from('profiles')
       .update(updates)
@@ -132,6 +146,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     setProfile(prev => prev ? { ...prev, ...updates } : null)
   }, [user])
+
+  if (!isSupabaseEnabled) {
+    return <AuthContext.Provider value={NOOP_CONTEXT}>{children}</AuthContext.Provider>
+  }
 
   return (
     <AuthContext.Provider value={{

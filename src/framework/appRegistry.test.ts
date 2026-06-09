@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest'
 import { apps, getAppById, getAppByPath } from './appRegistry'
 
 describe('appRegistry', () => {
-  it('registers 13 apps', () => {
-    expect(apps).toHaveLength(15)
+  it('registers all apps', () => {
+    expect(apps).toHaveLength(16)
   })
 
   it('each app has required fields', () => {

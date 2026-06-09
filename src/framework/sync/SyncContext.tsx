@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useRef, useCallback, ReactNode, useState } from 'react'
-import { supabase } from '../supabase/client'
+import { supabase, isSupabaseEnabled } from '../supabase/client'
 import { useAuth } from '../auth/AuthContext'
 import { storageEngine } from '../storage/StorageEngine'
 
@@ -15,6 +15,12 @@ const SyncContext = createContext<SyncContextValue | null>(null)
 
 const DEBOUNCE_MS = 2000
 
+const NOOP_CONTEXT: SyncContextValue = {
+  status: 'idle',
+  syncNow: async () => {},
+  lastSynced: null,
+}
+
 export function SyncProvider({ children }: { children: ReactNode }) {
   const { user, profile, refreshProfile } = useAuth()
   const [status, setStatus] = useState<SyncStatus>('idle')
@@ -29,7 +35,7 @@ export function SyncProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const pushToCloud = useCallback(async () => {
-    if (!user) return
+    if (!user || !supabase) return
 
     setStatus('syncing')
     try {
@@ -119,7 +125,7 @@ export function SyncProvider({ children }: { children: ReactNode }) {
   }, [user, pushToCloud])
 
   useEffect(() => {
-    if (!user) return
+    if (!user || !supabase) return
 
     const channel = supabase
       .channel('profile-changes')
@@ -163,6 +169,10 @@ export function SyncProvider({ children }: { children: ReactNode }) {
       storageEngine.importState(merged)
     }
   }, [profile])
+
+  if (!isSupabaseEnabled) {
+    return <SyncContext.Provider value={NOOP_CONTEXT}>{children}</SyncContext.Provider>
+  }
 
   return (
     <SyncContext.Provider value={{ status, syncNow, lastSynced }}>
