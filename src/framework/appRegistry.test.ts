@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest'
 import { apps, getAppById, getAppByPath } from './appRegistry'
 
 describe('appRegistry', () => {
-  it('registers 12 apps', () => {
-    expect(apps).toHaveLength(12)
+  it('registers 13 apps', () => {
+    expect(apps).toHaveLength(13)
   })
 
   it('each app has required fields', () => {
@@ -37,7 +37,7 @@ describe('appRegistry', () => {
 
     expect(music.length).toBeGreaterThanOrEqual(4)
     expect(games.length).toBeGreaterThanOrEqual(4)
-    expect(productivity.length).toBeGreaterThanOrEqual(2)
+    expect(productivity.length).toBeGreaterThanOrEqual(3)
     expect(utilities.length).toBeGreaterThanOrEqual(2)
   })
 

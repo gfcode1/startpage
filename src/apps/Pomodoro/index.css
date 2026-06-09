@@ -1,0 +1,301 @@
+/* ─── Pomodoro App ─── */
+.gf-pomodoro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gf-space-xl);
+  padding: var(--gf-space-xl);
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.gf-pomodoro__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gf-space-2xl);
+  width: 100%;
+}
+
+.gf-pomodoro__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.gf-pomodoro__settings-btn {
+  position: fixed;
+  bottom: calc(var(--gf-playerbar-height) + var(--gf-space-lg));
+  right: var(--gf-space-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--gf-radius-full);
+  background: var(--gf-bg-elevated);
+  color: var(--gf-text-muted);
+  border: 1px solid var(--gf-border);
+  transition: all var(--gf-duration-fast) var(--gf-ease-out);
+}
+
+.gf-pomodoro__settings-btn:hover {
+  color: var(--gf-accent);
+  border-color: var(--gf-border-accent);
+  background: var(--gf-bg-hover);
+}
+
+/* ─── Timer Section ─── */
+.gf-pomodoro-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gf-space-lg);
+}
+
+/* ─── Timer Display ─── */
+.gf-pomodoro-timer {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gf-pomodoro-timer__ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.gf-pomodoro-timer__track {
+  stroke: var(--gf-border);
+}
+
+.gf-pomodoro-timer__fill {
+  stroke: var(--gf-accent);
+  transition: stroke-dashoffset 0.5s var(--gf-ease-out);
+}
+
+.gf-pomodoro-timer__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.gf-pomodoro-timer__phase {
+  font-family: var(--gf-font-ui);
+  font-size: var(--gf-size-tiny);
+  font-weight: var(--gf-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gf-text-muted);
+}
+
+.gf-pomodoro-timer__time {
+  font-family: var(--gf-font-ui);
+  font-size: var(--gf-size-display);
+  font-weight: var(--gf-weight-bold);
+  color: var(--gf-text);
+  letter-spacing: 0.02em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.gf-pomodoro-timer__sessions {
+  font-family: var(--gf-font-ui);
+  font-size: var(--gf-size-tiny);
+  color: var(--gf-text-muted);
+}
+
+/* ─── Controls ─── */
+.gf-pomodoro-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--gf-space-md);
+}
+
+/* ─── Stats ─── */
+.gf-pomodoro-stats {
+  width: 100%;
+}
+
+.gf-pomodoro-stats__title {
+  font-family: var(--gf-font-ui);
+  font-size: var(--gf-size-small);
+  font-weight: var(--gf-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gf-text-muted);
+  margin-bottom: var(--gf-space-md);
+}
+
+.gf-pomodoro-stats__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gf-space-sm);
+}
+
+.gf-pomodoro-stats__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gf-space-xs);
+  padding: var(--gf-space-md);
+  border-radius: var(--gf-radius-md);
+  background: var(--gf-bg-elevated);
+  border: 1px solid var(--gf-border);
+  color: var(--gf-text-muted);
+}
+
+.gf-pomodoro-stats__value {
+  font-family: var(--gf-font-ui);
+  font-size: var(--gf-size-heading);
+  font-weight: var(--gf-weight-bold);
+  color: var(--gf-text);
+}
+
+.gf-pomodoro-stats__label {
+  font-family: var(--gf-font-ui);
+  font-size: var(--gf-size-tiny);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ─── Settings ─── */
+.gf-pomodoro-settings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gf-space-lg);
+  padding: var(--gf-space-md) 0;
+}
+
+.gf-pomodoro-settings__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gf-space-sm);
+}
+
+.gf-pomodoro-settings__label {
+  font-family: var(--gf-font-ui);
+  font-size: var(--gf-size-small);
+  color: var(--gf-text);
+}
+
+/* ─── Widget ─── */
+.gf-widget-pomodoro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gf-space-sm);
+  width: 100%;
+  padding: var(--gf-space-md) var(--gf-space-lg);
+}
+
+.gf-widget-pomodoro__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gf-widget-pomodoro__label {
+  font-family: var(--gf-font-ui);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gf-text-muted);
+}
+
+.gf-widget-pomodoro__open {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--gf-radius-md);
+  color: var(--gf-text-muted);
+  transition: all 0.15s ease;
+}
+
+.gf-widget-pomodoro__open:hover {
+  color: var(--gf-accent);
+  background: var(--gf-bg-hover);
+}
+
+.gf-widget-pomodoro__timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.gf-widget-pomodoro__phase {
+  font-family: var(--gf-font-ui);
+  font-size: var(--gf-size-tiny);
+  font-weight: var(--gf-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gf-text-muted);
+}
+
+.gf-widget-pomodoro__time {
+  font-family: var(--gf-font-ui);
+  font-size: var(--gf-size-heading);
+  font-weight: var(--gf-weight-bold);
+  color: var(--gf-text);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+.gf-widget-pomodoro__bar {
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--gf-border);
+  overflow: hidden;
+}
+
+.gf-widget-pomodoro__bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--gf-accent);
+  transition: width 0.5s var(--gf-ease-out);
+}
+
+.gf-widget-pomodoro__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gf-space-sm);
+}
+
+.gf-widget-pomodoro__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--gf-radius-full);
+  color: var(--gf-text-muted);
+  transition: all 0.15s ease;
+}
+
+.gf-widget-pomodoro__btn:hover {
+  background: var(--gf-bg-hover);
+  color: var(--gf-text);
+}
+
+.gf-widget-pomodoro__btn--primary {
+  background: var(--gf-accent);
+  color: var(--gf-text-inverse);
+}
+
+.gf-widget-pomodoro__btn--primary:hover {
+  background: var(--gf-accent-hover);
+}

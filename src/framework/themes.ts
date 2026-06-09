@@ -9,6 +9,7 @@ export interface ThemeColors {
   bgApp: string
   bgElevated: string
   bgHover: string
+  bgInput: string
   overlay: string
   text: string
   textMuted: string
@@ -47,6 +48,7 @@ export const themes: Record<string, Theme> = {
       bgApp: '#1a1412',
       bgElevated: '#241d1a',
       bgHover: '#2d2420',
+      bgInput: '#15100e',
       overlay: 'rgba(0,0,0,0.55)',
       text: '#c4b5a5',
       textMuted: '#7a6f65',
@@ -76,6 +78,7 @@ export const themes: Record<string, Theme> = {
       bgApp: '#faf5ed',
       bgElevated: '#ffffff',
       bgHover: '#f0e8d8',
+      bgInput: '#f0e8d8',
       overlay: 'rgba(0,0,0,0.3)',
       text: '#2a2018',
       textMuted: '#6a6055',

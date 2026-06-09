@@ -1,14 +1,74 @@
 import { lazy, ComponentType, LazyExoticComponent } from 'react'
+import { apps } from './appRegistry'
 
 export type WidgetSize = 'small' | 'medium' | 'large'
+export type WidgetCategory = 'system' | 'app' | 'standard'
+
+export interface WidgetOption {
+  key: string
+  label: string
+  type: 'select' | 'toggle' | 'text'
+  default: string | boolean
+  options?: { label: string; value: string }[]
+}
 
 export interface WidgetDef {
   id: string
   name: string
   description: string
   size: WidgetSize
+  category: WidgetCategory
   component: LazyExoticComponent<ComponentType>
+  options?: WidgetOption[]
+  defaultActive?: boolean
 }
+
+export const systemWidgets: WidgetDef[] = [
+  {
+    id: 'search',
+    name: 'Search & Ask',
+    description: 'Search the web or ask an LLM',
+    size: 'large',
+    category: 'system',
+    defaultActive: true,
+    component: lazy(() => import('../apps/SearchWidget/SearchWidget')),
+    options: [
+      {
+        key: 'searchEngine',
+        label: 'Search Engine',
+        type: 'select',
+        default: 'google',
+        options: [
+          { label: 'Google', value: 'google' },
+          { label: 'DuckDuckGo', value: 'duckduckgo' },
+          { label: 'Bing', value: 'bing' },
+          { label: 'Brave Search', value: 'brave' },
+          { label: 'Ecosia', value: 'ecosia' },
+          { label: 'Startpage', value: 'startpage' },
+        ],
+      },
+      {
+        key: 'askProvider',
+        label: 'Ask Provider (LLM)',
+        type: 'select',
+        default: 'perplexity',
+        options: [
+          { label: 'Perplexity', value: 'perplexity' },
+          { label: 'ChatGPT', value: 'chatgpt' },
+          { label: 'Gemini', value: 'gemini' },
+          { label: 'Claude', value: 'claude' },
+          { label: 'Copilot', value: 'copilot' },
+        ],
+      },
+      {
+        key: 'openInNewTab',
+        label: 'Open in new tab',
+        type: 'toggle',
+        default: true,
+      },
+    ],
+  },
+]
 
 export const widgets: WidgetDef[] = [
   {
@@ -16,80 +76,45 @@ export const widgets: WidgetDef[] = [
     name: 'Clock',
     description: 'Current time and date',
     size: 'small',
+    category: 'standard',
     component: lazy(() => import('../apps/ClockWidget/ClockWidget')),
-  },
-  {
-    id: 'weather',
-    name: 'Weather',
-    description: 'Current weather conditions',
-    size: 'medium',
-    component: lazy(() => import('../apps/WeatherWidget/WeatherWidget')),
-  },
-  {
-    id: 'news',
-    name: 'News',
-    description: 'Latest headlines from your feeds',
-    size: 'small',
-    component: lazy(() => import('../apps/NewsWidget/NewsWidget')),
-  },
-  {
-    id: 'todo',
-    name: 'Todo',
-    description: 'Your pending tasks',
-    size: 'small',
-    component: lazy(() => import('../apps/TodoWidget/TodoWidget')),
   },
   {
     id: 'quicknote',
     name: 'Quick Note',
     description: 'Your latest note',
     size: 'small',
+    category: 'standard',
     component: lazy(() => import('../apps/QuickNoteWidget/QuickNoteWidget')),
-  },
-  {
-    id: 'nowplaying',
-    name: 'Now Playing',
-    description: 'Currently playing track',
-    size: 'small',
-    component: lazy(() => import('../apps/NowPlayingWidget/NowPlayingWidget')),
-  },
-  {
-    id: 'radiofav',
-    name: 'Radio Favorite',
-    description: 'Your favorite radio station',
-    size: 'small',
-    component: lazy(() => import('../apps/RadioFavWidget/RadioFavWidget')),
-  },
-  {
-    id: 'uv',
-    name: 'UV Index',
-    description: 'Today\'s UV index',
-    size: 'small',
-    component: lazy(() => import('../apps/UvWidget/UvWidget')),
-  },
-  {
-    id: 'moon',
-    name: 'Moon Phase',
-    description: 'Current moon phase',
-    size: 'small',
-    component: lazy(() => import('../apps/MoonWidget/MoonWidget')),
-  },
-  {
-    id: 'aqi',
-    name: 'Air Quality',
-    description: 'Current air quality index',
-    size: 'small',
-    component: lazy(() => import('../apps/AqiWidget/AqiWidget')),
   },
   {
     id: 'quote',
     name: 'Quote of Day',
     description: 'Daily inspiration',
     size: 'medium',
+    category: 'standard',
     component: lazy(() => import('../apps/QuoteWidget/QuoteWidget')),
   },
 ]
 
+export function getAppDefinedWidgets(): WidgetDef[] {
+  const seen = new Set<string>()
+  return apps.flatMap(a => a.widgets ?? []).filter(w => {
+    if (seen.has(w.id)) return false
+    seen.add(w.id)
+    return true
+  })
+}
+
 export function getWidgetById(id: string): WidgetDef | undefined {
-  return widgets.find(w => w.id === id)
+  const all = [...systemWidgets, ...widgets, ...getAppDefinedWidgets()]
+  return all.find(w => w.id === id)
+}
+
+export function getAllWidgets(): WidgetDef[] {
+  return [...systemWidgets, ...widgets, ...getAppDefinedWidgets()]
+}
+
+export function getSystemWidgets(): WidgetDef[] {
+  return systemWidgets.filter(w => w.defaultActive)
 }

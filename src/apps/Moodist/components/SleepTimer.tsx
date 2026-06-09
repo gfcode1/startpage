@@ -56,6 +56,7 @@ export function SleepTimer({ onSleep }: SleepTimerProps) {
           value={minutes}
           onChange={e => setMinutes(Number(e.target.value))}
           disabled={isActive}
+          aria-label="Sleep timer minutes"
         >
           <option value={5}>5 min</option>
           <option value={10}>10 min</option>

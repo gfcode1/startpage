@@ -344,7 +344,7 @@ export default function MarkdownNotesApp() {
 
             <div className={`gf-markdown-notes__layout ${showFolderSidebar ? 'gf-markdown-notes__layout--sidebar' : ''}`}>
               {showFolderSidebar && (
-                <div className="gf-markdown-notes__sidebar-backdrop" onClick={() => setShowFolderSidebar(false)} />
+                <div className="gf-markdown-notes__sidebar-backdrop" onClick={() => setShowFolderSidebar(false)} role="presentation" />
               )}
               {showFolderSidebar && (
                 <aside className="gf-markdown-notes__sidebar">

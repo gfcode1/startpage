@@ -189,7 +189,7 @@ export default function Game2048App() {
       </div>
 
       <div className="gf-game__board">
-        <canvas ref={canvasRef} className="gf-game__canvas" tabIndex={0} />
+        <canvas ref={canvasRef} className="gf-game__canvas" tabIndex={0} role="application" aria-label="2048 game" />
 
         {showResume && (
           <div className="gf-game__overlay">
@@ -252,6 +252,7 @@ export default function Game2048App() {
             <input
               className="gf-game__name-input"
               type="text"
+              aria-label="Your name"
               placeholder="Your name"
               maxLength={20}
               value={playerName}

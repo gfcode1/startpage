@@ -49,6 +49,7 @@ export function NoisePanel() {
           className="gf-moodist__select"
           value={color}
           onChange={e => handleColorChange(e.target.value as NoiseColor)}
+          aria-label="Noise color"
         >
           {Object.entries(NOISE_LABELS).map(([k, v]) => (
             <option key={k} value={k}>{v}</option>

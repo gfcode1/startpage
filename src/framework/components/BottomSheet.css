@@ -7,7 +7,7 @@
   justify-content: center;
   background: var(--gf-overlay);
   backdrop-filter: blur(4px);
-  animation: gf-sheet-overlay-in 0.2s ease-out;
+  animation: gf-sheet-overlay-in var(--gf-duration-fast) var(--gf-ease-out);
 }
 
 @keyframes gf-sheet-overlay-in {
@@ -24,7 +24,7 @@
   border-radius: var(--gf-radius-xl) var(--gf-radius-xl) 0 0;
   display: flex;
   flex-direction: column;
-  animation: gf-sheet-in 0.3s ease-out;
+  animation: gf-sheet-in var(--gf-duration-normal) var(--gf-ease-out);
   will-change: transform;
 }
 
@@ -61,7 +61,7 @@
   height: 4px;
   border-radius: var(--gf-radius-full);
   background: var(--gf-border);
-  transition: background 0.2s ease;
+  transition: background var(--gf-duration-fast) var(--gf-ease-out);
 }
 
 .gf-sheet__handle-area:hover .gf-sheet__handle {
@@ -90,7 +90,7 @@
   height: 32px;
   border-radius: var(--gf-radius-md);
   color: var(--gf-text-muted);
-  transition: all 0.15s ease;
+  transition: all var(--gf-duration-fast) var(--gf-ease-out);
 }
 
 @media (hover: hover) {

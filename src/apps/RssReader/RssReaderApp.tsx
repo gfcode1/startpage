@@ -464,7 +464,7 @@ export default function RssReaderApp() {
                 onClick={() => handleArticleClick(article)}
                 role="button"
                 tabIndex={0}
-                onKeyDown={e => { if (e.key === 'Enter') handleArticleClick(article) }}
+                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleArticleClick(article) } }}
               >
                 {article.mediaThumbnail && (
                   <div className="gf-rssreader__card-thumb">
@@ -513,7 +513,7 @@ export default function RssReaderApp() {
 
       {drawerArticle && (
         <>
-          <div className="gf-rssreader__drawer-overlay" onClick={handleCloseDrawer} />
+          <div className="gf-rssreader__drawer-overlay" onClick={handleCloseDrawer} role="presentation" />
           <aside className="gf-rssreader__drawer" role="dialog" aria-label={drawerArticle.title} ref={drawerRef}>
             <div className="gf-rssreader__drawer-header">
               <div className="gf-rssreader__drawer-header-top">

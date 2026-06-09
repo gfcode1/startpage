@@ -1,0 +1,56 @@
+.gf-scoreboard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: var(--gf-space-md);
+  flex-wrap: wrap;
+}
+
+.gf-scoreboard__stats {
+  display: flex;
+  gap: var(--gf-space-sm);
+}
+
+.gf-scoreboard__box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--gf-space-xs) var(--gf-space-sm);
+  background: var(--gf-bg-elevated);
+  border-radius: var(--gf-radius-md);
+  border: 1px solid var(--gf-border);
+  min-width: 70px;
+}
+
+.gf-scoreboard__box--best {
+  border-color: var(--gf-border-accent);
+}
+
+.gf-scoreboard__label {
+  font-family: var(--gf-font-ui);
+  font-size: 0.6rem;
+  color: var(--gf-text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.gf-scoreboard__value {
+  font-family: var(--gf-font-display);
+  font-weight: var(--gf-weight-display, 700);
+  font-size: var(--gf-size-heading);
+  color: var(--gf-text);
+  line-height: 1.2;
+}
+
+.gf-scoreboard__diffs {
+  display: flex;
+  gap: var(--gf-space-xs);
+}
+
+@media (min-width: 640px) {
+  .gf-scoreboard__box {
+    min-width: 80px;
+    padding: var(--gf-space-xs) var(--gf-space-md);
+  }
+}

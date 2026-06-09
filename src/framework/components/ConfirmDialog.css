@@ -7,7 +7,7 @@
   justify-content: center;
   background: var(--gf-overlay);
   backdrop-filter: blur(4px);
-  animation: gf-confirm-fade-in 0.15s ease-out;
+  animation: gf-confirm-fade-in var(--gf-duration-fast) var(--gf-ease-out);
 }
 
 @keyframes gf-confirm-fade-in {
@@ -21,7 +21,7 @@
   border-radius: var(--gf-radius-lg);
   padding: var(--gf-space-xl);
   width: min(90vw, 380px);
-  animation: gf-confirm-slide-in 0.2s ease-out;
+  animation: gf-confirm-slide-in var(--gf-duration-fast) var(--gf-ease-out);
 }
 
 @keyframes gf-confirm-slide-in {

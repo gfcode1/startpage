@@ -154,7 +154,7 @@ export default function SnakeApp() {
       </div>
 
       <div className="gf-snake__board">
-        <canvas ref={canvasRef} className="gf-snake__canvas" tabIndex={0} />
+        <canvas ref={canvasRef} className="gf-snake__canvas" tabIndex={0} role="application" aria-label="Snake game" />
         {paused && !gameOver && (
           <div className="gf-snake__overlay">
             <div className="gf-snake__dialog">
@@ -193,6 +193,7 @@ export default function SnakeApp() {
             <h2 className="gf-snake__dialog-title">Save Score</h2>
             <p className="gf-snake__dialog-score">{finalScore}</p>
             <input className="gf-snake__name-input" type="text"
+              aria-label="Your name"
               placeholder="Your name" maxLength={20}
               value={playerName}
               onChange={(e) => setPlayerName(e.target.value)}

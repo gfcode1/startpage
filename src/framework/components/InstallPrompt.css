@@ -12,7 +12,7 @@
   border: 1px solid var(--gf-border);
   border-radius: var(--gf-radius-lg);
   box-shadow: var(--gf-shadow-lg);
-  animation: gf-install-slide-up 0.35s ease-out both;
+  animation: gf-install-slide-up var(--gf-duration-slow) var(--gf-ease-out) both;
   max-width: 90vw;
 }
 
@@ -62,7 +62,7 @@
   font-size: var(--gf-size-small);
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--gf-duration-fast) var(--gf-ease-out);
 }
 
 @media (hover: hover) {
@@ -87,7 +87,7 @@
   background: none;
   color: var(--gf-text-muted);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--gf-duration-fast) var(--gf-ease-out);
 }
 
 @media (hover: hover) {

@@ -1,4 +1,5 @@
 import { lazy, ComponentType, LazyExoticComponent } from 'react'
+import type { WidgetDef } from './widgetRegistry'
 
 export type AppCategory = 'music' | 'games' | 'productivity' | 'utilities'
 
@@ -12,6 +13,7 @@ export interface AppDef {
   icon: string
   category: AppCategory
   component: LazyExoticComponent<ComponentType>
+  widgets?: WidgetDef[]
 }
 
 export const apps: AppDef[] = [
@@ -25,6 +27,17 @@ export const apps: AppDef[] = [
     icon: 'tabler:headphones',
     category: 'music',
     component: lazy(() => import('../apps/YouTubeStreams/YouTubeStreamsApp')),
+    widgets: [
+      {
+        id: 'nowplaying',
+        name: 'Now Playing',
+        description: 'Currently playing track',
+        size: 'small',
+        category: 'app',
+        defaultActive: true,
+        component: lazy(() => import('../apps/NowPlayingWidget/NowPlayingWidget')),
+      },
+    ],
   },
   {
     id: 'somafm',
@@ -36,6 +49,17 @@ export const apps: AppDef[] = [
     icon: 'tabler:antenna-bars-5',
     category: 'music',
     component: lazy(() => import('../apps/Somafm/SomafmApp')),
+    widgets: [
+      {
+        id: 'nowplaying',
+        name: 'Now Playing',
+        description: 'Currently playing track',
+        size: 'small',
+        category: 'app',
+        defaultActive: true,
+        component: lazy(() => import('../apps/NowPlayingWidget/NowPlayingWidget')),
+      },
+    ],
   },
   {
     id: 'game2048',
@@ -58,6 +82,39 @@ export const apps: AppDef[] = [
     icon: 'tabler:list-check',
     category: 'productivity',
     component: lazy(() => import('../apps/Todo/TodoApp')),
+    widgets: [
+      {
+        id: 'todo',
+        name: 'Todo',
+        description: 'Your pending tasks',
+        size: 'small',
+        category: 'app',
+        defaultActive: true,
+        component: lazy(() => import('../apps/TodoWidget/TodoWidget')),
+      },
+    ],
+  },
+  {
+    id: 'pomodoro',
+    name: 'Pomodoro',
+    description: 'Focus timer with work/break intervals, session tracking & statistics',
+    path: '/pomodoro',
+    color: '#ef4444',
+    gradient: 'linear-gradient(135deg, #ef4444, #f97316)',
+    icon: 'tabler:clock',
+    category: 'productivity',
+    component: lazy(() => import('../apps/Pomodoro/PomodoroApp')),
+    widgets: [
+      {
+        id: 'pomodoro',
+        name: 'Pomodoro',
+        description: 'Focus timer with controls',
+        size: 'small',
+        category: 'app',
+        defaultActive: true,
+        component: lazy(() => import('../apps/Pomodoro/PomodoroWidget')),
+      },
+    ],
   },
   {
     id: 'flappybird',
@@ -80,6 +137,17 @@ export const apps: AppDef[] = [
     icon: 'tabler:rss',
     category: 'utilities',
     component: lazy(() => import('../apps/RssReader/RssReaderApp')),
+    widgets: [
+      {
+        id: 'news',
+        name: 'News',
+        description: 'Latest headlines from your feeds',
+        size: 'small',
+        category: 'app',
+        defaultActive: true,
+        component: lazy(() => import('../apps/NewsWidget/NewsWidget')),
+      },
+    ],
   },
   {
     id: 'radiobrowser',
@@ -91,6 +159,17 @@ export const apps: AppDef[] = [
     icon: 'tabler:globe',
     category: 'music',
     component: lazy(() => import('../apps/RadioBrowser/RadioBrowserApp')),
+    widgets: [
+      {
+        id: 'radiofav',
+        name: 'Radio Favorite',
+        description: 'Your favorite radio station',
+        size: 'small',
+        category: 'app',
+        defaultActive: true,
+        component: lazy(() => import('../apps/RadioFavWidget/RadioFavWidget')),
+      },
+    ],
   },
   {
     id: 'emulator',
@@ -124,6 +203,55 @@ export const apps: AppDef[] = [
     icon: 'tabler:sun',
     category: 'utilities',
     component: lazy(() => import('../apps/Weather/WeatherApp')),
+    widgets: [
+      {
+        id: 'weather',
+        name: 'Weather',
+        description: 'Current weather conditions',
+        size: 'medium',
+        category: 'app',
+        defaultActive: true,
+        component: lazy(() => import('../apps/WeatherWidget/WeatherWidget')),
+      },
+      {
+        id: 'uv',
+        name: 'UV Index',
+        description: 'Today\'s UV index',
+        size: 'small',
+        category: 'app',
+        defaultActive: true,
+        component: lazy(() => import('../apps/UvWidget/UvWidget')),
+      },
+      {
+        id: 'moon',
+        name: 'Moon Phase',
+        description: 'Current moon phase',
+        size: 'small',
+        category: 'app',
+        defaultActive: true,
+        component: lazy(() => import('../apps/MoonWidget/MoonWidget')),
+      },
+      {
+        id: 'aqi',
+        name: 'Air Quality',
+        description: 'Current air quality index',
+        size: 'small',
+        category: 'app',
+        defaultActive: true,
+        component: lazy(() => import('../apps/AqiWidget/AqiWidget')),
+      },
+    ],
+  },
+  {
+    id: 'swappuzzle',
+    name: 'Swap Puzzle',
+    description: 'Swap tiles to recompose the photo — 3×3, 4×4 & 5×5 puzzles',
+    path: '/swappuzzle',
+    color: '#8b5cf6',
+    gradient: 'linear-gradient(135deg, #8b5cf6, #ec4899)',
+    icon: 'tabler:arrows-shuffle',
+    category: 'games',
+    component: lazy(() => import('../apps/SwapPuzzle/SwapPuzzleApp')),
   },
   {
     id: 'snake',
@@ -137,6 +265,17 @@ export const apps: AppDef[] = [
     component: lazy(() => import('../apps/Snake/SnakeApp')),
   },
   {
+    id: 'fifteenpuzzle',
+    name: 'Photo Puzzle',
+    description: 'Slide tiles to recompose a photo — 3×3, 4×4 & 5×5 puzzles',
+    path: '/fifteenpuzzle',
+    color: '#06b6d4',
+    gradient: 'linear-gradient(135deg, #06b6d4, #8b5cf6)',
+    icon: 'tabler:layout-grid',
+    category: 'games',
+    component: lazy(() => import('../apps/FifteenPuzzle/FifteenPuzzleApp')),
+  },
+  {
     id: 'moodist',
     name: 'Moodist',
     description: '84 ambient sounds — focus, relax, and sleep with layered soundscapes',
@@ -146,6 +285,17 @@ export const apps: AppDef[] = [
     icon: 'tabler:wave-sine',
     category: 'music',
     component: lazy(() => import('../apps/Moodist/MoodistApp')),
+    widgets: [
+      {
+        id: 'nowplaying',
+        name: 'Now Playing',
+        description: 'Currently playing track',
+        size: 'small',
+        category: 'app',
+        defaultActive: true,
+        component: lazy(() => import('../apps/NowPlayingWidget/NowPlayingWidget')),
+      },
+    ],
   },
 ]
 

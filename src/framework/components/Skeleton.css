@@ -59,8 +59,3 @@
   border-radius: var(--gf-radius-sm);
   animation: gf-skeleton-pulse 1.5s ease-in-out infinite;
 }
-
-@keyframes gf-skeleton-pulse {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.6; }
-}

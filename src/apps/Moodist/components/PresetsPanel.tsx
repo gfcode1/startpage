@@ -65,6 +65,7 @@ export function PresetsPanel({ sounds, onApplyPreset }: PresetsPanelProps) {
         <input
           className="gf-moodist__input"
           placeholder="Preset name..."
+          aria-label="Preset name"
           value={newLabel}
           onChange={e => setNewLabel(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter') savePreset() }}

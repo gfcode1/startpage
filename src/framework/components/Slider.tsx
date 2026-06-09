@@ -7,10 +7,11 @@ interface SliderProps {
   max?: number
   step?: number
   className?: string
+  'aria-label'?: string
   [key: string]: unknown
 }
 
-export function GfSlider({ value = 0, onChange, min = 0, max = 1, step = 0.01, className = '', ...props }: SliderProps) {
+export function GfSlider({ value = 0, onChange, min = 0, max = 1, step = 0.01, className = '', 'aria-label': ariaLabel, ...props }: SliderProps) {
   return (
     <div className={`gf-slider ${className}`} {...props}>
       <input
@@ -20,6 +21,7 @@ export function GfSlider({ value = 0, onChange, min = 0, max = 1, step = 0.01, c
         max={max}
         step={step}
         value={value}
+        aria-label={ariaLabel}
         onChange={(e) => onChange?.(parseFloat(e.target.value))}
       />
       <div className="gf-slider__track">

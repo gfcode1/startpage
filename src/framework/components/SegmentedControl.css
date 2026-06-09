@@ -29,7 +29,7 @@
   font-family: var(--gf-font-ui);
   font-size: var(--gf-size-small);
   color: var(--gf-text-muted);
-  transition: all 0.15s ease;
+  transition: all var(--gf-duration-fast) var(--gf-ease-out);
   border-right: 1px solid var(--gf-border);
   text-transform: uppercase;
   letter-spacing: 0.05em;

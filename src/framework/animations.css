@@ -19,6 +19,11 @@
   100% { transform: scaleY(1); }
 }
 
+@keyframes gf-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 @keyframes gf-fade-in-up {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
@@ -29,7 +34,18 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes gf-scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
 @keyframes gf-card-enter {
   from { opacity: 0; transform: translateY(30px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes gf-skeleton-pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 1; }
 }

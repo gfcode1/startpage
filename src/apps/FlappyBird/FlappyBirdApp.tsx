@@ -168,7 +168,7 @@ export default function FlappyBirdApp() {
       </div>
 
       <div className="gf-flappy__board" onClick={handleBoardTap}>
-        <canvas ref={canvasRef} className="gf-flappy__canvas" tabIndex={0} />
+        <canvas ref={canvasRef} className="gf-flappy__canvas" tabIndex={0} role="application" aria-label="Flappy Bird game" />
 
         {paused && !gameOver && (
           <div className="gf-flappy__overlay">
@@ -206,6 +206,7 @@ export default function FlappyBirdApp() {
             <p className="gf-flappy__dialog-score">{finalScore}</p>
             <input
               className="gf-flappy__name-input"
+              aria-label="Your name"
               type="text"
               placeholder="Your name"
               maxLength={20}

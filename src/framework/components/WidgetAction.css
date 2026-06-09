@@ -11,7 +11,7 @@
   padding: var(--gf-space-xs) var(--gf-space-sm);
   border-radius: var(--gf-radius-md);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--gf-duration-fast) var(--gf-ease-out);
 }
 
 @media (hover: hover) {
@@ -22,7 +22,7 @@
 }
 
 .gf-widget-action svg {
-  transition: transform 0.15s ease;
+  transition: transform var(--gf-duration-fast) var(--gf-ease-out);
 }
 
 .gf-widget-action:hover svg {

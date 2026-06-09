@@ -30,7 +30,7 @@
   border-radius: var(--gf-radius-lg);
   background: var(--gf-bg-app);
   overflow: hidden;
-  transition: all 0.2s ease;
+  transition: all var(--gf-duration-fast) var(--gf-ease-out);
   min-height: 100px;
 }
 
@@ -53,6 +53,47 @@
   .gf-widget-card--large { grid-column: span 3; }
 }
 
+.gf-widget-card--system {
+  border-color: var(--gf-border);
+  background: var(--gf-bg-app);
+}
+
+.gf-widget-card--system:hover {
+  border-color: var(--gf-border-accent);
+  box-shadow: var(--gf-shadow-sm);
+}
+
+.gf-widget-card__options-btn {
+  position: absolute;
+  top: var(--gf-space-xs);
+  right: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--gf-radius-md);
+  color: var(--gf-text-muted);
+  opacity: 0;
+  transform: scale(0.85);
+  transition: all var(--gf-duration-fast) var(--gf-ease-out);
+  z-index: 3;
+}
+
+.gf-widget-card:hover .gf-widget-card__options-btn {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.gf-widget-card__options-btn:hover {
+  color: var(--gf-text);
+  background: var(--gf-bg-hover);
+}
+
+.gf-widget-card--system .gf-widget-card__options-btn {
+  right: var(--gf-space-xs);
+}
+
 .gf-widget-card__remove {
   position: absolute;
   top: var(--gf-space-xs);
@@ -67,7 +108,7 @@
   background: var(--gf-bg);
   opacity: 0;
   transform: scale(0.85);
-  transition: all 0.15s ease;
+  transition: all var(--gf-duration-fast) var(--gf-ease-out);
   z-index: 3;
 }
 
@@ -141,7 +182,7 @@
   color: var(--gf-text-muted);
   cursor: grab;
   opacity: 0;
-  transition: opacity 0.15s ease, background 0.15s ease;
+  transition: opacity var(--gf-duration-fast) var(--gf-ease-out), background var(--gf-duration-fast) var(--gf-ease-out);
   z-index: 3;
   touch-action: none;
 }
@@ -179,7 +220,7 @@
   border-radius: var(--gf-radius-md);
   border: 1px dashed var(--gf-border);
   color: var(--gf-text-muted);
-  transition: all 0.15s ease;
+  transition: all var(--gf-duration-fast) var(--gf-ease-out);
 }
 
 .gf-widgets__add-btn:hover {
@@ -201,7 +242,7 @@
   box-shadow: var(--gf-shadow-md);
   z-index: 50;
   overflow: hidden;
-  animation: gf-widget-fade-in-up 0.15s ease-out both;
+  animation: gf-widget-fade-in-up var(--gf-duration-fast) var(--gf-ease-out) both;
 }
 
 .gf-widgets__picker-item {
@@ -210,7 +251,7 @@
   gap: 2px;
   padding: var(--gf-space-sm) var(--gf-space-md);
   text-align: left;
-  transition: background 0.15s ease;
+  transition: background var(--gf-duration-fast) var(--gf-ease-out);
 }
 
 .gf-widgets__picker-item:hover {

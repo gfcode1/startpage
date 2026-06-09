@@ -8,7 +8,7 @@
   font-weight: 500;
   letter-spacing: 0.02em;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--gf-duration-fast) var(--gf-ease-out);
   border: 1px solid transparent;
 }
 

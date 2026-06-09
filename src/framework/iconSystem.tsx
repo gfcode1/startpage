@@ -44,6 +44,7 @@ const iconDefs: Record<string, string> = {
   wave: 'audio-waveform',
   snake: 'bug',
   sparkles: 'sparkles',
+  timer: 'clock',
   popup: 'maximize-2',
   gear: 'settings',
   queue: 'list',

@@ -52,6 +52,7 @@ export function BinauralPanel() {
           className="gf-moodist__select"
           value={frequency}
           onChange={e => handleFreqChange(e.target.value as BinauralFreq)}
+          aria-label="Binaural beat frequency"
         >
           {Object.entries(FREQ_LABELS).map(([k, v]) => (
             <option key={k} value={k}>{v}</option>

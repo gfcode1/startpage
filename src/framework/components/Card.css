@@ -6,7 +6,7 @@
   background: var(--gf-bg-app);
   border: 1px solid var(--gf-border);
   border-radius: var(--gf-radius-lg);
-  transition: all 0.3s ease;
+  transition: all var(--gf-duration-normal) var(--gf-ease-out);
   overflow: hidden;
 }
 
@@ -31,7 +31,7 @@
   width: 4px;
   border-radius: var(--gf-radius-full);
   background: var(--gf-card-accent, var(--gf-accent));
-  transition: all 0.3s ease;
+  transition: all var(--gf-duration-normal) var(--gf-ease-out);
 }
 
 .gf-card--clickable:hover .gf-card__accent {

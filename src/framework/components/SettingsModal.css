@@ -7,7 +7,7 @@
   justify-content: center;
   background: var(--gf-overlay);
   backdrop-filter: blur(4px);
-  animation: gf-settings-fade-in 0.2s ease-out;
+  animation: gf-settings-fade-in var(--gf-duration-fast) var(--gf-ease-out);
 }
 
 @keyframes gf-settings-fade-in {
@@ -22,7 +22,7 @@
   width: min(90vw, 420px);
   max-height: 85vh;
   overflow-y: auto;
-  animation: gf-settings-slide-in 0.25s ease-out;
+  animation: gf-settings-slide-in var(--gf-duration-normal) var(--gf-ease-out);
 }
 
 @keyframes gf-settings-slide-in {
@@ -57,7 +57,7 @@
   height: 36px;
   border-radius: var(--gf-radius-md);
   color: var(--gf-text-muted);
-  transition: all 0.15s ease;
+  transition: all var(--gf-duration-fast) var(--gf-ease-out);
 }
 
 @media (hover: hover) {
@@ -114,7 +114,7 @@
   font-family: var(--gf-font-ui);
   font-size: var(--gf-size-body);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--gf-duration-fast) var(--gf-ease-out);
   min-height: 44px;
 }
 
@@ -154,7 +154,7 @@
   font-family: var(--gf-font-ui);
   font-size: var(--gf-size-small);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--gf-duration-fast) var(--gf-ease-out);
 }
 
 @media (hover: hover) {

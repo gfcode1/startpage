@@ -119,7 +119,7 @@ export function PlayerBar({
             )}
             <div className="gf-playerbar__volume">
               <GfIcon name="volume" size={14} />
-              <GfSlider value={volume} onChange={onVolumeChange} />
+              <GfSlider value={volume} onChange={onVolumeChange} aria-label="Volume" />
             </div>
           </div>
         </div>

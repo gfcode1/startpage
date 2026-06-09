@@ -53,6 +53,7 @@ function applyTheme(themeKey: string): void {
     '--gf-bg-app': c.bgApp,
     '--gf-bg-elevated': c.bgElevated,
     '--gf-bg-hover': c.bgHover,
+    '--gf-bg-input': c.bgInput,
     '--gf-overlay': c.overlay,
     '--gf-text': c.text,
     '--gf-text-muted': c.textMuted,

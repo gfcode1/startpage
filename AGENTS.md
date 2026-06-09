@@ -6,31 +6,34 @@
 |--------|---------|
 | Dev server | `npm run dev` |
 | Build | `npm run build` |
+| Bundle analysis | `npm run analyze` |
 | Preview build | `npm run preview` |
 | Lint | `npm run lint` |
+| Typecheck | `npm run typecheck` |
 | Test all | `npm run test` |
 | Test watch | `npm run test:watch` |
-| Single test file | `npx vitest run path/to/file.test.tsx` |
+| Single test | `npx vitest run path/to/file.test.tsx` |
 
-**Order:** `lint` before `test`. TypeScript errors surface through lint (no separate typecheck command).
+**CI order:** `lint` → `test` → `build`. CI does not run `typecheck`. Pre-commit hook runs `eslint --fix` on staged files via `husky` + `lint-staged`.
 
 ## Stack
 
 - React 19, TypeScript 6, Vite 8, Vitest 4, React Router 7, ESLint 10 (flat config)
-- No `tsc` check — type checking via `tsconfig.json` + `tseslint`
+- Path alias `@/*` → `src/*` (configured in both `tsconfig.json` and `vite.config.js`)
 
 ## Architecture
 
 - **Entry:** `src/main.tsx` → `App.tsx` (Router → Theme → Player → Toast → ErrorBoundary → AppBadgeProvider)
 - **Apps** registered in `src/framework/appRegistry.ts` (lazy-loaded, 12 apps)
+- **Widget system:** `widgetRegistry.ts` defines 3 categories: `system` (Search), `standard` (Clock/QuickNote/Quote), `app` (per-app widgets). Launcher renders `WidgetGrid` with drag-reorderable layout via `@dnd-kit`. Options persisted via `WidgetOptionsContext`.
 - **Base path:** `/startpage` (set in `vite.config.js` and Router basename)
-- **Themes:** 5 themes (`Analog`, `Spectrum`, `Daylight`, `Retro`, `Forest`) defined in `src/framework/themes.ts`, applied via CSS custom properties + `data-theme` attribute on `<html>`
-- **Storage:** `useAppStorage(appId, key, default)` → persists to `localStorage` under `gf:{appId}:{key}`. Old `-` separator keys auto-migrated on read.
+- **Themes:** 2 themes (`dark`, `light`) defined in `src/framework/themes.ts`, applied via CSS custom properties + `data-theme` attribute on `<html>`. Legacy named themes (`Analog`, `Spectrum`, `Retro`, `Forest` → `dark`; `Daylight` → `light`) auto-migrate on first read.
+- **Storage:** `useAppStorage(appId, key, default)` → persists to `localStorage` under `gf:{appId}:{key}`. Old `-` separator keys auto-migrated on read. Game state via `useAppSaveData` with versioned wrapper.
 - **Player:** `PlayerContext` manages cross-app audio state (volume persisted, play/stop/metadata transient)
 - **Components:** shared UI kit in `src/framework/components/`
 - **Engine:** custom game/audio/tween engines in `src/framework/engine/`
 - **Hooks:** utility hooks in `src/framework/hooks/` (`useFlipAnimation`, `useCommandPalette`, `useInstallPrompt`, `useScrollToTop`, `useLocalStorage`)
-- **View Transitions:** `App.tsx` → `useViewTransitionLocation()` wraps route changes in `document.startViewTransition()` for smooth crossfade between pages
+- **View Transitions:** route changes use `document.startViewTransition()` for smooth crossfade between pages
 - **App badges:** `AppBadgeContext` provides `useAppBadge(appId)` hook to set count badges on launcher app cards
 - **Command palette:** `CommandPalette` component + `useCommandPalette()` hook (⌘K/⌃K global shortcut, fuzzy search apps/themes/actions)
 
