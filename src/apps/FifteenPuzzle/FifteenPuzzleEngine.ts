@@ -3,6 +3,7 @@ import type { Difficulty } from './types'
 import { DIFFICULTY_CONFIG } from './types'
 
 const ANIM_DURATION = 200
+const TILE_GAP = 2
 
 interface AnimatingTile {
   tileNum: number
@@ -20,15 +21,40 @@ export class FifteenPuzzleEngine extends GameEngine {
   moveCount = 0
   solved = false
   started = false
+  focusR = 0
+  focusC = 0
 
   private puzzleImage: HTMLImageElement | null = null
   private anims: AnimatingTile[] = []
   private onMoveCb: (() => void) | null = null
   private onSolveCb: (() => void) | null = null
   private initialised = false
+  private themeBg = '#1a1a2e'
+  private themeMuted = '#666'
+  private themeAccent = '#06b6d4'
 
   init() {
     this.initialised = true
+    this.readTheme()
+  }
+
+  private readTheme(): void {
+    this.themeBg = this.getCssVar('--gf-bg-elevated') || '#1a1a2e'
+    this.themeMuted = this.getCssVar('--gf-text-muted') || '#666'
+    this.themeAccent = this.getCssVar('--gf-accent') || '#06b6d4'
+  }
+
+  protected onResume(): void {
+    this.readTheme()
+  }
+
+  protected onPause(): void {
+    this.saveGameState()
+  }
+
+  stop() {
+    super.stop()
+    this.anims = []
   }
 
   setImage(img: HTMLImageElement) {
@@ -49,6 +75,8 @@ export class FifteenPuzzleEngine extends GameEngine {
     this.moveCount = 0
     this.solved = false
     this.anims = []
+    this.focusR = 0
+    this.focusC = 0
 
     this.grid = []
     let n = 1
@@ -63,6 +91,63 @@ export class FifteenPuzzleEngine extends GameEngine {
 
     this.shuffle()
     this.started = true
+    this.animateEntrance()
+  }
+
+  loadGameFromState(data: unknown) {
+    this.deserialize(data)
+    if (!this.initialised) this.init()
+    this.solved = false
+    this.anims = []
+    this.focusR = 0
+    this.focusC = 0
+  }
+
+  private animateEntrance() {
+    let delay = 0
+    for (let r = 0; r < this.rows; r++) {
+      for (let c = 0; c < this.cols; c++) {
+        if (this.grid[r][c] === 0) continue
+        const target = { scale: 1 }
+        this.tweens.add({
+          target,
+          to: { scale: 1 },
+          duration: 200,
+          delay,
+          easing: 'easeOutBack',
+        })
+        delay += 20
+      }
+    }
+  }
+
+  private animateVictory() {
+    const rows = this.rows
+    const cols = this.cols
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        if (this.grid[r][c] === 0) continue
+        const target = { pulse: 1 }
+        this.tweens.add({
+          target,
+          to: { pulse: 0 },
+          duration: 500,
+          delay: (r * cols + c) * 30,
+          easing: 'easeOutCubic',
+        })
+      }
+    }
+  }
+
+  private playVictorySound(): void {
+    const engine = this.audio
+    if (!engine) return
+    const notes = [523, 659, 784, 1047]
+    notes.forEach((freq, i) => {
+      setTimeout(() => {
+        engine.playTone(freq, 'sine', 0.12, 0.2, 0.001)
+      }, i * 120)
+    })
   }
 
   private shuffle() {
@@ -98,6 +183,13 @@ export class FifteenPuzzleEngine extends GameEngine {
     this.grid[r2][c2] = t
   }
 
+  setFocus(r: number, c: number) {
+    if (r >= 0 && r < this.rows && c >= 0 && c < this.cols) {
+      this.focusR = r
+      this.focusC = c
+    }
+  }
+
   tryMove(r: number, c: number): boolean {
     if (this.anims.length > 0 || this.solved || !this.started) return false
     if (this.grid[r][c] === 0) return false
@@ -120,6 +212,7 @@ export class FifteenPuzzleEngine extends GameEngine {
 
     this.swap(r, c, empty.r, empty.c)
     this.moveCount++
+    this.audio?.playMove()
     this.onMoveCb?.()
     return true
   }
@@ -153,22 +246,24 @@ export class FifteenPuzzleEngine extends GameEngine {
       this.anims = []
       if (this.checkSolved()) {
         this.solved = true
+        this.animateVictory()
+        this.playVictorySound()
         this.onSolveCb?.()
       }
     }
   }
 
   protected render(ctx: CanvasRenderingContext2D) {
-    const gap = 2
+    const gap = TILE_GAP
     const tileW = this.width / this.cols
     const tileH = this.height / this.rows
 
-    ctx.fillStyle = this.getCssVar('--gf-bg-elevated') || '#1a1a2e'
+    ctx.fillStyle = this.themeBg
     this.roundRect(0, 0, this.width, this.height, 8)
     ctx.fill()
 
     if (!this.puzzleImage) {
-      ctx.fillStyle = this.getCssVar('--gf-text-muted') || '#666'
+      ctx.fillStyle = this.themeMuted
       ctx.font = '16px sans-serif'
       ctx.textAlign = 'center'
       ctx.fillText('Select a photo to play', this.width / 2, this.height / 2)
@@ -207,11 +302,25 @@ export class FifteenPuzzleEngine extends GameEngine {
           drawX, drawY, cellW, cellH,
         )
 
-        ctx.strokeStyle = 'rgba(255,255,255,0.12)'
-        ctx.lineWidth = 1
-        ctx.strokeRect(drawX, drawY, cellW, cellH)
+        const isFocus = r === this.focusR && c === this.focusC
+        if (isFocus && !anim && this.grid[r][c] !== 0) {
+          ctx.strokeStyle = this.themeAccent
+          ctx.lineWidth = 2
+          ctx.setLineDash([4, 3])
+          ctx.strokeRect(drawX, drawY, cellW, cellH)
+          ctx.setLineDash([])
+        } else {
+          ctx.strokeStyle = 'rgba(255,255,255,0.12)'
+          ctx.lineWidth = 1
+          ctx.strokeRect(drawX, drawY, cellW, cellH)
+        }
       }
     }
+  }
+
+  private saveGameState(): void {
+    if (!this.storage) return
+    this.storage.setItem('gameState', this.serialize())
   }
 
   serialize(): unknown {

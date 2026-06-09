@@ -155,7 +155,7 @@
   align-items: center;
   gap: var(--gf-space-md);
   padding: var(--gf-space-lg);
-  margin-top: var(--gf-space-md);
+  margin-bottom: var(--gf-space-md);
   background: var(--gf-bg-elevated);
   border: 1px solid var(--gf-border-accent);
   border-radius: var(--gf-radius-lg);

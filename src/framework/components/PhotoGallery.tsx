@@ -75,67 +75,11 @@ export function PhotoGallery({
         <input
           className="gf-photo-gallery__search-input"
           type="text"
-          placeholder="Search by author name…"
+          placeholder="Search by topic…"
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
-          aria-label="Search photos by author"
+          aria-label="Search photos by topic"
         />
-      </div>
-
-      {error && (
-        <div className="gf-photo-gallery__status">
-          <p>Failed to load photos</p>
-          <GfButton variant="primary" size="sm" onClick={retry}>Retry</GfButton>
-        </div>
-      )}
-
-      {loading && <p className="gf-photo-gallery__status">Loading photos…</p>}
-
-      {!loading && !error && photos.length === 0 && (
-        <p className="gf-photo-gallery__status">No photos found</p>
-      )}
-
-      {!loading && !error && photos.length > 0 && (
-        <div className="gf-photo-gallery__grid">
-          {photos.map(photo => (
-            <button
-              key={photo.id}
-              className={`gf-photo-gallery__card${selectedPhoto?.id === photo.id ? ' gf-photo-gallery__card--selected' : ''}`}
-              onClick={() => handlePhotoClick(photo)}
-            >
-              <img
-                src={selectedPhoto?.id === photo.id
-                  ? photo.downloadUrl
-                  : `https://picsum.photos/id/${photo.id}/200/200`
-                }
-                alt={`Photo by ${photo.author}`}
-                className="gf-photo-gallery__thumb"
-                loading="lazy"
-              />
-              <span className="gf-photo-gallery__author">{photo.author}</span>
-            </button>
-          ))}
-        </div>
-      )}
-
-      {!error && !loading && hasMore && (
-        <div className="gf-photo-gallery__load-more-wrap">
-          <GfButton variant="ghost" size="md" onClick={loadMore} disabled={loadingMore}>
-            {loadingMore ? 'Loading…' : 'Load more photos'}
-          </GfButton>
-        </div>
-      )}
-
-      <div className="gf-photo-gallery__upload">
-        <button className="gf-photo-gallery__upload-btn" onClick={() => fileInputRef.current?.click()}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="17 8 12 3 7 8" />
-            <line x1="12" y1="3" x2="12" y2="15" />
-          </svg>
-          Upload your photo
-        </button>
-        <input ref={fileInputRef} type="file" className="gf-photo-gallery__upload-input" accept="image/*" onChange={handleUpload} />
       </div>
 
       {selectedPhoto && (
@@ -168,6 +112,63 @@ export function PhotoGallery({
           {playError && <p className="gf-photo-gallery__play-error">{playError}</p>}
         </div>
       )}
+
+      {error && (
+        <div className="gf-photo-gallery__status">
+          <p>Failed to load photos</p>
+          <GfButton variant="primary" size="sm" onClick={retry}>Retry</GfButton>
+        </div>
+      )}
+
+      {loading && <p className="gf-photo-gallery__status">Loading photos…</p>}
+
+      {!loading && !error && photos.length === 0 && (
+        <p className="gf-photo-gallery__status">No photos found</p>
+      )}
+
+      {!loading && !error && photos.length > 0 && !selectedPhoto && (
+        <p className="gf-photo-gallery__status">Select a photo to play</p>
+      )}
+
+      {!loading && !error && photos.length > 0 && (
+        <div className="gf-photo-gallery__grid">
+          {photos.map(photo => (
+            <button
+              key={photo.id}
+              className={`gf-photo-gallery__card${selectedPhoto?.id === photo.id ? ' gf-photo-gallery__card--selected' : ''}`}
+              onClick={() => handlePhotoClick(photo)}
+            >
+              <img
+                src={photo.downloadUrl}
+                alt={`Photo by ${photo.author}`}
+                className="gf-photo-gallery__thumb"
+                loading="lazy"
+              />
+              <span className="gf-photo-gallery__author">{photo.author}</span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {!error && !loading && hasMore && (
+        <div className="gf-photo-gallery__load-more-wrap">
+          <GfButton variant="ghost" size="md" onClick={loadMore} disabled={loadingMore}>
+            {loadingMore ? 'Loading…' : 'Load more photos'}
+          </GfButton>
+        </div>
+      )}
+
+      <div className="gf-photo-gallery__upload">
+        <button className="gf-photo-gallery__upload-btn" onClick={() => fileInputRef.current?.click()}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          Upload your photo
+        </button>
+        <input ref={fileInputRef} type="file" className="gf-photo-gallery__upload-input" accept="image/*" onChange={handleUpload} />
+      </div>
 
       {bestScores && (
         <div className="gf-photo-gallery__bests">
