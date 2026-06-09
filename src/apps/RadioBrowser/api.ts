@@ -1,7 +1,7 @@
 import type { RadioStation, Tag, Country, ClickResponse } from './types'
 
 export const API_BASE = 'https://de1.api.radio-browser.info'
-const CORS_PROXY = 'https://api.allorigins.win/raw?url='
+const CORS_PROXY = 'https://corsproxy.org/?url='
 
 async function apiRequest<T>(url: string, options?: RequestInit & { externalSignal?: AbortSignal }): Promise<T> {
   const controller = new AbortController()
@@ -30,6 +30,7 @@ async function apiRequest<T>(url: string, options?: RequestInit & { externalSign
     ...options,
     headers: Object.keys(proxyHeaders).length > 0 ? proxyHeaders : undefined,
     signal: controller.signal,
+    credentials: 'omit',
   })
   clearTimeout(timeout)
   if (!res.ok) throw new Error(`API error: ${res.status}`)

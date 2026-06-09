@@ -138,8 +138,8 @@ export function downloadOpml(feeds: FeedConfig[]): void {
 
 const PROXIES: string[] = [
   'https://api.rss2json.com/v1/api.json?rss_url=',
-  'https://api.allorigins.win/get?url=',
-  'https://corsproxy.io/?url=',
+  'https://corsproxy.org/?url=',
+  'https://api.allorigins.win/raw?url=',
 ]
 
 function devProxyUrl(target: string): string {
@@ -165,7 +165,7 @@ async function fetchViaProxy(url: string, signal?: AbortSignal): Promise<string>
   for (const proxy of PROXIES) {
     try {
       const proxyUrl = proxy + encodeURIComponent(url)
-      const res = await fetch(proxyUrl, { signal })
+      const res = await fetch(proxyUrl, { signal, credentials: 'omit' })
 
       if (!res.ok) {
         if (res.status >= 500) continue
@@ -196,10 +196,7 @@ async function fetchViaProxy(url: string, signal?: AbortSignal): Promise<string>
       }
 
       if (proxy.includes('allorigins')) {
-        const json = JSON.parse(text)
-        if (json?.contents) return json.contents
-        if (json?.error) throw new Error(json.error)
-        throw new Error('Invalid proxy response')
+        return text
       }
 
       return text
