@@ -102,7 +102,7 @@ function reconstructRss(json: { feed?: Record<string, unknown>; items?: Record<s
     const desc = item.description as string | undefined
     return `<item><title>${esc(String(item.title || ''))}</title><link>${esc(String(item.link || ''))}</link><description>${esc(desc || '')}</description><pubDate>${esc(String(item.pubDate || ''))}</pubDate><dc:creator>${esc(String(item.author || ''))}</dc:creator></item>`
   }).join('')
-  return `<?xml version="1.0"?><rss version="2.0"><channel>${items}</channel></rss>`
+   return `<?xml version="1.0"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel>${items}</channel></rss>`
 }
 
 function esc(s: string): string {

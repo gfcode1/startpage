@@ -189,7 +189,7 @@ async function fetchViaProxy(url: string, signal?: AbortSignal): Promise<string>
               : ''
             return `<item><title>${escapeXml(String(item.title || ''))}</title><link>${escapeXml(String(item.link || ''))}</link><description>${escapeXml(String(item.description || ''))}</description><pubDate>${escapeXml(String(item.pubDate || ''))}</pubDate>${enclosureXml}${mediaXml}</item>`
           }).join('')
-          return `<?xml version="1.0"?><rss version="2.0"><channel><title>${escapeXml(json.feed.title)}</title><description>${escapeXml(json.feed.description || '')}</description>${items}</channel></rss>`
+           return `<?xml version="1.0"?><rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/"><channel><title>${escapeXml(json.feed.title)}</title><description>${escapeXml(json.feed.description || '')}</description>${items}</channel></rss>`
         }
         if (json?.error) throw new Error(json.error)
         throw new Error('Invalid rss2json response')
