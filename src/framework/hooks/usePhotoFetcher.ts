@@ -1,8 +1,22 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 const IMG_SIZE = 800
 const FETCH_TIMEOUT = 10000
-const TOPIC_COUNT = 30
+const PAGE_LIMIT = 60
+const MAX_PAGE = 20
+
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
+
+function randomPage(): number {
+  return Math.floor(Math.random() * MAX_PAGE) + 1
+}
 
 export interface PhotoInfo {
   id: string
@@ -14,7 +28,7 @@ async function fetchPicsumPage(pageNum: number): Promise<{ mapped: PhotoInfo[]; 
   const controller = new AbortController()
   const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT)
   try {
-    const res = await fetch(`https://picsum.photos/v2/list?page=${pageNum}&limit=30`, { signal: controller.signal })
+    const res = await fetch(`https://picsum.photos/v2/list?page=${pageNum}&limit=${PAGE_LIMIT}`, { signal: controller.signal })
     const data: { id: number; author: string }[] = await res.json()
     return {
       mapped: data.map(p => ({
@@ -29,50 +43,20 @@ async function fetchPicsumPage(pageNum: number): Promise<{ mapped: PhotoInfo[]; 
   }
 }
 
-function generateTopicPhotos(topic: string): PhotoInfo[] {
-  const result: PhotoInfo[] = []
-  for (let i = 0; i < TOPIC_COUNT; i++) {
-    result.push({
-      id: `topic-${topic}-${i}`,
-      author: topic,
-      downloadUrl: `https://picsum.photos/seed/${encodeURIComponent(topic)}${i}/${IMG_SIZE}/${IMG_SIZE}`,
-    })
-  }
-  return result
-}
-
 export function usePhotoFetcher() {
   const [apiPhotos, setApiPhotos] = useState<PhotoInfo[]>([])
   const [apiLoading, setApiLoading] = useState(true)
   const [apiError, setApiError] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
   const [loadingMore, setLoadingMore] = useState(false)
   const [apiHasMore, setApiHasMore] = useState(true)
-  const pageRef = useRef(1)
-
-  const isTopicSearch = searchQuery.trim().length > 0
-
-  const topicPhotos = useMemo(() => {
-    const q = searchQuery.trim()
-    return q ? generateTopicPhotos(q) : null
-  }, [searchQuery])
-
-  const photos = topicPhotos ?? apiPhotos
-  const loading = isTopicSearch ? false : apiLoading
-  const error = isTopicSearch ? false : apiError
-  const hasMore = isTopicSearch ? false : apiHasMore
 
   useEffect(() => {
-    if (topicPhotos) return
-
     let cancelled = false
-    pageRef.current = 1
-    fetchPicsumPage(1)
-      .then(({ mapped, count }) => {
+    fetchPicsumPage(randomPage())
+      .then(({ mapped }) => {
         if (cancelled) return
-        setApiPhotos(mapped)
+        setApiPhotos(shuffle(mapped))
         setApiLoading(false)
-        if (count < 30) setApiHasMore(false)
       })
       .catch(() => {
         if (cancelled) return
@@ -80,49 +64,42 @@ export function usePhotoFetcher() {
         setApiLoading(false)
       })
     return () => { cancelled = true }
-  }, [topicPhotos])
+  }, [])
 
   const loadMore = useCallback(() => {
-    if (isTopicSearch || loadingMore) return
-    pageRef.current += 1
+    if (loadingMore) return
     setLoadingMore(true)
-    fetchPicsumPage(pageRef.current)
-      .then(({ mapped, count }) => {
-        setApiPhotos(prev => [...prev, ...mapped])
+    fetchPicsumPage(randomPage())
+      .then(({ mapped }) => {
+        setApiPhotos(prev => [...prev, ...shuffle(mapped)])
         setLoadingMore(false)
-        if (count < 30) setApiHasMore(false)
       })
       .catch(() => setLoadingMore(false))
-  }, [isTopicSearch, loadingMore])
+  }, [loadingMore])
 
   const retry = useCallback(() => {
-    if (isTopicSearch) return
-    pageRef.current = 1
     setApiPhotos([])
     setApiHasMore(true)
     setApiLoading(true)
     setApiError(false)
-    fetchPicsumPage(1)
-      .then(({ mapped, count }) => {
-        setApiPhotos(mapped)
+    fetchPicsumPage(randomPage())
+      .then(({ mapped }) => {
+        setApiPhotos(shuffle(mapped))
         setApiLoading(false)
-        if (count < 30) setApiHasMore(false)
       })
       .catch(() => {
         setApiError(true)
         setApiLoading(false)
       })
-  }, [isTopicSearch])
+  }, [])
 
   return {
-    photos,
-    loading,
-    error,
-    searchQuery,
-    setSearchQuery,
+    photos: apiPhotos,
+    loading: apiLoading,
+    error: apiError,
     loadMore,
     loadingMore,
-    hasMore,
+    hasMore: apiHasMore,
     retry,
   }
 }

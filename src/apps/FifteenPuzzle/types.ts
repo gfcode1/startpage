@@ -6,8 +6,3 @@ export const DIFFICULTY_CONFIG = {
   hard: { rows: 5, cols: 5, label: '5×5', shuffleMoves: 200 },
 } as const
 
-export interface PhotoInfo {
-  id: string
-  author: string
-  downloadUrl: string
-}

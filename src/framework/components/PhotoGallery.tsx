@@ -15,7 +15,7 @@ interface PhotoGalleryProps {
 export function PhotoGallery({
   difficulty, difficulties, onDifficultyChange, onPlay, bestScores,
 }: PhotoGalleryProps) {
-  const { photos, loading, error, searchQuery, setSearchQuery, loadMore, loadingMore, hasMore, retry } = usePhotoFetcher()
+  const { photos, loading, error, loadMore, loadingMore, hasMore, retry } = usePhotoFetcher()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [selectedPhoto, setSelectedPhoto] = useState<PhotoInfo | null>(null)
   const [playError, setPlayError] = useState('')
@@ -68,18 +68,11 @@ export function PhotoGallery({
 
   return (
     <div className="gf-photo-gallery">
-      <div className="gf-photo-gallery__search">
-        <svg className="gf-photo-gallery__search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
-        <input
-          className="gf-photo-gallery__search-input"
-          type="text"
-          placeholder="Search by topic…"
-          value={searchQuery}
-          onChange={e => setSearchQuery(e.target.value)}
-          aria-label="Search photos by topic"
-        />
+      <div className="gf-photo-gallery__upload">
+        <input ref={fileInputRef} type="file" className="gf-photo-gallery__upload-input" accept="image/*" onChange={handleUpload} />
+        <GfButton variant="primary" size="md" onClick={() => fileInputRef.current?.click()}>
+          Upload your photo
+        </GfButton>
       </div>
 
       {selectedPhoto && (
@@ -157,18 +150,6 @@ export function PhotoGallery({
           </GfButton>
         </div>
       )}
-
-      <div className="gf-photo-gallery__upload">
-        <button className="gf-photo-gallery__upload-btn" onClick={() => fileInputRef.current?.click()}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="17 8 12 3 7 8" />
-            <line x1="12" y1="3" x2="12" y2="15" />
-          </svg>
-          Upload your photo
-        </button>
-        <input ref={fileInputRef} type="file" className="gf-photo-gallery__upload-input" accept="image/*" onChange={handleUpload} />
-      </div>
 
       {bestScores && (
         <div className="gf-photo-gallery__bests">
