@@ -93,6 +93,7 @@ const iconDefs: Record<string, string> = {
   utilities: 'wrench',
   news: 'newspaper',
   'message-circle': 'message-circle',
+  'book-open': 'book-open',
 }
 
 export type IconName = keyof typeof iconDefs

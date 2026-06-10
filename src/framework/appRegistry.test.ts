@@ -3,7 +3,7 @@ import { apps, getAppById, getAppByPath } from './appRegistry'
 
 describe('appRegistry', () => {
   it('registers all apps', () => {
-    expect(apps).toHaveLength(16)
+    expect(apps).toHaveLength(17)
   })
 
   it('each app has required fields', () => {
