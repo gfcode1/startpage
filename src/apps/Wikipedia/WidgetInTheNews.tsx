@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import DOMPurify from 'dompurify'
 import { fetchFeed } from './api'
 import type { FeedNewsItem } from './types'
 import './WidgetInTheNews.css'
@@ -67,11 +68,10 @@ export default function WidgetInTheNews() {
   return (
     <div className="gf-widget-itn">
       {link ? (
-        <a className="gf-widget-itn__link" href={link.url} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}>
-          {item.story}
-        </a>
+        <a className="gf-widget-itn__link" href={link.url} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.story) }} />
       ) : (
-        <span className="gf-widget-itn__text">{item.story}</span>
+        <span className="gf-widget-itn__text" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.story) }} />
       )}
       <span className="gf-widget-itn__dot">
         {items.map((_, i) => <span key={i} className={i === index ? 'gf-widget-itn__dot--active' : ''} />)}

@@ -348,6 +348,28 @@ export const apps: AppDef[] = [
       },
     ],
   },
+  {
+    id: 'kanban',
+    name: 'Kanban',
+    description: 'Visual project manager — boards, columns, cards, and drag & drop workflow',
+    path: '/kanban',
+    color: '#8b5cf6',
+    gradient: 'linear-gradient(135deg, #8b5cf6, #3b82f6)',
+    icon: 'tabler:layout-kanban',
+    category: 'productivity',
+    component: lazy(() => import('../apps/Kanban/KanbanApp')),
+    widgets: [
+      {
+        id: 'kanban',
+        name: 'Kanban',
+        description: 'Board overview with column stats',
+        size: 'medium',
+        category: 'app',
+        defaultActive: true,
+        component: lazy(() => import('../apps/Kanban/KanbanWidget')),
+      },
+    ],
+  },
 ]
 
 export function getAppById(id: string): AppDef | undefined {

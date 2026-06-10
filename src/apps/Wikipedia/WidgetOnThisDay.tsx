@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import DOMPurify from 'dompurify'
 import { fetchFeed } from './api'
 import type { FeedOnThisDayEvent } from './types'
 import './WidgetOnThisDay.css'
@@ -70,7 +71,7 @@ export default function WidgetOnThisDay() {
         {events.map((ev, i) => (
           <div key={i} className="gf-widget-oth__event">
             <span className="gf-widget-oth__year">{ev.year}</span>
-            <span className="gf-widget-oth__text">{ev.text}</span>
+            <span className="gf-widget-oth__text" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(ev.text) }} />
           </div>
         ))}
       </div>

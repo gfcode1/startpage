@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import DOMPurify from 'dompurify'
 import { useNavigate } from 'react-router-dom'
 import { fetchFeed } from './api'
 import type { FeedTfa } from './types'
@@ -69,7 +70,7 @@ export default function WidgetDidYouKnow() {
       {tfa.thumbnail && (
         <img className="gf-widget-dyk__img" src={tfa.thumbnail.source} alt="" loading="lazy" />
       )}
-      <h3 className="gf-widget-dyk__title">{tfa.displaytitle}</h3>
+      <h3 className="gf-widget-dyk__title" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(tfa.displaytitle) }} />
       <p className="gf-widget-dyk__extract">{tfa.extract}</p>
     </div>
   )

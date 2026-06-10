@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import DOMPurify from 'dompurify'
 import { GfIcon } from '../../framework/iconSystem'
 import { GfEmptyState } from '../../framework/components/EmptyState'
 import { useTopbar } from '../../framework/TopbarContext'
@@ -226,7 +227,7 @@ export default function WikipediaApp() {
           )}
 
           <div className="gf-wikipedia__article-content">
-            <h1 className="gf-wikipedia__article-title">{selectedArticle.displaytitle}</h1>
+            <h1 className="gf-wikipedia__article-title" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedArticle.displaytitle) }} />
             {selectedArticle.description && (
               <p className="gf-wikipedia__article-desc">{selectedArticle.description}</p>
             )}

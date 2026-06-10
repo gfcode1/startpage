@@ -94,6 +94,10 @@ const iconDefs: Record<string, string> = {
   news: 'newspaper',
   'message-circle': 'message-circle',
   'book-open': 'book-open',
+
+  board: 'layout-dashboard',
+  person: 'user',
+  'layout-kanban': 'layout-kanban',
 }
 
 export type IconName = keyof typeof iconDefs
