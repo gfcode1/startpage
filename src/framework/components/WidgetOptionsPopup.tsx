@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useCallback } from 'react'
 import { GfIcon } from '../iconSystem'
 import { getWidgetById, type WidgetOption } from '../widgetRegistry'
 import { useWidgetOptions } from '../WidgetOptionsContext'
@@ -14,15 +14,52 @@ export function WidgetOptionsPopup({ widgetId, open, onClose }: WidgetOptionsPop
   const def = getWidgetById(widgetId)
   const { options, setOption } = useWidgetOptions(widgetId)
   const overlayRef = useRef<HTMLDivElement>(null)
+  const modalRef = useRef<HTMLDivElement>(null)
+  const prevFocusRef = useRef<HTMLElement | null>(null)
+
+  const getFocusableElements = useCallback(() => {
+    if (!modalRef.current) return []
+    const selectors = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    return Array.from(modalRef.current.querySelectorAll<HTMLElement>(selectors))
+      .filter(el => !el.hasAttribute('disabled') && el.offsetParent !== null)
+  }, [])
 
   useEffect(() => {
     if (!open) return
+
+    prevFocusRef.current = document.activeElement as HTMLElement
+
+    const timer = setTimeout(() => {
+      const focusable = getFocusableElements()
+      if (focusable.length > 0) focusable[0].focus()
+    }, 50)
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
+      if (e.key === 'Escape') {
+        onClose()
+        return
+      }
+      if (e.key === 'Tab') {
+        const focusable = getFocusableElements()
+        if (focusable.length === 0) return
+        const first = focusable[0]
+        const last = focusable[focusable.length - 1]
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault()
+          last.focus()
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault()
+          first.focus()
+        }
+      }
     }
     document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
-  }, [open, onClose])
+    return () => {
+      clearTimeout(timer)
+      document.removeEventListener('keydown', onKey)
+      prevFocusRef.current?.focus()
+    }
+  }, [open, onClose, getFocusableElements])
 
   if (!open || !def?.options) return null
 
@@ -35,7 +72,7 @@ export function WidgetOptionsPopup({ widgetId, open, onClose }: WidgetOptionsPop
       aria-modal="true"
       aria-label={`${def.name} options`}
     >
-      <div className="gf-widget-options-modal">
+      <div className="gf-widget-options-modal" ref={modalRef}>
         <div className="gf-widget-options-modal__header">
           <h2 className="gf-widget-options-modal__title">
             <GfIcon name="settings" size={16} />
@@ -61,7 +98,7 @@ export function WidgetOptionsPopup({ widgetId, open, onClose }: WidgetOptionsPop
   )
 }
 
-function OptionRow({ option, value, onChange }: { option: WidgetOption; value: unknown; onChange: (val: string | boolean) => void }) {
+function OptionRow({ option, value, onChange }: { option: WidgetOption; value: unknown; onChange: (val: string | boolean | number) => void }) {
   const id = `widget-opt-${option.key}`
   return (
     <div className="gf-widget-options-row">
@@ -94,6 +131,42 @@ function OptionRow({ option, value, onChange }: { option: WidgetOption; value: u
           id={id}
           className="gf-widget-options-row__text"
           type="text"
+          value={String(value ?? option.default)}
+          onChange={e => onChange(e.target.value)}
+        />
+      )}
+      {option.type === 'number' && (
+        <input
+          id={id}
+          className="gf-widget-options-row__number"
+          type="number"
+          value={Number(value ?? option.default)}
+          min={option.min}
+          max={option.max}
+          step={option.step}
+          onChange={e => onChange(Number(e.target.value))}
+        />
+      )}
+      {option.type === 'range' && (
+        <div className="gf-widget-options-row__range-wrap">
+          <input
+            id={id}
+            className="gf-widget-options-row__range"
+            type="range"
+            value={Number(value ?? option.default)}
+            min={option.min ?? 0}
+            max={option.max ?? 100}
+            step={option.step ?? 1}
+            onChange={e => onChange(Number(e.target.value))}
+          />
+          <span className="gf-widget-options-row__range-value">{Number(value ?? option.default)}</span>
+        </div>
+      )}
+      {option.type === 'color' && (
+        <input
+          id={id}
+          className="gf-widget-options-row__color"
+          type="color"
           value={String(value ?? option.default)}
           onChange={e => onChange(e.target.value)}
         />

@@ -29,9 +29,9 @@ export const apps: AppDef[] = [
     component: lazy(() => import('../apps/YouTubeStreams/YouTubeStreamsApp')),
     widgets: [
       {
-        id: 'nowplaying',
+        id: 'youtube-nowplaying',
         name: 'Now Playing',
-        description: 'Currently playing track',
+        description: 'Currently playing YouTube stream',
         size: 'small',
         category: 'app',
         defaultActive: true,
@@ -51,9 +51,9 @@ export const apps: AppDef[] = [
     component: lazy(() => import('../apps/Somafm/SomafmApp')),
     widgets: [
       {
-        id: 'nowplaying',
+        id: 'somafm-nowplaying',
         name: 'Now Playing',
-        description: 'Currently playing track',
+        description: 'Currently playing SomaFM channel',
         size: 'small',
         category: 'app',
         defaultActive: true,
@@ -192,6 +192,17 @@ export const apps: AppDef[] = [
     icon: 'tabler:file-text',
     category: 'productivity',
     component: lazy(() => import('../apps/MarkdownNotes/MarkdownNotesApp')),
+    widgets: [
+      {
+        id: 'recent-notes',
+        name: 'Recent Notes',
+        description: 'Your latest notes',
+        size: 'small',
+        category: 'app',
+        defaultActive: true,
+        component: lazy(() => import('../apps/RecentNotesWidget/RecentNotesWidget')),
+      },
+    ],
   },
   {
     id: 'weather',
@@ -325,6 +336,17 @@ export const apps: AppDef[] = [
     icon: 'tabler:news',
     category: 'utilities',
     component: lazy(() => import('../apps/HackerNews/HackerNewsApp')),
+    widgets: [
+      {
+        id: 'hackernews-top',
+        name: 'HN Top Stories',
+        description: 'Top stories from Hacker News',
+        size: 'small',
+        category: 'app',
+        defaultActive: true,
+        component: lazy(() => import('../apps/HackerNewsWidget/HackerNewsWidget')),
+      },
+    ],
   },
   {
     id: 'moodist',
@@ -338,9 +360,9 @@ export const apps: AppDef[] = [
     component: lazy(() => import('../apps/Moodist/MoodistApp')),
     widgets: [
       {
-        id: 'nowplaying',
+        id: 'moodist-nowplaying',
         name: 'Now Playing',
-        description: 'Currently playing track',
+        description: 'Currently playing ambient sound',
         size: 'small',
         category: 'app',
         defaultActive: true,

@@ -6,39 +6,6 @@
   padding: var(--gf-space-md) var(--gf-space-lg);
 }
 
-.gf-widget-search__options-btn {
-  position: absolute;
-  top: var(--gf-space-xs);
-  right: var(--gf-space-xs);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: var(--gf-radius-md);
-  color: var(--gf-text-muted);
-  opacity: 0;
-  transform: scale(0.85);
-  transition: opacity 0.15s, transform 0.15s, background 0.15s;
-  z-index: 2;
-}
-
-@media (hover: hover) {
-  .gf-widget-search:hover .gf-widget-search__options-btn {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  .gf-widget-search__options-btn:hover {
-    background: var(--gf-bg-hover);
-    color: var(--gf-text);
-  }
-}
-
-.gf-widget-search__options-btn:active {
-  transform: scale(0.97);
-}
-
 .gf-widget-search__bar {
   display: flex;
   align-items: center;

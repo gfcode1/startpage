@@ -1,0 +1,46 @@
+.gf-widget-worldclock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gf-space-xs);
+  width: 100%;
+  padding: var(--gf-space-md);
+}
+
+.gf-widget-worldclock__header {
+  display: flex;
+  align-items: center;
+  gap: var(--gf-space-xs);
+  color: var(--gf-text-muted);
+  font-family: var(--gf-font-ui);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.gf-widget-worldclock__rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gf-space-sm);
+}
+
+.gf-widget-worldclock__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gf-space-sm);
+}
+
+.gf-widget-worldclock__city {
+  font-family: var(--gf-font-ui);
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--gf-text-muted);
+}
+
+.gf-widget-worldclock__time {
+  font-family: var(--gf-font-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--gf-text);
+  font-variant-numeric: tabular-nums;
+}

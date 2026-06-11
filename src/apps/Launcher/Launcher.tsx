@@ -4,6 +4,7 @@ import { Icon } from '@iconify/react'
 import { GfIcon, IconName } from '../../framework/iconSystem'
 import { apps, AppDef, AppCategory } from '../../framework/appRegistry'
 import { useBadges } from '../../framework/AppBadgeContext'
+import { useAppStorage } from '../../framework/persistence/useAppStorage'
 import { WidgetGrid } from '../../framework/components/WidgetGrid'
 import { GfSegmentedControl } from '../../framework/components/SegmentedControl'
 import './Launcher.css'
@@ -30,7 +31,7 @@ const categoryIcons: Record<AppCategory, IconName> = {
   utilities: 'utilities',
 }
 
-function AppCard({ app, index }: { app: AppDef; index: number }) {
+function AppCard({ app, index, isFavorite, onToggleFavorite }: { app: AppDef; index: number; isFavorite: boolean; onToggleFavorite: (id: string) => void }) {
   const navigate = useNavigate()
   const badges = useBadges()
   const badge = badges[app.id]
@@ -72,14 +73,24 @@ function AppCard({ app, index }: { app: AppDef; index: number }) {
               Launch
               <GfIcon name="chevron-right" size={16} />
             </span>
-            <button
-              className="gf-launcher__card-popup-btn"
-              onClick={(e) => { e.stopPropagation(); openInPopup(app) }}
-              title="Open in popup window"
-              aria-label="Open in popup window"
-            >
-              <GfIcon name="popup" size={14} />
-            </button>
+            <div className="gf-launcher__card-back-actions">
+              <button
+                className={`gf-launcher__card-fav${isFavorite ? ' gf-launcher__card-fav--active' : ''}`}
+                onClick={(e) => { e.stopPropagation(); onToggleFavorite(app.id) }}
+                title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+              >
+                <GfIcon name={isFavorite ? 'star' : 'star-outline'} size={14} />
+              </button>
+              <button
+                className="gf-launcher__card-popup-btn"
+                onClick={(e) => { e.stopPropagation(); openInPopup(app) }}
+                title="Open in popup window"
+                aria-label="Open in popup window"
+              >
+                <GfIcon name="popup" size={14} />
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -97,6 +108,13 @@ const TAB_SEGMENTS = [
 export function Launcher() {
   const [tab, setTab] = useState<Tab>('widgets')
   const [query, setQuery] = useState('')
+  const [favoriteApps, setFavoriteApps] = useAppStorage<string[]>('_framework', 'favoriteApps', [])
+
+  function toggleFavorite(id: string) {
+    setFavoriteApps(prev =>
+      prev.includes(id) ? prev.filter(fid => fid !== id) : [...prev, id]
+    )
+  }
 
   const filtered = useMemo(() => {
     if (!query.trim()) return apps
@@ -167,7 +185,15 @@ export function Launcher() {
             if (items.length === 0) return null
             const sectionCards = items.map(app => {
               const idx = cardIndex++
-              return <AppCard key={app.id} app={app} index={idx} />
+              return (
+                <AppCard
+                  key={app.id}
+                  app={app}
+                  index={idx}
+                  isFavorite={favoriteApps.includes(app.id)}
+                  onToggleFavorite={toggleFavorite}
+                />
+              )
             })
 
             return (

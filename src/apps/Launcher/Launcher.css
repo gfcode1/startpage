@@ -288,6 +288,32 @@
   color: var(--card-color, var(--gf-accent));
 }
 
+.gf-launcher__card-back-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.gf-launcher__card-fav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--gf-radius-md);
+  color: var(--gf-text-muted);
+  transition: all 0.2s ease;
+}
+
+.gf-launcher__card-fav:hover {
+  color: #eab308;
+  background: var(--gf-bg-hover);
+}
+
+.gf-launcher__card-fav--active {
+  color: #eab308;
+}
+
 .gf-launcher__card-popup-btn {
   display: flex;
   align-items: center;

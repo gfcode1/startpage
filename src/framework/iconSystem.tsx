@@ -17,6 +17,8 @@ const iconDefs: Record<string, string> = {
   volume: 'volume-2',
   heart: 'heart',
   'heart-outline': 'heart',
+  star: 'star',
+  'star-outline': 'star',
   'music-note': 'music',
 
   plus: 'plus',
@@ -98,6 +100,12 @@ const iconDefs: Record<string, string> = {
   board: 'layout-dashboard',
   person: 'user',
   'layout-kanban': 'layout-kanban',
+
+  trophy: 'trophy',
+  'link-2': 'link-2',
+  copy: 'copy',
+  hash: 'hash',
+  calculator: 'calculator',
 }
 
 export type IconName = keyof typeof iconDefs

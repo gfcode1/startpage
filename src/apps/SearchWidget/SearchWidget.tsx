@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react'
 import { GfIcon } from '../../framework/iconSystem'
 import { useWidgetOptions } from '../../framework/WidgetOptionsContext'
-import { WidgetOptionsPopup } from '../../framework/components/WidgetOptionsPopup'
 import './SearchWidget.css'
 
 const WIDGET_ID = 'search'
@@ -25,7 +24,6 @@ const ASK_URLS: Record<string, (q: string) => string> = {
 
 export default function SearchWidget() {
   const [query, setQuery] = useState('')
-  const [optionsOpen, setOptionsOpen] = useState(false)
   const { options } = useWidgetOptions(WIDGET_ID)
 
   const searchEngine = String(options.searchEngine ?? 'google')
@@ -60,15 +58,6 @@ export default function SearchWidget() {
 
   return (
     <div className="gf-widget-search">
-      <button
-        className="gf-widget-search__options-btn"
-        onClick={() => setOptionsOpen(true)}
-        aria-label="Search & Ask options"
-        title="Search & Ask options"
-      >
-        <GfIcon name="settings" size={14} />
-      </button>
-
       <div className="gf-widget-search__bar">
         <input
           className="gf-widget-search__input"
@@ -90,12 +79,6 @@ export default function SearchWidget() {
           </button>
         </div>
       </div>
-
-      <WidgetOptionsPopup
-        widgetId={WIDGET_ID}
-        open={optionsOpen}
-        onClose={() => setOptionsOpen(false)}
-      />
     </div>
   )
 }
