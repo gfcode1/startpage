@@ -6,7 +6,7 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 import tseslint from 'typescript-eslint'
 
 export default defineConfig([
-  globalIgnores(['dist', 'public/emulator']),
+  globalIgnores(['dist', 'public/emulator', 'neutralino.d.ts']),
   {
     files: ['**/*.{js,jsx}'],
     extends: [
