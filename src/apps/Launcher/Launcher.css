@@ -5,6 +5,13 @@
   padding-bottom: var(--gf-space-3xl);
 }
 
+/* ── Tabs ── */
+
+.gf-launcher__tabs {
+  display: flex;
+  justify-content: center;
+}
+
 /* ── Search ── */
 
 .gf-launcher__search {

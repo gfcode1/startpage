@@ -5,6 +5,7 @@ import { GfIcon, IconName } from '../../framework/iconSystem'
 import { apps, AppDef, AppCategory } from '../../framework/appRegistry'
 import { useBadges } from '../../framework/AppBadgeContext'
 import { WidgetGrid } from '../../framework/components/WidgetGrid'
+import { GfSegmentedControl } from '../../framework/components/SegmentedControl'
 import './Launcher.css'
 
 function openInPopup(app: AppDef) {
@@ -86,7 +87,15 @@ function AppCard({ app, index }: { app: AppDef; index: number }) {
   )
 }
 
+type Tab = 'widgets' | 'apps'
+
+const TAB_SEGMENTS = [
+  { value: 'widgets', label: 'Widget' },
+  { value: 'apps', label: 'Apps' },
+]
+
 export function Launcher() {
+  const [tab, setTab] = useState<Tab>('widgets')
   const [query, setQuery] = useState('')
 
   const filtered = useMemo(() => {
@@ -111,54 +120,67 @@ export function Launcher() {
   return (
     <div className="gf-launcher">
       <h1 className="gf-sr-only">GFcode</h1>
-      <div className="gf-launcher__search">
-        <GfIcon name="search" size={18} className="gf-launcher__search-icon" />
-        <input
-          className="gf-launcher__search-input"
-          type="text"
-          placeholder="Search apps..."
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-          aria-label="Search apps"
+
+      <div className="gf-launcher__tabs">
+        <GfSegmentedControl
+          segments={TAB_SEGMENTS}
+          value={tab}
+          onChange={v => setTab(v as Tab)}
         />
-        {query && (
-          <button
-            className="gf-launcher__search-clear"
-            onClick={() => setQuery('')}
-            aria-label="Clear search"
-          >
-            <GfIcon name="close" size={16} />
-          </button>
-        )}
       </div>
 
-      {!hasResults && (
-        <div className="gf-launcher__empty">
-          <p>No apps match "{query}"</p>
-        </div>
-      )}
+      {tab === 'widgets' ? (
+        <WidgetGrid />
+      ) : (
+        <>
+          <div className="gf-launcher__search">
+            <GfIcon name="search" size={18} className="gf-launcher__search-icon" />
+            <input
+              className="gf-launcher__search-input"
+              type="text"
+              placeholder="Search apps..."
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              aria-label="Search apps"
+            />
+            {query && (
+              <button
+                className="gf-launcher__search-clear"
+                onClick={() => setQuery('')}
+                aria-label="Clear search"
+              >
+                <GfIcon name="close" size={16} />
+              </button>
+            )}
+          </div>
 
-      {!query && <WidgetGrid />}
+          {query && <div className="gf-launcher__search-divider" />}
 
-      {query && <div className="gf-launcher__search-divider" />}
-
-      {categoryOrder.map(cat => {
-        const items = grouped[cat]
-        if (items.length === 0) return null
-        const sectionCards = items.map(app => {
-          const idx = cardIndex++
-          return <AppCard key={app.id} app={app} index={idx} />
-        })
-
-        return (
-          <section key={cat} className="gf-launcher__section">
-            <h2 className="gf-launcher__section-title"><GfIcon name={categoryIcons[cat]} size={14} /> {categoryLabels[cat]}</h2>
-            <div className="gf-launcher__grid">
-              {sectionCards}
+          {!hasResults && (
+            <div className="gf-launcher__empty">
+              <p>No apps match "{query}"</p>
             </div>
-          </section>
-        )
-      })}
+          )}
+
+          {categoryOrder.map(cat => {
+            const items = grouped[cat]
+            if (items.length === 0) return null
+            const sectionCards = items.map(app => {
+              const idx = cardIndex++
+              return <AppCard key={app.id} app={app} index={idx} />
+            })
+
+            return (
+              <section key={cat} className="gf-launcher__section">
+                <h2 className="gf-launcher__section-title"><GfIcon name={categoryIcons[cat]} size={14} /> {categoryLabels[cat]}</h2>
+                <div className="gf-launcher__grid">
+                  {sectionCards}
+                </div>
+              </section>
+            )
+          })}
+        </>
+      )}
     </div>
   )
 }
