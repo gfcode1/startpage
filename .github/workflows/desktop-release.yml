@@ -1,0 +1,34 @@
+name: Desktop Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:desktop
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+      - run: |
+          cd dist/gfcode
+          zip -j gfcode-linux.zip gfcode-linux_x64 resources.neu
+          zip -j gfcode-win.zip gfcode-win_x64.exe resources.neu
+          zip -j gfcode-mac-intel.zip gfcode-mac_x64 resources.neu
+          zip -j gfcode-mac-arm.zip gfcode-mac_arm64 resources.neu
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/gfcode/*.zip
+          generate_release_notes: true
