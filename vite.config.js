@@ -12,8 +12,10 @@ import path from 'path'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
+const isDesktopBuild = process.env.VITE_BASE_URL === './'
+
 export default defineConfig({
-  base: '/startpage/',
+  base: process.env.VITE_BASE_URL || '/startpage/',
   optimizeDeps: {
     entries: ['index.html'],
     include: ['react', 'react-dom', 'react-router-dom'],
@@ -60,7 +62,7 @@ export default defineConfig({
         })
       },
     },
-    VitePWA({
+    !isDesktopBuild && VitePWA({
       registerType: 'autoUpdate',
       workbox: {
         globPatterns: ['**/*.{js,css,html,png,svg,json}'],

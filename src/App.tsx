@@ -110,9 +110,11 @@ function AppInner() {
   )
 }
 
+const routerBasename = import.meta.env.BASE_URL.startsWith('.') ? '' : import.meta.env.BASE_URL.replace(/\/$/, '')
+
 export default function App() {
   return (
-    <BrowserRouter basename="/startpage">
+    <BrowserRouter basename={routerBasename}>
       <GfThemeProvider>
         <PlayerProvider>
         <ToastProvider>

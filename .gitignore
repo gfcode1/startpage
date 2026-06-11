@@ -23,6 +23,11 @@ dist-ssr
 *.sln
 *.sw?
 
+# Neutralinojs desktop build
+dist-neutralino/
+bin/
+neutralino.js
+
 # Generated manifests
 public/roms-manifest.json
 

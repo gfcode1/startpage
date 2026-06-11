@@ -12,7 +12,9 @@
     "analyze": "ANALYZE=1 vite build",
     "test": "vitest run",
     "test:watch": "vitest",
-    "prepare": "husky"
+    "prepare": "husky",
+    "dev:desktop": "VITE_BASE_URL=./ vite build --outDir dist-neutralino && npx neu run",
+    "build:desktop": "VITE_BASE_URL=./ vite build --outDir dist-neutralino && npx neu update && npx neu build"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,css}": "eslint --fix"
@@ -38,6 +40,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@neutralinojs/neu": "^11.7.2",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/dompurify": "^3.0.5",
