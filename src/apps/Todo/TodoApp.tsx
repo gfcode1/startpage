@@ -11,12 +11,12 @@ import { useTopbar } from '../../framework/TopbarContext'
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragOverlay, type DragStartEvent, type DragEndEvent } from '@dnd-kit/core'
 import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { generateId, formatRelativeTime, formatDate, formatDueDate, isOverdue } from './utils'
-import type { TodoItem, FilterMode, Priority, SortMode, TagDef, TodoList } from './types'
+import { generateId, formatRelativeTime, formatDate, formatDueDate, isOverdue, createList, createInitialAppData, normalizeAppData, getActiveList, getSortedLists } from './utils'
+import type { TodoItem, FilterMode, Priority, SortMode, TagDef, TodoList, TodoAppData } from './types'
 import './TodoApp.css'
 
 const APP_ID = 'todo'
-const STORAGE_KEY = 'list'
+const STORAGE_KEY = 'lists'
 
 const PRIORITY_CYCLE: Record<Priority, Priority> = {
   low: 'medium',
@@ -25,43 +25,6 @@ const PRIORITY_CYCLE: Record<Priority, Priority> = {
 }
 
 const TAG_COLORS = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#8b5cf6', '#ec4899', '#14b8a6']
-
-function initialList(): TodoList {
-  return {
-    name: 'My Todo List',
-    items: [],
-    tags: [],
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  }
-}
-
-function normalizeItem(raw: unknown): TodoItem {
-  const i = (raw || {}) as Record<string, unknown>
-  return {
-    id: typeof i.id === 'string' ? i.id : '',
-    text: typeof i.text === 'string' ? i.text : '',
-    completed: !!i.completed,
-    priority: (i.priority === 'low' || i.priority === 'medium' || i.priority === 'high') ? i.priority : 'medium',
-    tags: Array.isArray(i.tags) ? i.tags as string[] : [],
-    parentId: typeof i.parentId === 'string' ? i.parentId : null,
-    dueDate: typeof i.dueDate === 'number' ? i.dueDate : null,
-    order: typeof i.order === 'number' ? i.order : 0,
-    createdAt: typeof i.createdAt === 'number' ? i.createdAt : Date.now(),
-    completedAt: typeof i.completedAt === 'number' ? i.completedAt : null,
-  }
-}
-
-function normalizeList(raw: unknown): TodoList {
-  const data = (raw || {}) as Record<string, unknown>
-  return {
-    name: typeof data.name === 'string' ? data.name : 'My Todo List',
-    items: Array.isArray(data.items) ? (data.items as TodoItem[]).map(normalizeItem) : [],
-    tags: Array.isArray(data.tags) ? data.tags as TagDef[] : [],
-    createdAt: typeof data.createdAt === 'number' ? data.createdAt : Date.now(),
-    updatedAt: typeof data.updatedAt === 'number' ? data.updatedAt : Date.now(),
-  }
-}
 
 function SortableItem({
   item,
@@ -196,7 +159,7 @@ function SortableItem({
 
       <div className="gf-todo__meta">
         <button
-          className={`gf-todo__due-btn`}
+          className="gf-todo__due-btn"
           onClick={() => {
             const current = new Date()
             const existing = item.dueDate ? new Date(item.dueDate) : current
@@ -283,9 +246,33 @@ function SortableItem({
   )
 }
 
+function getListStats(list: TodoList) {
+  const total = list.items.length
+  const completed = list.items.filter(i => i.completed).length
+  const active = total - completed
+  return { total, completed, active }
+}
+
+function getInitialAppData(): TodoAppData {
+  try {
+    const oldKey = 'gf:todo:list'
+    const newKey = `gf:${APP_ID}:${STORAGE_KEY}`
+    const oldVal = localStorage.getItem(oldKey)
+    if (oldVal !== null && localStorage.getItem(newKey) === null) {
+      localStorage.setItem(newKey, oldVal)
+      localStorage.removeItem(oldKey)
+      return normalizeAppData(JSON.parse(oldVal))
+    }
+  } catch {
+  }
+  return createInitialAppData()
+}
+
 export default function TodoApp() {
-  const [rawList, setList] = useAppStorage(APP_ID, STORAGE_KEY, initialList())
-  const list = useMemo(() => normalizeList(rawList), [rawList])
+  const [rawData, setData] = useAppStorage<TodoAppData>(APP_ID, STORAGE_KEY, getInitialAppData())
+  const appData = useMemo(() => normalizeAppData(rawData), [rawData])
+  const activeList = useMemo(() => getActiveList(appData), [appData])
+  const sortedLists = useMemo(() => getSortedLists(appData), [appData])
   const [newTodoText, setNewTodoText] = useState('')
   const [filter, setFilter] = useState<FilterMode>('all')
   const [search, setSearch] = useState('')
@@ -299,6 +286,11 @@ export default function TodoApp() {
   const [subtaskParentId, setSubtaskParentId] = useState<string | null>(null)
   const [subtaskText, setSubtaskText] = useState('')
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
+  const [showListManager, setShowListManager] = useState(false)
+  const [listToDelete, setListToDelete] = useState<string | null>(null)
+  const [renamingId, setRenamingId] = useState<string | null>(null)
+  const [renameText, setRenameText] = useState('')
+  const [newListName, setNewListName] = useState('')
   const { addToast } = useToast()
   const { setActions, setSearch: setTopbarSearch, clearConfig } = useTopbar()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -307,6 +299,10 @@ export default function TodoApp() {
   const { setBadge } = useAppBadge('todo')
 
   useEffect(() => { editingIdRef.current = editingId }, [editingId])
+
+  const list = activeList
+  const listStats = useMemo(() => sortedLists.map(l => ({ id: l.id, name: l.name, ...getListStats(l) })), [sortedLists])
+  const totalActive = useMemo(() => listStats.reduce((s, l) => s + l.active, 0), [listStats])
 
   const cycleSort = useCallback(() => {
     const modes: SortMode[] = ['manual', 'dueDate', 'priority', 'createdAt']
@@ -328,6 +324,12 @@ export default function TodoApp() {
         label: 'Manage tags',
         onClick: () => setShowTagManager(true),
       },
+      {
+        id: 'lists',
+      icon: 'checklist',
+      label: 'Manage Lists',
+        onClick: () => setShowListManager(true),
+      },
     ])
     setTopbarSearch({ placeholder: 'Search tasks or tags...', value: search, onChange: setSearch })
     return () => { clearConfig() }
@@ -340,6 +342,7 @@ export default function TodoApp() {
   )
 
   const filteredItems = useMemo(() => {
+    if (!list) return []
     let items = list.items
     if (filter === 'active') items = items.filter(i => !i.completed)
     if (filter === 'completed') items = items.filter(i => i.completed)
@@ -367,9 +370,10 @@ export default function TodoApp() {
       return a.order - b.order
     })
     return sorted
-  }, [list.items, filter, search, sortMode])
+  }, [list, filter, search, sortMode])
 
   const childMap = useMemo(() => {
+    if (!list) return new Map<string, string[]>()
     const map = new Map<string, string[]>()
     for (const item of list.items) {
       if (item.parentId) {
@@ -379,45 +383,112 @@ export default function TodoApp() {
       }
     }
     return map
-  }, [list.items])
+  }, [list])
 
   const stats = useMemo(() => {
-    const total = list.items.length
-    const completed = list.items.filter(i => i.completed).length
-    const active = total - completed
-    return { total, completed, active }
-  }, [list.items])
+    if (!list) return { total: 0, completed: 0, active: 0 }
+    return getListStats(list)
+  }, [list])
 
   useEffect(() => {
-    setBadge(stats.active > 0 ? stats.active : null)
-  }, [stats.active, setBadge])
+    setBadge(totalActive > 0 ? totalActive : null)
+  }, [totalActive, setBadge])
 
-  const updateItems = useCallback(
-    (updater: (prev: TodoItem[]) => TodoItem[]) => {
-      setList(prev => ({
-        ...prev,
-        items: updater(prev.items),
-        updatedAt: Date.now(),
-      }))
-    },
-    [setList],
-  )
+  const updateActiveList = useCallback((updater: (list: TodoList) => TodoList) => {
+    setData(prev => {
+      const data = normalizeAppData(prev)
+      const activeList = getActiveList(data)
+      if (!activeList) return data
+      const idx = data.lists.findIndex(l => l.id === data.activeListId)
+      if (idx === -1) return data
+      const newLists = [...data.lists]
+      newLists[idx] = updater({ ...newLists[idx] })
+      return { ...data, lists: newLists }
+    })
+  }, [setData])
 
-  const updateTags = useCallback(
-    (updater: (prev: TagDef[]) => TagDef[]) => {
-      setList(prev => ({
-        ...prev,
-        tags: updater(prev.tags),
-        updatedAt: Date.now(),
-      }))
-    },
-    [setList],
-  )
+  const updateActiveListItems = useCallback((updater: (items: TodoItem[]) => TodoItem[]) => {
+    updateActiveList(list => ({
+      ...list,
+      items: updater(list.items),
+      updatedAt: Date.now(),
+    }))
+  }, [updateActiveList])
+
+  const updateActiveListTags = useCallback((updater: (tags: TagDef[]) => TagDef[]) => {
+    updateActiveList(list => ({
+      ...list,
+      tags: updater(list.tags),
+      updatedAt: Date.now(),
+    }))
+  }, [updateActiveList])
+
+  function switchList(listId: string) {
+    setData(prev => {
+      const data = normalizeAppData(prev)
+      if (!data.lists.some(l => l.id === listId)) return data
+      return { ...data, activeListId: listId }
+    })
+    setFilter('all')
+    setSearch('')
+    setNewTodoText('')
+    setSubtaskParentId(null)
+    setEditingId(null)
+  }
+
+  function handleCreateList() {
+    const name = newListName.trim()
+    if (!name) return
+    const newList = createList(name)
+    setData(prev => {
+      const data = normalizeAppData(prev)
+      return {
+        activeListId: newList.id,
+        lists: [...data.lists, newList],
+        listOrder: [...data.listOrder, newList.id],
+      }
+    })
+    setNewListName('')
+    addToast(`List "${name}" created`, 'success')
+  }
+
+  function handleDeleteList(listId: string) {
+    setData(prev => {
+      const data = normalizeAppData(prev)
+      if (data.lists.length <= 1) {
+        addToast('Cannot delete the last list', 'error')
+        return data
+      }
+      const newLists = data.lists.filter(l => l.id !== listId)
+      const newOrder = data.listOrder.filter(id => id !== listId)
+      const newActiveId = data.activeListId === listId
+        ? (newOrder[0] || newLists[0]?.id || '')
+        : data.activeListId
+      addToast('List deleted', 'error')
+      return { activeListId: newActiveId, lists: newLists, listOrder: newOrder }
+    })
+    setListToDelete(null)
+  }
+
+  function handleRenameList(listId: string, newName: string) {
+    const name = newName.trim()
+    if (!name) return
+    setData(prev => {
+      const data = normalizeAppData(prev)
+      return {
+        ...data,
+        lists: data.lists.map(l => l.id === listId ? { ...l, name, updatedAt: Date.now() } : l),
+      }
+    })
+    setRenamingId(null)
+    setRenameText('')
+  }
 
   const handleAdd = useCallback(() => {
+    if (!list) return
     const text = newTodoText.trim()
     if (!text) return
-    updateItems(prev => {
+    updateActiveListItems(prev => {
       const maxOrder = prev.reduce((max, i) => Math.max(max, i.order), 0)
       const item: TodoItem = {
         id: generateId(),
@@ -436,7 +507,7 @@ export default function TodoApp() {
     setNewTodoText('')
     inputRef.current?.focus()
     addToast('Task added', 'success')
-  }, [newTodoText, updateItems, addToast])
+  }, [newTodoText, updateActiveListItems, addToast, list])
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -447,7 +518,7 @@ export default function TodoApp() {
 
   const handleToggle = useCallback(
     (id: string) => {
-      updateItems(prev =>
+      updateActiveListItems(prev =>
         prev.map(item =>
           item.id === id
             ? {
@@ -459,7 +530,7 @@ export default function TodoApp() {
         ),
       )
     },
-    [updateItems],
+    [updateActiveListItems],
   )
 
   const handleDelete = useCallback(
@@ -472,10 +543,10 @@ export default function TodoApp() {
 
   const handleConfirmDelete = useCallback(() => {
     if (!deleteConfirmId) return
-    updateItems(prev => prev.filter(i => i.id !== deleteConfirmId && i.parentId !== deleteConfirmId))
+    updateActiveListItems(prev => prev.filter(i => i.id !== deleteConfirmId && i.parentId !== deleteConfirmId))
     addToast('Task deleted', 'error')
     setDeleteConfirmId(null)
-  }, [deleteConfirmId, updateItems, addToast])
+  }, [deleteConfirmId, updateActiveListItems, addToast])
 
   const handleStartEdit = useCallback((item: TodoItem) => {
     setEditingId(item.id)
@@ -485,7 +556,7 @@ export default function TodoApp() {
   const handleFinishEdit = useCallback(() => {
     const eid = editingIdRef.current
     if (eid && editText.trim()) {
-      updateItems(prev =>
+      updateActiveListItems(prev =>
         prev.map(i =>
           i.id === eid ? { ...i, text: editText.trim() } : i,
         ),
@@ -493,7 +564,7 @@ export default function TodoApp() {
     }
     setEditingId(null)
     setEditText('')
-  }, [editText, updateItems])
+  }, [editText, updateActiveListItems])
 
   const handleEditKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -505,19 +576,20 @@ export default function TodoApp() {
 
   const handleSetPriority = useCallback(
     (id: string, priority: Priority) => {
-      updateItems(prev =>
+      updateActiveListItems(prev =>
         prev.map(i => (i.id === id ? { ...i, priority } : i)),
       )
     },
-    [updateItems],
+    [updateActiveListItems],
   )
 
   const handleClearCompleted = useCallback(() => {
+    if (!list) return
     const count = list.items.filter(i => i.completed).length
     if (count === 0) return
-    updateItems(prev => prev.filter(i => !i.completed))
+    updateActiveListItems(prev => prev.filter(i => !i.completed))
     addToast(`Cleared ${count} completed task${count > 1 ? 's' : ''}`, 'info')
-  }, [list.items, updateItems, addToast])
+  }, [list, updateActiveListItems, addToast])
 
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     setActiveDragId(null)
@@ -530,7 +602,7 @@ export default function TodoApp() {
 
     const reorderedVisible = arrayMove(filteredItems, oldIndex, newIndex)
 
-    updateItems(prev => {
+    updateActiveListItems(prev => {
       const allSorted = [...prev].sort((a, b) => a.order - b.order)
       const visibleSet = new Set(reorderedVisible.map(i => i.id))
       const hiddenItems = allSorted.filter(i => !visibleSet.has(i.id))
@@ -558,7 +630,7 @@ export default function TodoApp() {
 
       return result
     })
-  }, [filteredItems, updateItems])
+  }, [filteredItems, updateActiveListItems])
 
   const handleAddSubtask = useCallback((parentId: string) => {
     setSubtaskParentId(parentId)
@@ -568,7 +640,7 @@ export default function TodoApp() {
 
   const handleSubmitSubtask = useCallback(() => {
     if (!subtaskParentId || !subtaskText.trim()) return
-    updateItems(prev => {
+    updateActiveListItems(prev => {
       const parent = prev.find(i => i.id === subtaskParentId)
       if (!parent) return prev
       const maxOrder = prev.reduce((max, i) => Math.max(max, i.order), 0)
@@ -589,31 +661,32 @@ export default function TodoApp() {
     setSubtaskParentId(null)
     setSubtaskText('')
     addToast('Subtask added', 'success')
-  }, [subtaskParentId, subtaskText, updateItems, addToast])
+  }, [subtaskParentId, subtaskText, updateActiveListItems, addToast])
 
   const handleSetDueDate = useCallback((id: string, dueDate: number | null) => {
-    updateItems(prev =>
+    updateActiveListItems(prev =>
       prev.map(i => (i.id === id ? { ...i, dueDate } : i)),
     )
-  }, [updateItems])
+  }, [updateActiveListItems])
 
   const handleAddTag = useCallback(() => {
+    if (!list) return
     const name = newTagName.trim()
     if (!name || list.tags.some(t => t.name === name)) return
     const color = TAG_COLORS[list.tags.length % TAG_COLORS.length]
-    updateTags(prev => [...prev, { name, color }])
+    updateActiveListTags(prev => [...prev, { name, color }])
     setNewTagName('')
-  }, [newTagName, list.tags, updateTags])
+  }, [newTagName, list, updateActiveListTags])
 
   const handleDeleteTag = useCallback((tagName: string) => {
-    updateTags(prev => prev.filter(t => t.name !== tagName))
-    updateItems(prev =>
+    updateActiveListTags(prev => prev.filter(t => t.name !== tagName))
+    updateActiveListItems(prev =>
       prev.map(i => ({
         ...i,
         tags: i.tags.filter(t => t !== tagName),
       })),
     )
-  }, [updateTags, updateItems])
+  }, [updateActiveListTags, updateActiveListItems])
 
   const handleTagClick = useCallback((tag: string) => {
     setSearch(tag)
@@ -647,16 +720,58 @@ export default function TodoApp() {
     { value: 'completed', label: `Done (${stats.completed})` },
   ]
 
-  const activeDragItem = activeDragId ? list.items.find(i => i.id === activeDragId) : null
+  const activeDragItem = list ? list.items.find(i => i.id === activeDragId) : null
+
+  if (!list) {
+    return (
+      <div className="gf-todo">
+        <AppHeader badge={`${totalActive} active`} />
+        <GfEmptyState
+          icon={<GfIcon name="checklist" size={24} />}
+          title="No lists"
+          description="Create your first list to get started"
+        />
+      </div>
+    )
+  }
 
   return (
     <div className="gf-todo">
       <AppHeader
-        badge={`${stats.active} active`}
+        badge={`${totalActive} active across ${sortedLists.length} list${sortedLists.length > 1 ? 's' : ''}`}
         segments={segmentOptions}
         segmentValue={filter}
         onSegmentChange={v => setFilter(v as FilterMode)}
       />
+
+      <div className="gf-todo__list-switcher">
+        <div className="gf-todo__list-chips">
+          {sortedLists.map(l => {
+            const ls = listStats.find(s => s.id === l.id)
+            const isActive = l.id === appData.activeListId
+            return (
+              <button
+                key={l.id}
+                className={`gf-todo__list-chip ${isActive ? 'gf-todo__list-chip--active' : ''}`}
+                onClick={() => switchList(l.id)}
+              >
+                <span className="gf-todo__list-chip-name">{l.name}</span>
+                {ls && ls.active > 0 && (
+                  <span className="gf-todo__list-chip-count">{ls.active}</span>
+                )}
+              </button>
+            )
+          })}
+          <button
+            className="gf-todo__list-chip gf-todo__list-chip--add"
+            onClick={() => setShowListManager(true)}
+            aria-label="Manage lists"
+            title="Manage lists"
+          >
+            <GfIcon name="plus" size={12} />
+          </button>
+        </div>
+      </div>
 
       <div className="gf-todo__add">
         <input
@@ -666,7 +781,7 @@ export default function TodoApp() {
           value={newTodoText}
           onChange={e => setNewTodoText(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Add a new task..."
+          placeholder={`Add a task to "${list.name}"...`}
           aria-label="Add a new task"
           autoFocus
         />
@@ -704,7 +819,7 @@ export default function TodoApp() {
       {filteredItems.length === 0 && !search && filter === 'all' && (
         <GfEmptyState
           icon={<GfIcon name="checklist" size={24} />}
-          title="No tasks yet"
+          title={`"${list.name}" is empty`}
           description="Type above and press Enter to add a task"
         />
       )}
@@ -879,6 +994,99 @@ export default function TodoApp() {
           </div>
         </div>
       </GfBottomSheet>
+
+      <GfBottomSheet
+        open={showListManager}
+        onClose={() => setShowListManager(false)}
+        title="Manage Lists"
+      >
+        <div className="gf-todo__list-manager">
+          <div className="gf-todo__list-manager-input-row">
+            <input
+              className="gf-todo__list-manager-input"
+              type="text"
+              value={newListName}
+              onChange={e => setNewListName(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') handleCreateList() }}
+              placeholder="New list name..."
+              aria-label="New list name"
+            />
+            <button
+              className="gf-todo__btn gf-todo__btn--primary"
+              onClick={handleCreateList}
+              disabled={!newListName.trim()}
+              aria-label="Create list"
+            >
+              <GfIcon name="plus" size={14} />
+            </button>
+          </div>
+
+          <div className="gf-todo__list-manager-items">
+            {sortedLists.map(l => {
+              const ls = listStats.find(s => s.id === l.id)
+              const isRenaming = renamingId === l.id
+              return (
+                <div key={l.id} className="gf-todo__list-manager-item">
+                  {isRenaming ? (
+                    <input
+                      className="gf-todo__list-manager-rename-input"
+                      type="text"
+                      value={renameText}
+                      onChange={e => setRenameText(e.target.value)}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') handleRenameList(l.id, renameText)
+                        if (e.key === 'Escape') setRenamingId(null)
+                      }}
+                      onBlur={() => handleRenameList(l.id, renameText)}
+                      autoFocus
+                    />
+                  ) : (
+                    <>
+                      <span
+                        className="gf-todo__list-manager-name"
+                        onDoubleClick={() => { setRenamingId(l.id); setRenameText(l.name) }}
+                      >
+                        {l.name}
+                      </span>
+                      {ls && (
+                        <span className="gf-todo__list-manager-count">
+                          {ls.active} active · {ls.total} total
+                        </span>
+                      )}
+                      <button
+                        className="gf-todo__list-manager-rename-btn"
+                        onClick={() => { setRenamingId(l.id); setRenameText(l.name) }}
+                        aria-label={`Rename list ${l.name}`}
+                      >
+                        <GfIcon name="edit" size={12} />
+                      </button>
+                      {sortedLists.length > 1 && (
+                        <button
+                          className="gf-todo__list-manager-delete-btn"
+                          onClick={() => setListToDelete(l.id)}
+                          aria-label={`Delete list ${l.name}`}
+                        >
+                          <GfIcon name="close" size={12} />
+                        </button>
+                      )}
+                    </>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </GfBottomSheet>
+
+      <GfConfirmDialog
+        open={listToDelete !== null}
+        onClose={() => setListToDelete(null)}
+        onConfirm={() => { if (listToDelete) handleDeleteList(listToDelete) }}
+        title="Delete list?"
+        message="This will permanently delete this list and all its tasks. This cannot be undone."
+        confirmLabel="Delete"
+        variant="danger"
+      />
 
       <GfConfirmDialog
         open={deleteConfirmId !== null}

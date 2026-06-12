@@ -44,6 +44,7 @@ const iconDefs: Record<string, string> = {
   document: 'file-text',
   sun: 'sun',
   wave: 'audio-waveform',
+  'wave-sine': 'audio-waveform',
   snake: 'bug',
   sparkles: 'sparkles',
   timer: 'clock',
@@ -106,6 +107,15 @@ const iconDefs: Record<string, string> = {
   copy: 'copy',
   hash: 'hash',
   calculator: 'calculator',
+  pin: 'pin',
+  bookmark: 'bookmark',
+
+  'calendar-plus': 'calendar-plus',
+  'calendar-check': 'calendar-check',
+  'calendar-x': 'calendar-x',
+  'arrow-left': 'arrow-left',
+  'arrow-right': 'arrow-right',
+  'clock': 'clock',
 }
 
 export type IconName = keyof typeof iconDefs

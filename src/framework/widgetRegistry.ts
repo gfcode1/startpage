@@ -101,7 +101,7 @@ export const widgets: WidgetDef[] = [
     description: 'Your latest note',
     size: 'small',
     category: 'standard',
-    component: lazy(() => import('../apps/QuickNoteWidget/QuickNoteWidget')),
+    component: lazy(() => import('../apps/Notes/widgets/QuickNoteWidget/QuickNoteWidget')),
   },
   {
     id: 'quote',

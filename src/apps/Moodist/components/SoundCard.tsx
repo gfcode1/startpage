@@ -1,5 +1,6 @@
 import { memo, useCallback, useEffect } from 'react'
 import { GfIcon } from '../../../framework/iconSystem'
+import { GfSlider } from '../../../framework/components/Slider'
 import type { Sound, SoundState } from '../types'
 import { useSoundPlayer } from '../hooks/useSoundPlayer'
 
@@ -43,8 +44,7 @@ export const SoundCard = memo(function SoundCard({
     else onSelect()
   }, [state.selected, onSelect, onUnselect])
 
-  const handleVolChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const vol = Number(e.target.value)
+  const handleVolChange = useCallback((vol: number) => {
     onSetVolume(vol)
   }, [onSetVolume])
 
@@ -80,19 +80,24 @@ export const SoundCard = memo(function SoundCard({
         </div>
       )}
 
-      {isActive && <div className="gf-moodist__sound-indicator" />}
+      {isActive && (
+        <div className="gf-moodist__sound-indicator">
+          <div className="gf-moodist__sound-bar" />
+          <div className="gf-moodist__sound-bar" />
+          <div className="gf-moodist__sound-bar" />
+          <div className="gf-moodist__sound-bar" />
+          <div className="gf-moodist__sound-bar" />
+        </div>
+      )}
 
-      <input
-        className="gf-moodist__sound-vol"
-        type="range"
+      <GfSlider
+        value={state.volume}
+        onChange={handleVolChange}
         min={0}
         max={1}
         step={0.01}
-        value={state.volume}
-        disabled={!state.selected}
-        onClick={e => e.stopPropagation()}
-        onChange={handleVolChange}
         aria-label={`${sound.label} volume`}
+        className={state.selected ? '' : 'gf-slider--disabled'}
       />
 
       <div className="gf-moodist__sound-label">{sound.label}</div>

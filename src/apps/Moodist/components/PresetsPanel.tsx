@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { GfIcon } from '../../../framework/iconSystem'
 import { GfButton } from '../../../framework/components/Button'
+import { GfEmptyState } from '../../../framework/components/EmptyState'
 import { useAppStorage } from '../../../framework/persistence/useAppStorage'
 import type { Preset, SoundsState } from '../types'
 
@@ -81,9 +82,11 @@ export function PresetsPanel({ sounds, onApplyPreset }: PresetsPanelProps) {
       </div>
 
       {presets.length === 0 && (
-        <div className="gf-moodist__empty-state">
-          Select sounds and save your mix as a preset.
-        </div>
+        <GfEmptyState
+          icon={<GfIcon name="sparkles" size={24} />}
+          title="No presets yet"
+          description="Select some sounds, adjust volumes, then save your mix as a preset."
+        />
       )}
 
       {presets.map(p => (

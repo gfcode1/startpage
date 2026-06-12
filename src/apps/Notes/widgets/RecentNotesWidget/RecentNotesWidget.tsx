@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom'
-import { GfIcon } from '../../framework/iconSystem'
-import { GfWidgetAction } from '../../framework/components/WidgetAction'
-import { useAppStorage } from '../../framework/persistence/useAppStorage'
-import type { Note } from '../MarkdownNotes/types'
+import { GfIcon } from '../../../../framework/iconSystem'
+import { GfWidgetAction } from '../../../../framework/components/WidgetAction'
+import { useAppStorage } from '../../../../framework/persistence/useAppStorage'
+import type { Note } from '../../types'
 import './RecentNotesWidget.css'
 
 function stripMarkdown(text: string): string {
@@ -20,12 +20,12 @@ function firstLine(text: string): string {
 
 export default function RecentNotesWidget() {
   const navigate = useNavigate()
-  const [notes] = useAppStorage<Note[]>('markdownnotes', 'notes', [])
+  const [notes] = useAppStorage<Note[]>('notes', 'notes', [])
 
   if (notes.length === 0) {
     return (
       <div className="gf-widget-recentnotes">
-        <GfWidgetAction label="Create a note in Markdown" onClick={() => navigate('/markdownnotes')} />
+        <GfWidgetAction label="Create a new note" onClick={() => navigate('/notes')} />
       </div>
     )
   }
@@ -37,7 +37,7 @@ export default function RecentNotesWidget() {
       <div className="gf-widget-recentnotes__header">
         <GfIcon name="document" size={14} />
         <span className="gf-widget-recentnotes__label">Recent Notes</span>
-        <button className="gf-widget-recentnotes__open" onClick={() => navigate('/markdownnotes')} aria-label="Open Markdown Notes">
+        <button className="gf-widget-recentnotes__open" onClick={() => navigate('/notes')} aria-label="Open Notes">
           <GfIcon name="chevron-right" size={14} />
         </button>
       </div>

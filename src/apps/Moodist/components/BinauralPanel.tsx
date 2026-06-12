@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 import { useBinauralBeat } from '../hooks/useBinauralBeat'
 import { GfButton } from '../../../framework/components/Button'
+import { GfSlider } from '../../../framework/components/Slider'
 
 type BinauralFreq = 'delta' | 'theta' | 'alpha' | 'beta' | 'gamma'
 
@@ -62,33 +63,28 @@ export function BinauralPanel() {
 
       <div className="gf-moodist__row">
         <span className="gf-moodist__label">Carrier: {carrier} Hz</span>
-        <input
-          className="gf-moodist__sound-vol"
-          type="range"
+        <GfSlider
+          value={carrier}
           min={100}
           max={400}
           step={10}
-          value={carrier}
-          onChange={e => {
-            const v = Number(e.target.value)
+          aria-label="Carrier frequency"
+          onChange={v => {
             setCarrier(v)
             if (active) beat.start(frequency, v, volume)
           }}
-          aria-label="Carrier frequency"
         />
       </div>
 
       <div className="gf-moodist__row">
         <span className="gf-moodist__label">Volume</span>
-        <input
-          className="gf-moodist__sound-vol"
-          type="range"
+        <GfSlider
+          value={volume}
           min={0}
           max={1}
           step={0.01}
-          value={volume}
-          onChange={e => handleVolChange(Number(e.target.value))}
           aria-label="Binaural volume"
+          onChange={handleVolChange}
         />
       </div>
 

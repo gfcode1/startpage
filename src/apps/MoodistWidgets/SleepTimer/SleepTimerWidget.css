@@ -1,0 +1,41 @@
+.gf-widget-sleeptimer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gf-space-sm);
+  width: 100%;
+  padding: var(--gf-space-md) var(--gf-space-lg);
+}
+
+.gf-widget-sleeptimer__header {
+  display: flex;
+  align-items: center;
+  gap: var(--gf-space-xs);
+}
+
+.gf-widget-sleeptimer__label {
+  font-family: var(--gf-font-ui);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gf-text-muted);
+}
+
+.gf-widget-sleeptimer__active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gf-widget-sleeptimer__time {
+  font-size: var(--gf-size-heading);
+  font-weight: 700;
+  color: var(--gf-accent);
+  font-family: var(--gf-font-display);
+  font-variant-numeric: tabular-nums;
+}
+
+.gf-widget-sleeptimer__idle {
+  font-size: var(--gf-size-small);
+  color: var(--gf-text-muted);
+}

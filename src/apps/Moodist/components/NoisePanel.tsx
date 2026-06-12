@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 import { useNoiseGenerator } from '../hooks/useBinauralBeat'
 import { GfButton } from '../../../framework/components/Button'
+import { GfSlider } from '../../../framework/components/Slider'
 
 type NoiseColor = 'white' | 'pink' | 'brown'
 
@@ -59,15 +60,13 @@ export function NoisePanel() {
 
       <div className="gf-moodist__row">
         <span className="gf-moodist__label">Volume</span>
-        <input
-          className="gf-moodist__sound-vol"
-          type="range"
+        <GfSlider
+          value={volume}
           min={0}
           max={1}
           step={0.01}
-          value={volume}
-          onChange={e => handleVolChange(Number(e.target.value))}
           aria-label="Noise volume"
+          onChange={handleVolChange}
         />
       </div>
 

@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
-import { GfIcon } from '../../framework/iconSystem'
-import { GfWidgetAction } from '../../framework/components/WidgetAction'
-import { useAppStorage } from '../../framework/persistence/useAppStorage'
+import { GfIcon } from '../../../../framework/iconSystem'
+import { GfWidgetAction } from '../../../../framework/components/WidgetAction'
+import { useAppStorage } from '../../../../framework/persistence/useAppStorage'
 import './QuickNoteWidget.css'
 
 interface Note {
@@ -26,12 +26,12 @@ function firstLine(text: string): string {
 
 export default function QuickNoteWidget() {
   const navigate = useNavigate()
-  const [notes] = useAppStorage<Note[]>('markdownnotes', 'notes', [])
+  const [notes] = useAppStorage<Note[]>('notes', 'notes', [])
 
   if (notes.length === 0) {
     return (
       <div className="gf-widget-quicknote">
-        <GfWidgetAction label="Create a note in Markdown" onClick={() => navigate('/markdownnotes')} />
+        <GfWidgetAction label="Create a new note" onClick={() => navigate('/notes')} />
       </div>
     )
   }
@@ -41,7 +41,7 @@ export default function QuickNoteWidget() {
     <div className="gf-widget-quicknote">
       <div className="gf-widget-quicknote__header">
         <span className="gf-widget-quicknote__label">Latest Note</span>
-        <button className="gf-widget-quicknote__open" onClick={() => navigate('/markdownnotes')} aria-label="Open Markdown Notes">
+        <button className="gf-widget-quicknote__open" onClick={() => navigate('/notes')} aria-label="Open Notes">
           <GfIcon name="chevron-right" size={14} />
         </button>
       </div>

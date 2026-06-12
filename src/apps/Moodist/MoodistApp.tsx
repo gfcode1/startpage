@@ -1,9 +1,10 @@
-import { useReducer, useMemo, useCallback, useEffect, useState } from 'react'
+import { useReducer, useMemo, useCallback, useEffect, useState, useRef } from 'react'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
 import { AppHeader } from '../../framework/components/AppHeader'
 import { GfBottomSheet } from '../../framework/components/BottomSheet'
 import { useToast } from '../../framework/ToastContext'
 import { useTopbar } from '../../framework/TopbarContext'
+import { usePlayer } from '../../framework/PlayerContext'
 
 import { categories, getAllSounds } from './data/sounds'
 import { moodistReducer, createInitialState } from './reducer'
@@ -26,6 +27,35 @@ export default function MoodistApp() {
   const [showPresets, setShowPresets] = useState(false)
   const [showSleepTimer, setShowSleepTimer] = useState(false)
   const { setActions, clearConfig } = useTopbar()
+  const player = usePlayer()
+  const prevPlayingState = useRef({ isPlaying: false, hasSelection: false })
+
+  const selectedCount = useMemo(() =>
+    Object.values(state.sounds).filter(s => s.selected).length,
+    [state.sounds],
+  )
+
+  useEffect(() => {
+    const prev = prevPlayingState.current
+    const now = { isPlaying: state.isPlaying, hasSelection: selectedCount > 0 }
+
+    if (now.isPlaying && now.hasSelection && !prev.isPlaying) {
+      player.play({
+        id: 'moodist',
+        title: 'Ambient Mix',
+        subtitle: `${selectedCount} sound${selectedCount !== 1 ? 's' : ''} playing`,
+        type: 'moodist',
+      })
+    } else if (now.isPlaying && now.hasSelection && prev.isPlaying) {
+      player.setPlayInfo('Ambient Mix', `${selectedCount} sound${selectedCount !== 1 ? 's' : ''} playing`)
+    } else if (!now.isPlaying && now.hasSelection) {
+      player.setPlaying(false)
+    } else if (!now.hasSelection) {
+      player.stop()
+    }
+
+    prevPlayingState.current = now
+  }, [state.isPlaying, selectedCount, player.play, player.setPlayInfo, player.setPlaying, player.stop])
 
   useEffect(() => {
     setActions([
@@ -135,8 +165,18 @@ export default function MoodistApp() {
     }
   }, [state.isPlaying, hasNoSelection])
 
+  const statusMessage = useMemo(() => {
+    if (!hasSelection) return 'No sounds selected'
+    if (!state.isPlaying) return `${selectedCount} sound${selectedCount !== 1 ? 's' : ''} paused`
+    return `Playing ${selectedCount} sound${selectedCount !== 1 ? 's' : ''}`
+  }, [hasSelection, state.isPlaying, selectedCount])
+
   return (
     <div className="gf-moodist">
+      <div role="status" aria-live="polite" className="gf-moodist__sr-only">
+        {statusMessage}
+      </div>
+
       <AppHeader badge="84 sounds" />
 
       <PlayerControls

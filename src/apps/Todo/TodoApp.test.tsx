@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { ToastProvider } from '../../framework/ToastContext'
 import { TopbarProvider } from '../../framework/TopbarContext'
 import TodoApp from './TodoApp'
+import { createInitialAppData } from './utils'
 
 function renderWithProviders() {
   return render(
@@ -14,6 +15,10 @@ function renderWithProviders() {
   )
 }
 
+function seedStorage(data: unknown) {
+  localStorage.setItem('gf:todo:lists', JSON.stringify(data))
+}
+
 describe('TodoApp', () => {
   beforeEach(() => {
     localStorage.clear()
@@ -21,7 +26,7 @@ describe('TodoApp', () => {
 
   it('can add a new task via input + button', () => {
     renderWithProviders()
-    const input = screen.getByPlaceholderText('Add a new task...')
+    const input = screen.getByPlaceholderText('Add a task to "My List"...')
     fireEvent.change(input, { target: { value: 'Buy milk' } })
     fireEvent.click(screen.getByLabelText('Add task'))
     expect(screen.getByText('Buy milk')).toBeInTheDocument()
@@ -29,7 +34,7 @@ describe('TodoApp', () => {
 
   it('can add a new task via Enter key', () => {
     renderWithProviders()
-    const input = screen.getByPlaceholderText('Add a new task...')
+    const input = screen.getByPlaceholderText('Add a task to "My List"...')
     fireEvent.change(input, { target: { value: 'Write tests' } })
     fireEvent.keyDown(input, { key: 'Enter' })
     expect(screen.getByText('Write tests')).toBeInTheDocument()
@@ -43,7 +48,7 @@ describe('TodoApp', () => {
 
   it('can toggle a task complete', () => {
     renderWithProviders()
-    const input = screen.getByPlaceholderText('Add a new task...')
+    const input = screen.getByPlaceholderText('Add a task to "My List"...')
     fireEvent.change(input, { target: { value: 'Task to complete' } })
     fireEvent.keyDown(input, { key: 'Enter' })
 
@@ -54,7 +59,7 @@ describe('TodoApp', () => {
 
   it('can delete a task', () => {
     renderWithProviders()
-    const input = screen.getByPlaceholderText('Add a new task...')
+    const input = screen.getByPlaceholderText('Add a task to "My List"...')
     fireEvent.change(input, { target: { value: 'Delete me' } })
     fireEvent.keyDown(input, { key: 'Enter' })
 
@@ -75,7 +80,7 @@ describe('TodoApp', () => {
 
   it('clears completed tasks', () => {
     renderWithProviders()
-    const input = screen.getByPlaceholderText('Add a new task...')
+    const input = screen.getByPlaceholderText('Add a task to "My List"...')
     fireEvent.change(input, { target: { value: 'Task one' } })
     fireEvent.keyDown(input, { key: 'Enter' })
     fireEvent.change(input, { target: { value: 'Task two' } })
@@ -92,7 +97,7 @@ describe('TodoApp', () => {
 
   it('can add a subtask', () => {
     renderWithProviders()
-    const input = screen.getByPlaceholderText('Add a new task...')
+    const input = screen.getByPlaceholderText('Add a task to "My List"...')
     fireEvent.change(input, { target: { value: 'Parent task' } })
     fireEvent.keyDown(input, { key: 'Enter' })
 
@@ -108,7 +113,7 @@ describe('TodoApp', () => {
 
   it('cycles priority on click', () => {
     renderWithProviders()
-    const input = screen.getByPlaceholderText('Add a new task...')
+    const input = screen.getByPlaceholderText('Add a task to "My List"...')
     fireEvent.change(input, { target: { value: 'Priority task' } })
     fireEvent.keyDown(input, { key: 'Enter' })
 
@@ -122,7 +127,7 @@ describe('TodoApp', () => {
 
   it('can cancel deletion', () => {
     renderWithProviders()
-    const input = screen.getByPlaceholderText('Add a new task...')
+    const input = screen.getByPlaceholderText('Add a task to "My List"...')
     fireEvent.change(input, { target: { value: 'Keep me' } })
     fireEvent.keyDown(input, { key: 'Enter' })
 
@@ -141,26 +146,38 @@ describe('TodoApp', () => {
 
   it('renders active count badge in header', () => {
     renderWithProviders()
-    expect(screen.getByText('0 active')).toBeInTheDocument()
+    expect(screen.getByText(/0 active across/)).toBeInTheDocument()
   })
 
   it('shows default tag manager state when task exists', () => {
     renderWithProviders()
-    const input = screen.getByPlaceholderText('Add a new task...')
+    const input = screen.getByPlaceholderText('Add a task to "My List"...')
     fireEvent.change(input, { target: { value: 'Tagged task' } })
     fireEvent.keyDown(input, { key: 'Enter' })
     expect(screen.getByText('Tagged task')).toBeInTheDocument()
   })
 
   it('handles corrupted localStorage gracefully', () => {
-    localStorage.setItem('gf:todo:list', JSON.stringify({ items: 'not-an-array', tags: null }))
+    localStorage.setItem('gf:todo:lists', JSON.stringify({ items: 'not-an-array', tags: null }))
     renderWithProviders()
-    expect(screen.getByText('No tasks yet')).toBeInTheDocument()
+    expect(screen.getByText('"My List" is empty')).toBeInTheDocument()
+  })
+
+  it('handles old single-list format gracefully', () => {
+    localStorage.setItem('gf:todo:list', JSON.stringify({
+      name: 'Legacy',
+      items: [{ id: '1', text: 'Old task', completed: false, priority: 'medium', tags: [], parentId: null, dueDate: null, order: 0, createdAt: Date.now(), completedAt: null }],
+      tags: [],
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    }))
+    renderWithProviders()
+    expect(screen.getByText('Old task')).toBeInTheDocument()
   })
 
   it('filters by completed segment', () => {
     renderWithProviders()
-    const input = screen.getByPlaceholderText('Add a new task...')
+    const input = screen.getByPlaceholderText('Add a task to "My List"...')
     fireEvent.change(input, { target: { value: 'Active task' } })
     fireEvent.keyDown(input, { key: 'Enter' })
 
@@ -176,7 +193,7 @@ describe('TodoApp', () => {
 
   it('shows empty state when all tasks are completed', () => {
     renderWithProviders()
-    const input = screen.getByPlaceholderText('Add a new task...')
+    const input = screen.getByPlaceholderText('Add a task to "My List"...')
     fireEvent.change(input, { target: { value: 'Task' } })
     fireEvent.keyDown(input, { key: 'Enter' })
 
@@ -186,5 +203,78 @@ describe('TodoApp', () => {
     const activeSegment = screen.getByText(/^Active/)
     fireEvent.click(activeSegment)
     expect(screen.getByText('All tasks are done!')).toBeInTheDocument()
+  })
+
+  describe('multi-list', () => {
+    it('shows the list switcher with the default list', () => {
+      renderWithProviders()
+      expect(screen.getByText('My List')).toBeInTheDocument()
+    })
+
+    it('can switch between lists', () => {
+      seedStorage(createInitialAppData())
+      renderWithProviders()
+
+      const input = screen.getByPlaceholderText('Add a task to "My List"...')
+      fireEvent.change(input, { target: { value: 'Task in My List' } })
+      fireEvent.keyDown(input, { key: 'Enter' })
+      expect(screen.getByText('Task in My List')).toBeInTheDocument()
+    })
+
+    it('shows list manager with create input', () => {
+      renderWithProviders()
+      const manageListsBtn = screen.getByLabelText('Manage lists')
+      fireEvent.click(manageListsBtn)
+      expect(screen.getByPlaceholderText('New list name...')).toBeInTheDocument()
+    })
+
+    it('can create a new list from the list manager', () => {
+      renderWithProviders()
+      const manageListsBtn = screen.getByLabelText('Manage lists')
+      fireEvent.click(manageListsBtn)
+
+      const newListInput = screen.getByPlaceholderText('New list name...')
+      fireEvent.change(newListInput, { target: { value: 'Work' } })
+      fireEvent.click(screen.getByLabelText('Create list'))
+
+      const workChips = screen.getAllByText('Work')
+      expect(workChips.length).toBeGreaterThanOrEqual(2)
+    })
+
+    it('shows the list chip with active count', () => {
+      renderWithProviders()
+      const input = screen.getByPlaceholderText('Add a task to "My List"...')
+      fireEvent.change(input, { target: { value: 'Task' } })
+      fireEvent.keyDown(input, { key: 'Enter' })
+
+      expect(screen.getByText('My List')).toBeInTheDocument()
+    })
+
+    it('can delete a list from the list manager', () => {
+      const data = createInitialAppData()
+      const list2 = {
+        id: 'list2',
+        name: 'Second List',
+        items: [],
+        tags: [],
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      }
+      data.lists.push(list2)
+      data.listOrder.push('list2')
+      data.activeListId = data.lists[0].id
+      seedStorage(data)
+
+      renderWithProviders()
+
+      const manageListsBtn = screen.getByLabelText('Manage lists')
+      fireEvent.click(manageListsBtn)
+
+      const delBtns = screen.getAllByLabelText(/Delete list/)
+      fireEvent.click(delBtns[0])
+
+      const confirmBtn = screen.getByText('Delete')
+      fireEvent.click(confirmBtn)
+    })
   })
 })

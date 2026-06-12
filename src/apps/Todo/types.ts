@@ -22,9 +22,16 @@ export interface TagDef {
 }
 
 export interface TodoList {
+  id: string
   name: string
   items: TodoItem[]
   tags: TagDef[]
   createdAt: number
   updatedAt: number
+}
+
+export interface TodoAppData {
+  activeListId: string
+  lists: TodoList[]
+  listOrder: string[]
 }
