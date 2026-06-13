@@ -36,7 +36,8 @@ interface PlayerActions {
 
 type PlayerContextValue = PlayerState & PlayerActions
 
-const PlayerContext = createContext<PlayerContextValue | null>(null)
+const PlayerStateContext = createContext<PlayerState | null>(null)
+const PlayerActionsContext = createContext<PlayerActions | null>(null)
 
 export function PlayerProvider({ children }: { children: ReactNode }) {
   const [playerPrefs, setPlayerPrefs] = useAppStorage<{ volume: number }>('_framework', 'player', { volume: 0.75 })
@@ -135,32 +136,43 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     }
   }, [transient.sleepTimer, transient.playingId, stop])
 
-  const value = useMemo<PlayerContextValue>(() => ({
+  const [actions] = useState<PlayerActions>(() => ({
+    play, setPlaying, setLoading, setPlayInfo, stop, setVolume,
+    addToQueue, removeFromQueue, playNextFromQueue, clearQueue, setSleepTimer,
+  }))
+
+  const state: PlayerState = useMemo(() => ({
     ...transient,
     volume: playerPrefs.volume,
-    play,
-    setPlaying,
-    setLoading,
-    setPlayInfo,
-    stop,
-    setVolume,
-    addToQueue,
-    removeFromQueue,
-    playNextFromQueue,
-    clearQueue,
-    setSleepTimer,
-  }), [transient, playerPrefs.volume, play, setPlaying, setLoading, setPlayInfo, stop, setVolume, addToQueue, removeFromQueue, playNextFromQueue, clearQueue, setSleepTimer])
+  }), [transient, playerPrefs.volume])
 
   return (
-    <PlayerContext.Provider value={value}>
-      {children}
-    </PlayerContext.Provider>
+    <PlayerActionsContext.Provider value={actions}>
+      <PlayerStateContext.Provider value={state}>
+        {children}
+      </PlayerStateContext.Provider>
+    </PlayerActionsContext.Provider>
   )
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function usePlayer(): PlayerContextValue {
-  const ctx = useContext(PlayerContext)
-  if (!ctx) throw new Error('usePlayer must be used within PlayerProvider')
+  const state = useContext(PlayerStateContext)
+  const actions = useContext(PlayerActionsContext)
+  if (!state || !actions) throw new Error('usePlayer must be used within PlayerProvider')
+  return useMemo(() => ({ ...state, ...actions }), [state, actions])
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+export function usePlayerState(): PlayerState {
+  const ctx = useContext(PlayerStateContext)
+  if (!ctx) throw new Error('usePlayerState must be used within PlayerProvider')
+  return ctx
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+export function usePlayerActions(): PlayerActions {
+  const ctx = useContext(PlayerActionsContext)
+  if (!ctx) throw new Error('usePlayerActions must be used within PlayerProvider')
   return ctx
 }

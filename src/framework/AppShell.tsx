@@ -9,6 +9,7 @@ import { GfBottomSheet } from './components/BottomSheet'
 import { GfIcon } from './iconSystem'
 import { SettingsModal } from './components/SettingsModal'
 import { InstallPrompt } from './components/InstallPrompt'
+import { useWindowManager } from './WindowManager'
 import './AppShell.css'
 
 const MOBILE_BREAKPOINT = '(max-width: 639px)'
@@ -124,17 +125,24 @@ export function AppShell({ children }: { children: ReactNode }) {
   useScrollToTop()
   const { themeKey } = useGfTheme()
   const [showSettings, setShowSettings] = useState(false)
+  const { windows } = useWindowManager()
+  const location = useLocation()
+  const isHome = location.pathname === '/'
+  const hasWindows = windows.length > 0
+  const hideTopbar = isHome && hasWindows
 
   return (
     <TopbarProvider>
-      <div className="gf-shell">
+      <div className={`gf-shell ${hideTopbar ? 'gf-shell--desktop' : ''}`}>
         <a href="#main-content" className="gf-skip-link">
           Skip to content
         </a>
 
-        <TopbarInner onOpenSettings={() => setShowSettings(true)} />
+        <div className={`gf-topbar-wrapper ${hideTopbar ? 'gf-topbar-wrapper--hidden' : ''}`}>
+          <TopbarInner onOpenSettings={() => setShowSettings(true)} />
+        </div>
 
-        <main id="main-content" className="gf-shell__content">
+        <main id="main-content" className={`gf-shell__content ${hideTopbar ? 'gf-shell__content--desktop' : ''}`}>
           {children}
         </main>
 

@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useRef, useCallback, ReactNode, u
 import { supabase, isSupabaseEnabled } from '../supabase/client'
 import { useAuth } from '../auth/AuthContext'
 import { storageEngine } from '../storage/StorageEngine'
+import { mergeStorageData } from './syncMergeService'
+import type { MergeStrategy } from './syncMergeService'
 
 type SyncStatus = 'idle' | 'syncing' | 'synced' | 'error'
 
@@ -14,6 +16,8 @@ interface SyncContextValue {
 const SyncContext = createContext<SyncContextValue | null>(null)
 
 const DEBOUNCE_MS = 2000
+
+const MERGE_STRATEGY: MergeStrategy = 'local_wins'
 
 const NOOP_CONTEXT: SyncContextValue = {
   status: 'idle',
@@ -65,16 +69,7 @@ export function SyncProvider({ children }: { children: ReactNode }) {
       if (!cloudState || Object.keys(cloudState).length === 0) return
 
       const localState = storageEngine.getAllState()
-
-      const merged: Record<string, Record<string, unknown>> = {}
-      const allAppIds = new Set([...Object.keys(localState), ...Object.keys(cloudState)])
-
-      for (const appId of allAppIds) {
-        const localApp = localState[appId] ?? {}
-        const cloudApp = cloudState[appId] ?? {}
-        merged[appId] = { ...cloudApp, ...localApp }
-      }
-
+      const merged = mergeStorageData(localState, cloudState, MERGE_STRATEGY)
       storageEngine.importState(merged)
 
       if (mountedRef.current) {
@@ -138,7 +133,7 @@ export function SyncProvider({ children }: { children: ReactNode }) {
       .subscribe()
 
     return () => {
-      supabase.removeChannel(channel)
+      supabase?.removeChannel(channel)
     }
   }, [user, refreshProfile])
 
@@ -162,10 +157,7 @@ export function SyncProvider({ children }: { children: ReactNode }) {
     }
 
     if (needsMerge) {
-      const merged: Record<string, Record<string, unknown>> = { ...cloudState }
-      for (const [appId, keys] of Object.entries(localState)) {
-        merged[appId] = { ...(merged[appId] ?? {}), ...keys }
-      }
+      const merged = mergeStorageData(localState, cloudState, MERGE_STRATEGY)
       storageEngine.importState(merged)
     }
   }, [profile])

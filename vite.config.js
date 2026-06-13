@@ -26,6 +26,12 @@ export default defineConfig({
         manualChunks(id) {
           if (id.includes('node_modules/react')) return 'vendor-react'
           if (id.includes('node_modules/marked') || id.includes('node_modules/@mozilla')) return 'vendor-content'
+          if (id.includes('node_modules/@supabase')) return 'vendor-supabase'
+          if (id.includes('node_modules/leaflet') || id.includes('node_modules/@types/leaflet')) return 'vendor-maps'
+          if (id.includes('node_modules/howler')) return 'vendor-audio'
+          if (id.includes('node_modules/highlight')) return 'vendor-code'
+          if (id.includes('node_modules/html2pdf')) return 'vendor-pdf'
+          if (id.includes('node_modules/@dnd-kit')) return 'vendor-dnd'
         },
       },
     },

@@ -1,5 +1,4 @@
 import { useState, useMemo, CSSProperties } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { Icon } from '@iconify/react'
 import { GfIcon, IconName } from '../../framework/iconSystem'
 import { apps, AppDef, AppCategory } from '../../framework/appRegistry'
@@ -7,6 +6,7 @@ import { useBadges } from '../../framework/AppBadgeContext'
 import { useAppStorage } from '../../framework/persistence/useAppStorage'
 import { WidgetGrid } from '../../framework/components/WidgetGrid'
 import { GfSegmentedControl } from '../../framework/components/SegmentedControl'
+import { useWindowManager } from '../../framework/WindowManager'
 import './Launcher.css'
 
 function openInPopup(app: AppDef) {
@@ -32,23 +32,32 @@ const categoryIcons: Record<AppCategory, IconName> = {
 }
 
 function AppCard({ app, index, isFavorite, onToggleFavorite }: { app: AppDef; index: number; isFavorite: boolean; onToggleFavorite: (id: string) => void }) {
-  const navigate = useNavigate()
+  const { openWindow, isOpen, focusWindow } = useWindowManager()
   const badges = useBadges()
   const badge = badges[app.id]
+  const alreadyOpen = isOpen(app.id)
+
+  const handleOpen = () => {
+    if (alreadyOpen) {
+      focusWindow(app.id)
+    } else {
+      openWindow(app.id)
+    }
+  }
 
   return (
     <div
-      className="gf-launcher__card"
+      className={`gf-launcher__card ${alreadyOpen ? 'gf-launcher__card--open' : ''}`}
       style={{
         '--card-color': app.color,
         '--card-gradient': app.gradient,
         '--card-index': index,
       } as CSSProperties}
-      onClick={() => navigate(app.path)}
+      onClick={handleOpen}
       role="button"
       tabIndex={0}
       aria-label={`Open ${app.name}`}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(app.path) } }}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleOpen() } }}
     >
       <div className="gf-launcher__card-inner">
         {/* Front — gradient + icon + name */}

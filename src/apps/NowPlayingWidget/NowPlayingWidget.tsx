@@ -1,9 +1,9 @@
 import { GfIcon } from '../../framework/iconSystem'
-import { usePlayer } from '../../framework/PlayerContext'
+import { usePlayerState } from '../../framework/PlayerContext'
 import './NowPlayingWidget.css'
 
 export default function NowPlayingWidget() {
-  const { playingId, playingTitle, subtitle, isPlaying, isLoading } = usePlayer()
+  const { playingId, playingTitle, subtitle, isPlaying, isLoading } = usePlayerState()
 
   if (!playingId) {
     return (

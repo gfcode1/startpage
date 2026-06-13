@@ -4,6 +4,21 @@
   min-height: 100dvh;
 }
 
+.gf-shell--desktop {
+  /* Desktop mode: no topbar adjustment needed */
+}
+
+.gf-topbar-wrapper {
+  transition: transform var(--gf-duration-slow) var(--gf-ease-out), opacity var(--gf-duration-slow) var(--gf-ease-out);
+}
+
+.gf-topbar-wrapper--hidden {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
 .gf-topbar {
   position: sticky;
   top: 0;
@@ -178,6 +193,10 @@
   width: 100%;
   margin: 0 auto;
   overflow-anchor: none;
+}
+
+.gf-shell__content.gf-shell__content--desktop {
+  padding-top: 0;
 }
 
 @media (min-width: 640px) {

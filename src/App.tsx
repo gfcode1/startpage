@@ -16,6 +16,8 @@ import { SkeletonGrid } from './framework/components/Skeleton'
 import { NotFound } from './apps/NotFound/NotFound'
 import { CommandPalette } from './framework/components/CommandPalette'
 import { useCommandPalette } from './framework/hooks/useCommandPalette'
+import { WindowManagerProvider } from './framework/WindowManager'
+import { AppShelf } from './framework/components/AppShelf'
 
 function AppShellWrapper({ children }: { children: ReactNode }) {
   return (
@@ -103,8 +105,11 @@ function AppInner() {
   return (
     <AuthGate>
       <SyncProvider>
-        <AnimatedRoutes />
-        <CommandPalette open={cmdkOpen} onClose={cmdkClose} />
+        <WindowManagerProvider>
+          <AnimatedRoutes />
+          <AppShelf />
+          <CommandPalette open={cmdkOpen} onClose={cmdkClose} />
+        </WindowManagerProvider>
       </SyncProvider>
     </AuthGate>
   )

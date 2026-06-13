@@ -4,6 +4,7 @@ import { Icon } from '@iconify/react'
 const iconDefs: Record<string, string> = {
   'chevron-left': 'chevron-left',
   'chevron-right': 'chevron-right',
+  'chevron-up': 'chevron-up',
   'chevron-down': 'chevron-down',
   home: 'house',
   menu: 'menu',

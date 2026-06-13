@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { usePlayer } from '../../../framework/PlayerContext'
+import { usePlayerState } from '../../../framework/PlayerContext'
 import { GfIcon } from '../../../framework/iconSystem'
 
 function formatRemaining(ms: number): string {
@@ -10,7 +10,7 @@ function formatRemaining(ms: number): string {
 }
 
 export default function SleepTimerWidget() {
-  const { sleepTimer, playingId } = usePlayer()
+  const { sleepTimer, playingId } = usePlayerState()
   const [now, setNow] = useState(() => Date.now())
 
   useEffect(() => {

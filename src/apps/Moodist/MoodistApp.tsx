@@ -4,7 +4,7 @@ import { AppHeader } from '../../framework/components/AppHeader'
 import { GfBottomSheet } from '../../framework/components/BottomSheet'
 import { useToast } from '../../framework/ToastContext'
 import { useTopbar } from '../../framework/TopbarContext'
-import { usePlayer } from '../../framework/PlayerContext'
+import { usePlayerActions } from '../../framework/PlayerContext'
 
 import { categories, getAllSounds } from './data/sounds'
 import { moodistReducer, createInitialState } from './reducer'
@@ -27,7 +27,7 @@ export default function MoodistApp() {
   const [showPresets, setShowPresets] = useState(false)
   const [showSleepTimer, setShowSleepTimer] = useState(false)
   const { setActions, clearConfig } = useTopbar()
-  const player = usePlayer()
+  const { play, setPlayInfo, setPlaying, stop } = usePlayerActions()
   const prevPlayingState = useRef({ isPlaying: false, hasSelection: false })
 
   const selectedCount = useMemo(() =>
@@ -40,22 +40,22 @@ export default function MoodistApp() {
     const now = { isPlaying: state.isPlaying, hasSelection: selectedCount > 0 }
 
     if (now.isPlaying && now.hasSelection && !prev.isPlaying) {
-      player.play({
+      play({
         id: 'moodist',
         title: 'Ambient Mix',
         subtitle: `${selectedCount} sound${selectedCount !== 1 ? 's' : ''} playing`,
         type: 'moodist',
       })
     } else if (now.isPlaying && now.hasSelection && prev.isPlaying) {
-      player.setPlayInfo('Ambient Mix', `${selectedCount} sound${selectedCount !== 1 ? 's' : ''} playing`)
+      setPlayInfo('Ambient Mix', `${selectedCount} sound${selectedCount !== 1 ? 's' : ''} playing`)
     } else if (!now.isPlaying && now.hasSelection) {
-      player.setPlaying(false)
+      setPlaying(false)
     } else if (!now.hasSelection) {
-      player.stop()
+      stop()
     }
 
     prevPlayingState.current = now
-  }, [state.isPlaying, selectedCount, player.play, player.setPlayInfo, player.setPlaying, player.stop])
+  }, [state.isPlaying, selectedCount, play, setPlayInfo, setPlaying, stop])
 
   useEffect(() => {
     setActions([

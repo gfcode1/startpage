@@ -156,6 +156,10 @@
   transform: scale(0.97);
 }
 
+.gf-launcher__card--open {
+  box-shadow: 0 0 0 2px var(--gf-accent), var(--gf-shadow-md);
+}
+
 .gf-launcher__card-inner {
   position: relative;
   width: 100%;

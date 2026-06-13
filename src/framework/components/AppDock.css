@@ -1,0 +1,180 @@
+.gf-appdock__inner {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--gf-space-xs);
+  padding: var(--gf-space-xs) var(--gf-space-sm);
+  background: var(--gf-bg-app);
+  border: 1px solid var(--gf-border);
+  border-radius: var(--gf-radius-xl);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--gf-shadow-lg);
+}
+
+.gf-appdock__sep {
+  width: 1px;
+  height: 32px;
+  background: var(--gf-border);
+  flex-shrink: 0;
+  margin: 0 var(--gf-space-xs);
+}
+
+.gf-appdock__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: var(--gf-space-xs);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: var(--gf-radius-md);
+  transition: transform 0.12s ease-out, opacity 0.15s ease;
+  min-width: 48px;
+  position: relative;
+  outline: none;
+  transform: scale(var(--gf-scale, 1));
+}
+
+.gf-appdock__item:focus-visible {
+  box-shadow: 0 0 0 2px var(--gf-accent);
+}
+
+.gf-appdock__item:hover {
+  transform: scale(var(--gf-scale, 1)) translateY(-4px);
+}
+
+.gf-appdock__item:active {
+  transform: scale(0.95);
+}
+
+.gf-appdock__item--open {
+  /* state indicator — dot handles visual feedback */
+}
+
+.gf-appdock__item--minimized {
+  opacity: 0.85;
+}
+
+.gf-appdock__item--dragging {
+  opacity: 0.4;
+  z-index: 1;
+}
+
+.gf-appdock__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--gf-radius-md);
+  color: #fff;
+  transition: border-radius 0.15s var(--gf-ease-out), transform 0.12s ease-out;
+  will-change: transform;
+}
+
+.gf-appdock__item:hover .gf-appdock__icon {
+  border-radius: var(--gf-radius-lg);
+}
+
+.gf-appdock__label {
+  font-size: var(--gf-size-tiny);
+  color: var(--gf-text-muted);
+  white-space: nowrap;
+  max-width: 56px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transition: opacity 0.15s var(--gf-ease-out);
+  position: absolute;
+  bottom: calc(100% + var(--gf-space-xs));
+  background: var(--gf-bg-elevated);
+  padding: 2px var(--gf-space-xs);
+  border-radius: var(--gf-radius-sm);
+  pointer-events: none;
+}
+
+.gf-appdock__item:hover .gf-appdock__label {
+  opacity: 1;
+}
+
+.gf-appdock__dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--gf-accent);
+}
+
+.gf-appdock__dot--minimized {
+  background: transparent;
+  border: 1.5px solid var(--gf-accent);
+  width: 5px;
+  height: 5px;
+}
+
+@keyframes gf-dock-bounce {
+  0%   { transform: scale(1); }
+  20%  { transform: scale(1.15); }
+  40%  { transform: scale(0.92); }
+  60%  { transform: scale(1.06); }
+  80%  { transform: scale(0.98); }
+  100% { transform: scale(1); }
+}
+
+.gf-appdock__item--opening .gf-appdock__icon {
+  animation: gf-dock-bounce 0.5s ease;
+}
+
+/* Context Menu */
+.gf-appdock__context-menu {
+  position: fixed;
+  z-index: 1000;
+  min-width: 180px;
+  padding: var(--gf-space-xs);
+  background: var(--gf-bg-elevated);
+  border: 1px solid var(--gf-border);
+  border-radius: var(--gf-radius-md);
+  box-shadow: var(--gf-shadow-lg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.gf-appdock__context-item {
+  display: flex;
+  align-items: center;
+  gap: var(--gf-space-sm);
+  width: 100%;
+  padding: var(--gf-space-xs) var(--gf-space-sm);
+  border: none;
+  background: transparent;
+  color: var(--gf-text);
+  font-size: var(--gf-size-small);
+  border-radius: var(--gf-radius-sm);
+  cursor: pointer;
+  text-align: left;
+  white-space: nowrap;
+  transition: background 0.1s;
+}
+
+.gf-appdock__context-item:hover {
+  background: var(--gf-bg-hover);
+}
+
+.gf-appdock__context-sep {
+  height: 1px;
+  margin: var(--gf-space-xs) 0;
+  background: var(--gf-border);
+}
+
+/* Drag overlay */
+.gf-appdock__overlay-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--gf-radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: var(--gf-shadow-lg);
+  transform: scale(1.1);
+}
