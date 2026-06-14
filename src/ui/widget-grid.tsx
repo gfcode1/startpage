@@ -1,0 +1,143 @@
+import { useState } from 'react'
+import { SimpleGrid, Paper, Text, Group, ActionIcon, Box } from '@mantine/core'
+
+import { Icon } from '@iconify/react'
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  rectSortingStrategy,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import { useWidgetActiveWidgets, useWidgetRemoveWidget, useWidgetReorderWidgets } from '@/stores/widget-store'
+import { widgets, type WidgetDefinition } from '@/registry/widgets'
+import { WidgetPickerDialog } from './widget-picker-dialog'
+
+function SortableWidget({ widget }: { widget: WidgetDefinition }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: widget.id,
+  })
+  const removeWidget = useWidgetRemoveWidget()
+  const WidgetComponent = widget.component
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.4 : 1,
+    position: 'relative' as const,
+  }
+
+  return (
+    <Paper
+      ref={setNodeRef}
+      style={style}
+      withBorder
+      p="md"
+      radius="md"
+      bg="var(--mantine-color-dark-8)"
+    >
+      <Group gap="xs" mb="xs" wrap="nowrap">
+        <Box
+          {...attributes}
+          {...listeners}
+          style={{ cursor: 'grab', display: 'flex', alignItems: 'center', color: 'var(--mantine-color-dark-3)' }}
+        >
+          <Icon icon="lucide:grip-vertical" width={14} />
+        </Box>
+        <Text size="sm" fw={600} style={{ flex: 1 }} truncate="end">
+          {widget.name}
+        </Text>
+        <ActionIcon
+          variant="subtle"
+          size="xs"
+          onClick={() => removeWidget(widget.id)}
+          aria-label={`Remove ${widget.name}`}
+        >
+          <Icon icon="lucide:x" width={14} />
+        </ActionIcon>
+      </Group>
+      <WidgetComponent />
+    </Paper>
+  )
+}
+
+
+export function WidgetGrid() {
+  const activeWidgets = useWidgetActiveWidgets()
+  const reorderWidgets = useWidgetReorderWidgets()
+  const [pickerOpen, setPickerOpen] = useState(false)
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  )
+
+  const activeWidgetDefs: WidgetDefinition[] = activeWidgets
+    .map((id) => widgets.find((w: WidgetDefinition) => w.id === id))
+    .filter((w): w is WidgetDefinition => w !== undefined)
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    const oldIndex = activeWidgets.indexOf(active.id as string)
+    const newIndex = activeWidgets.indexOf(over.id as string)
+    if (oldIndex === -1 || newIndex === -1) return
+    const reordered = [...activeWidgets]
+    reordered.splice(oldIndex, 1)
+    reordered.splice(newIndex, 0, active.id as string)
+    reorderWidgets(reordered)
+  }
+
+  // Separate system widget (search) from the rest
+  const systemWidgets = activeWidgetDefs.filter((w) => w.category === 'system')
+  const standardWidgets = activeWidgetDefs.filter((w) => w.category !== 'system')
+
+  return (
+    <div>
+      {systemWidgets.map((w) => {
+        const W = w.component
+        return (
+          <Paper key={w.id} withBorder p="md" radius="md" mb="md" bg="var(--mantine-color-dark-8)">
+            <W />
+          </Paper>
+        )
+      })}
+
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={standardWidgets.map((w) => w.id)} strategy={rectSortingStrategy}>
+          <SimpleGrid
+            cols={{ base: 2, sm: 3, lg: 4 }}
+            spacing="md"
+          >
+            {standardWidgets.length === 0 ? (
+              <Text c="dimmed" size="sm" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '2rem 0' }}>
+                No widgets active. Click + to add one.
+              </Text>
+            ) : (
+              standardWidgets.map((w) => (
+                <SortableWidget key={w.id} widget={w} />
+              ))
+            )}
+          </SimpleGrid>
+        </SortableContext>
+      </DndContext>
+
+      <Group justify="center" mt="md">
+        <ActionIcon variant="outline" size="lg" radius="xl" onClick={() => setPickerOpen(true)} aria-label="Add widget">
+          <Icon icon="lucide:plus" width={18} />
+        </ActionIcon>
+      </Group>
+
+      <WidgetPickerDialog opened={pickerOpen} onClose={() => setPickerOpen(false)} />
+    </div>
+  )
+}

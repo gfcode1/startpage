@@ -1,22 +1,31 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { MantineProvider } from '@mantine/core'
+import { Notifications } from '@mantine/notifications'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { theme } from './theme'
+import { App } from './App'
 import './index.css'
-import App from './App'
 
-const redirect = sessionStorage.getItem('redirect')
-sessionStorage.removeItem('redirect')
-if (redirect) {
-  const url = new URL(redirect)
-  if (url.pathname !== '/') {
-    history.replaceState(null, '', url.pathname + url.search + url.hash)
-  }
-}
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 2,
+      refetchOnWindowFocus: false,
+    },
+  },
+})
 
 const root = document.getElementById('root')
 if (root) {
   createRoot(root).render(
     <StrictMode>
-      <App />
+      <MantineProvider theme={theme} defaultColorScheme="dark">
+        <QueryClientProvider client={queryClient}>
+          <Notifications position="bottom-right" />
+          <App />
+        </QueryClientProvider>
+      </MantineProvider>
     </StrictMode>,
   )
 }

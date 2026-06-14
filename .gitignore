@@ -29,10 +29,4 @@ bin/
 neutralino.js
 neutralino.d.ts
 
-# Generated manifests
-public/roms-manifest.json
 
-# ROM files
-public/emulator/games/
-public/emulator/data/
-src/apps/EmulatorLauncher/roms/

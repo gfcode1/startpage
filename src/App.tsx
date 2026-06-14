@@ -1,138 +1,74 @@
-import { Suspense, ReactNode, useState, useEffect } from 'react'
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
-import { flushSync } from 'react-dom'
-import { GfThemeProvider } from './framework/ThemeProvider'
-import { AppShell } from './framework/AppShell'
-import { ErrorBoundary } from './framework/ErrorBoundary'
-import { PlayerProvider } from './framework/PlayerContext'
-import { ToastProvider } from './framework/ToastContext'
-import { AppBadgeProvider } from './framework/AppBadgeContext'
-import { AuthProvider, useAuth } from './framework/auth/AuthContext'
-import { SyncProvider } from './framework/sync/SyncContext'
-import { LoginPage } from './framework/auth/LoginPage'
-import { apps } from './framework/appRegistry'
-import { Launcher } from './apps/Launcher/Launcher'
-import { SkeletonGrid } from './framework/components/Skeleton'
-import { NotFound } from './apps/NotFound/NotFound'
-import { CommandPalette } from './framework/components/CommandPalette'
-import { useCommandPalette } from './framework/hooks/useCommandPalette'
-import { WindowManagerProvider } from './framework/WindowManager'
-import { AppShelf } from './framework/components/AppShelf'
-
-function AppShellWrapper({ children }: { children: ReactNode }) {
-  return (
-    <AppShell>
-      <Suspense fallback={<SkeletonGrid count={6} />}>
-        {children}
-      </Suspense>
-    </AppShell>
-  )
-}
-
-function useViewTransitionLocation() {
-  const location = useLocation()
-  const [displayLocation, setDisplayLocation] = useState(location)
-
-  useEffect(() => {
-    const locKey = `${location.pathname}${location.search}`
-    const displayKey = `${displayLocation.pathname}${displayLocation.search}`
-    if (locKey === displayKey) return
-
-    if (document.startViewTransition) {
-      document.startViewTransition(() => {
-        flushSync(() => setDisplayLocation(location))
-      })
-    } else {
-      requestAnimationFrame(() => {
-        setDisplayLocation(location)
-      })
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location])
-
-  return displayLocation
-}
-
-function AuthGate({ children }: { children: ReactNode }) {
-  const { user, loading } = useAuth()
-
-  if (loading) {
-    return (
-      <div className="gf-login" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--gf-bg)' }}>
-        <div style={{ color: 'var(--gf-text-muted)' }}>Loading...</div>
-      </div>
-    )
-  }
-
-  if (!user) {
-    return <LoginPage />
-  }
-
-  return <>{children}</>
-}
-
-function AnimatedRoutes() {
-  const displayLocation = useViewTransitionLocation()
-
-  return (
-    <Routes location={displayLocation}>
-      <Route path="/" element={
-        <AppShell>
-          <Launcher />
-        </AppShell>
-      } />
-      {apps.map(app => (
-        <Route key={app.id} path={app.path} element={
-          <ErrorBoundary key={`eb-${app.id}`} appName={app.name}>
-            <AppShellWrapper>
-              <app.component />
-            </AppShellWrapper>
-          </ErrorBoundary>
-        } />
-      ))}
-      <Route path="*" element={
-        <AppShell>
-          <NotFound />
-        </AppShell>
-      } />
-    </Routes>
-  )
-}
+import { Suspense } from 'react'
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'
+import { Icon } from '@iconify/react'
+import { Loader, Center } from '@mantine/core'
+import { useHotkeys } from '@mantine/hooks'
+import { Spotlight, spotlight } from '@mantine/spotlight'
+import { APP_CONFIG } from './config/app'
+import { AppShellWrapper } from './layout/app-shell'
+import { Launcher } from './pages/launcher'
+import { NotFound } from './pages/not-found'
+import { apps } from './registry/apps'
 
 function AppInner() {
-  const { open: cmdkOpen, close: cmdkClose } = useCommandPalette()
+  const navigate = useNavigate()
+
+  useHotkeys([['mod + K', spotlight.open]])
+
+  const spotlightActions = apps.map((app) => ({
+    id: app.id,
+    label: app.name,
+    description: app.description,
+    onClick: () => navigate(app.path),
+    leftSection: <Icon icon={app.icon} width={18} />,
+  }))
 
   return (
-    <AuthGate>
-      <SyncProvider>
-        <WindowManagerProvider>
-          <AnimatedRoutes />
-          <AppShelf />
-          <CommandPalette open={cmdkOpen} onClose={cmdkClose} />
-        </WindowManagerProvider>
-      </SyncProvider>
-    </AuthGate>
+    <>
+      <Spotlight
+        actions={[
+          { group: 'Apps', actions: spotlightActions },
+          {
+            group: 'Navigation',
+            actions: [
+              { id: 'home', label: 'Go home', onClick: () => navigate('/'), leftSection: <Icon icon="lucide:home" width={18} /> },
+            ],
+          },
+        ]}
+        searchProps={{ placeholder: 'Search apps...' }}
+        nothingFound="No results"
+      />
+      <AppShellWrapper>
+        <Suspense fallback={<Center h="60vh"><Loader /></Center>}>
+          <Routes>
+            <Route path="/" element={<Launcher />} />
+            {apps.map((app) => {
+              const AppComponent = app.component
+              return (
+                <Route
+                  key={app.id}
+                  path={app.path.replace(/^\//, '')}
+                  element={<AppComponent />}
+                />
+              )
+            })}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
+      </AppShellWrapper>
+    </>
   )
 }
 
-const routerBasename = import.meta.env.BASE_URL.startsWith('.') ? '' : import.meta.env.BASE_URL.replace(/\/$/, '')
+function basename() {
+  const base = APP_CONFIG.basePath
+  return base.endsWith('/') ? base.slice(0, -1) : base
+}
 
-export default function App() {
+export function App() {
   return (
-    <BrowserRouter basename={routerBasename}>
-      <GfThemeProvider>
-        <PlayerProvider>
-        <ToastProvider>
-        <ErrorBoundary>
-        <AppBadgeProvider>
-        <AuthProvider>
-          <AppInner />
-        </AuthProvider>
-        </AppBadgeProvider>
-        </ErrorBoundary>
-        </ToastProvider>
-        </PlayerProvider>
-      </GfThemeProvider>
+    <BrowserRouter basename={basename()}>
+      <AppInner />
     </BrowserRouter>
   )
 }

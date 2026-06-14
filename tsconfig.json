@@ -5,13 +5,14 @@
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
     "strict": true,
-    "noEmit": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "paths": { "@/*": ["./src/*"] },
     "skipLibCheck": true,
     "allowImportingTsExtensions": true,
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "isolatedModules": true,
+    "noEmit": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"]
   },
-  "include": ["src"],
-  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx"]
+  "include": ["src"]
 }
