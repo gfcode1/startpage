@@ -1,0 +1,77 @@
+[data-mantine-color-scheme="dark"] .notes-editor {
+  --accentBase: var(--mantine-color-accent-9);
+  --accentBgSubtle: var(--mantine-color-accent-8);
+  --accentBg: var(--mantine-color-accent-7);
+  --accentBgHover: var(--mantine-color-accent-6);
+  --accentBgActive: var(--mantine-color-accent-5);
+  --accentLine: var(--mantine-color-accent-6);
+  --accentBorder: var(--mantine-color-accent-5);
+  --accentBorderHover: var(--mantine-color-accent-4);
+  --accentSolid: var(--mantine-color-accent-5);
+  --accentSolidHover: var(--mantine-color-accent-4);
+  --accentText: var(--mantine-color-accent-3);
+  --accentTextContrast: var(--mantine-color-accent-1);
+
+  --baseBase: var(--mantine-color-dark-8);
+  --baseBgSubtle: var(--mantine-color-dark-7);
+  --baseBg: var(--mantine-color-dark-8);
+  --baseBgHover: var(--mantine-color-dark-6);
+  --baseBgActive: var(--mantine-color-dark-5);
+  --baseLine: var(--mantine-color-dark-6);
+  --baseBorder: var(--mantine-color-dark-6);
+  --baseBorderHover: var(--mantine-color-dark-5);
+  --baseSolid: var(--mantine-color-dark-4);
+  --baseSolidHover: var(--mantine-color-dark-3);
+  --baseText: var(--mantine-color-dark-0);
+  --baseTextContrast: var(--mantine-color-text);
+  --basePageBg: transparent;
+
+  font-family: var(--mantine-font-family);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+[data-mantine-color-scheme="dark"] .notes-editor .mdxeditor-toolbar {
+  background: var(--mantine-color-dark-7);
+  border-bottom: 1px solid var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme="light"] .notes-editor {
+  --accentBase: var(--mantine-color-accent-8);
+  --accentBgSubtle: var(--mantine-color-accent-1);
+  --accentBg: var(--mantine-color-accent-0);
+  --accentBgHover: var(--mantine-color-accent-1);
+  --accentBgActive: var(--mantine-color-accent-2);
+  --accentLine: var(--mantine-color-accent-4);
+  --accentBorder: var(--mantine-color-accent-5);
+  --accentBorderHover: var(--mantine-color-accent-4);
+  --accentSolid: var(--mantine-color-accent-6);
+  --accentSolidHover: var(--mantine-color-accent-5);
+  --accentText: var(--mantine-color-accent-7);
+  --accentTextContrast: var(--mantine-color-accent-9);
+
+  --baseBase: var(--mantine-color-gray-0);
+  --baseBgSubtle: var(--mantine-color-gray-1);
+  --baseBg: var(--mantine-color-gray-0);
+  --baseBgHover: var(--mantine-color-gray-1);
+  --baseBgActive: var(--mantine-color-gray-2);
+  --baseLine: var(--mantine-color-gray-4);
+  --baseBorder: var(--mantine-color-gray-4);
+  --baseBorderHover: var(--mantine-color-gray-3);
+  --baseSolid: var(--mantine-color-gray-6);
+  --baseSolidHover: var(--mantine-color-gray-5);
+  --baseText: var(--mantine-color-gray-9);
+  --baseTextContrast: var(--mantine-color-black);
+  --basePageBg: transparent;
+
+  font-family: var(--mantine-font-family);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+[data-mantine-color-scheme="light"] .notes-editor .mdxeditor-toolbar {
+  background: var(--mantine-color-gray-1);
+  border-bottom: 1px solid var(--mantine-color-gray-3);
+}
+
+.notes-editor :where(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--mantine-font-family-headings);
+}
