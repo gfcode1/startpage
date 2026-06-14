@@ -22,7 +22,7 @@ export function NoisePanel() {
   }, [active, color, volume, noise])
 
   return (
-    <div style={{ padding: 16, marginBottom: 16, border: '1px solid var(--mantine-color-dark-6)', borderRadius: 5 }}>
+    <div style={{ padding: 16, marginBottom: 16, border: '1px solid var(--mantine-color-default-border)', borderRadius: 'var(--mantine-radius-md)' }}>
       <Text fw={600} mb="sm">Noise Generator</Text>
       <Stack gap="sm">
         <SegmentedControl value={color} onChange={(v) => { const c = NOISE_OPTIONS.find((o) => o.value === v); if (c) { setColor(c.value); if (active) noise.startNoise(c.value, volume) } }} data={NOISE_OPTIONS} size="xs" />

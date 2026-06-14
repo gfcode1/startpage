@@ -89,7 +89,7 @@ export default function WikipediaApp() {
           <ActionIcon variant="subtle" onClick={() => setSelectedId(null)} aria-label="Back to search results">
             <Icon icon="lucide:arrow-left" width={20} />
           </ActionIcon>
-          <Text fw={700} size="lg" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+          <Text fw={700} size="lg" style={{ fontFamily: 'var(--mantine-heading-font-family)' }}>
             {page.title}
           </Text>
         </Group>
@@ -102,7 +102,7 @@ export default function WikipediaApp() {
           <img
             src={page.thumbnail.source}
             alt={page.title}
-            style={{ width: '100%', maxHeight: 300, objectFit: 'cover', borderRadius: 8, marginBottom: 16 }}
+            style={{ width: '100%', maxHeight: 300, objectFit: 'cover', borderRadius: 'var(--mantine-radius-md)', marginBottom: 16 }}
           />
         )}
 
@@ -125,7 +125,7 @@ export default function WikipediaApp() {
 
   return (
     <Container size="md" py="md">
-      <Text fw={700} size="lg" mb="md" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+      <Text fw={700} size="lg" mb="md" style={{ fontFamily: 'var(--mantine-heading-font-family)' }}>
         Wikipedia
       </Text>
 

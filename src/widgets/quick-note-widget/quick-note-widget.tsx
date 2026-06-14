@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Textarea } from '@mantine/core'
+import { Textarea, Paper } from '@mantine/core'
 import { getStorage } from '@/lib/storage/engine'
 
 const STORAGE_KEY = 'widgets:quicknote'
@@ -17,14 +17,16 @@ export default function QuickNoteWidget() {
   }, [note])
 
   return (
-    <Textarea
-      placeholder="Quick note..."
-      value={note}
-      onChange={(e) => setNote(e.currentTarget.value)}
-      variant="unstyled"
-      autosize
-      minRows={2}
-      size="sm"
-    />
+    <Paper withBorder p="xs" radius="sm" bg="var(--mantine-color-body)">
+      <Textarea
+        placeholder="Quick note..."
+        value={note}
+        onChange={(e) => setNote(e.currentTarget.value)}
+        variant="unstyled"
+        autosize
+        minRows={2}
+        size="sm"
+      />
+    </Paper>
   )
 }

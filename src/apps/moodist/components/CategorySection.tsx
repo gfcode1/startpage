@@ -59,11 +59,11 @@ export function CategorySection({
             marginTop: 8,
             padding: 8,
             textAlign: 'center',
-            border: '1px dashed var(--mantine-color-dark-6)',
-            borderRadius: 5,
+            border: '1px dashed var(--mantine-color-default-border)',
+            borderRadius: 'var(--mantine-radius-md)',
             cursor: 'pointer',
-            fontSize: '0.75rem',
-            color: hasHiddenSelected ? 'var(--mantine-color-accent-5)' : 'var(--mantine-color-dark-3)',
+            fontSize: 'var(--mantine-font-size-xs)',
+            color: hasHiddenSelected ? 'var(--mantine-color-accent-5)' : 'light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-3))',
           }}
         >
           {showAll ? 'Show Less' : `Show More (${category.sounds.length - VISIBLE_COUNT} more)`}

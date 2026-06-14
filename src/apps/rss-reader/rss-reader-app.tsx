@@ -117,13 +117,13 @@ export default function RssReaderApp() {
           <ActionIcon variant="subtle" onClick={() => setSelectedArticle(null)} aria-label="Back">
             <Icon icon="lucide:arrow-left" width={20} />
           </ActionIcon>
-          <Text fw={700} style={{ fontFamily: 'Space Grotesk, sans-serif' }} truncate="end">
+          <Text fw={700} style={{ fontFamily: 'var(--mantine-heading-font-family)' }} truncate="end">
             {selectedArticle.title}
           </Text>
         </Group>
         <iframe
           src={selectedArticle.link}
-          style={{ width: '100%', height: '80vh', border: 'none', borderRadius: 8 }}
+          style={{ width: '100%', height: '80vh', border: 'none', borderRadius: 'var(--mantine-radius-md)' }}
           title={selectedArticle.title}
           sandbox="allow-scripts allow-same-origin allow-popups"
         />
@@ -133,7 +133,7 @@ export default function RssReaderApp() {
 
   return (
     <Container size="xl" py="md">
-      <Text fw={700} size="lg" mb="md" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+      <Text fw={700} size="lg" mb="md" style={{ fontFamily: 'var(--mantine-heading-font-family)' }}>
         RSS Reader
       </Text>
 

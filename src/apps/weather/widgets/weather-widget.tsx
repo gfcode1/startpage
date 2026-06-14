@@ -1,6 +1,7 @@
-import { Text, Group, Loader, Center } from '@mantine/core'
+import { Text, Group } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
 import { useWeatherLocation } from '@/stores/weather-location-store'
+import { WidgetLoading, WidgetEmpty } from '@/ui/widget-container'
 import { WEATHER_EMOJIS } from '../shared'
 
 async function fetchWeather(lat: number, lon: number) {
@@ -22,8 +23,8 @@ export default function WeatherWidget() {
     enabled: lat !== 0 && lon !== 0,
   })
 
-  if (isLoading) return <Center py="md"><Loader size="sm" /></Center>
-  if (isError) return <Center py="md"><Text size="sm" c="dimmed">Weather unavailable</Text></Center>
+  if (isLoading) return <WidgetLoading />
+  if (isError) return <WidgetEmpty>Weather unavailable</WidgetEmpty>
   if (!data?.current) return null
 
   const weatherCode = data.current.weather_code
@@ -33,7 +34,7 @@ export default function WeatherWidget() {
     <Group justify="center" gap="xs">
       <Text style={{ fontSize: '2rem' }}>{emoji}</Text>
       <div>
-        <Text fw={700} style={{ fontSize: '1.3rem' }}>
+        <Text fw={700} size="xl">
           {Math.round(data.current.temperature_2m)}°C
         </Text>
         {data.daily && (

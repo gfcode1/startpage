@@ -12,7 +12,7 @@ export default function ClockWidget() {
   return (
     <Stack align="center" gap={0}>
       <Text
-        style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 'clamp(1.5rem, 4vw, 2.5rem)' }}
+        style={{ fontFamily: 'var(--mantine-heading-font-family)', fontSize: 'clamp(1.5rem, 4vw, 2.5rem)' }}
         fw={700}
       >
         {time.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}

@@ -65,14 +65,14 @@ export default function CountdownWidget() {
           style={{
             width: '100%',
             height: 4,
-            background: 'var(--mantine-color-dark-6)',
-            borderRadius: 4,
+            background: 'light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-6))',
+            borderRadius: 'var(--mantine-radius-sm)',
             overflow: 'hidden',
           }}
         >
           <div style={{ width: `${pct}%`, height: '100%', background: 'var(--mantine-color-accent-5)', transition: 'width 1s linear' }} />
         </div>
-        <Text fw={700} style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: '1.3rem' }}>
+        <Text fw={700} style={{ fontFamily: 'var(--mantine-heading-font-family)', fontSize: '1.3rem' }}>
           {formatTime(data.remaining)}
         </Text>
         <Button size="compact-xs" variant="light" color="red" onClick={resetCountdown}>Reset</Button>

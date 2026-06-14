@@ -159,7 +159,7 @@ export default function PomodoroApp() {
 
   return (
     <Container size="xs" py="md">
-      <Text fw={700} size="lg" ta="center" mb="md" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+      <Text fw={700} size="lg" ta="center" mb="md" style={{ fontFamily: 'var(--mantine-heading-font-family)' }}>
         Pomodoro
       </Text>
 
@@ -173,7 +173,7 @@ export default function PomodoroApp() {
         <Text
           ta="center"
           fw={700}
-          style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 'clamp(2.5rem, 8vw, 4rem)' }}
+          style={{ fontFamily: 'var(--mantine-heading-font-family)', fontSize: 'clamp(2.5rem, 8vw, 4rem)' }}
           mb="lg"
         >
           {formatTime(timeLeft)}

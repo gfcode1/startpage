@@ -138,7 +138,7 @@ export default function SomafmApp() {
 
   return (
     <Container size="xl" py="md">
-      <Text fw={700} size="lg" mb="md" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+      <Text fw={700} size="lg" mb="md" style={{ fontFamily: 'var(--mantine-heading-font-family)' }}>
         SomaFM
       </Text>
 
@@ -164,7 +164,7 @@ export default function SomafmApp() {
                     src={ch.image}
                     alt={ch.title}
                     loading="lazy"
-                    style={{ width: 48, height: 48, borderRadius: 6, objectFit: 'cover', flexShrink: 0 }}
+                    style={{ width: 48, height: 48, borderRadius: 'var(--mantine-radius-md)', objectFit: 'cover', flexShrink: 0 }}
                   />
                 )}
                 <div style={{ flex: 1, minWidth: 0 }}>

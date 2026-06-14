@@ -48,7 +48,7 @@ export default function WorldClockWidget() {
               <Text size="sm" fw={500}>{city.name}</Text>
               <Text size="xs" c="dimmed">{date}</Text>
             </div>
-            <Text fw={700} style={{ fontFamily: 'monospace' }}>{time}</Text>
+            <Text fw={700} style={{ fontFamily: 'var(--app-font-mono)' }}>{time}</Text>
           </Group>
         )
       })}

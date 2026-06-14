@@ -105,7 +105,7 @@ export default function MoodistApp() {
 
       <Group justify="space-between" mb="md">
         <Group gap="xs">
-          <Text fw={700} size="lg" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+          <Text fw={700} size="lg" style={{ fontFamily: 'var(--mantine-heading-font-family)' }}>
             Moodist
           </Text>
           <Badge size="sm" variant="light">{allSounds.length} sounds</Badge>

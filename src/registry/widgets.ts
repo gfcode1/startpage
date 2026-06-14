@@ -22,6 +22,7 @@ export interface WidgetDefinition {
   category: WidgetCategory
   defaultActive: boolean
   size: WidgetSize
+  align?: 'center' | 'left'
   component: LazyExoticComponent<ComponentType>
   options?: WidgetOption[]
 }
@@ -35,7 +36,7 @@ export const widgets: WidgetDefinition[] = [
   {
     id: 'clock', name: 'Clock', description: 'Current time',
     icon: 'lucide:clock', category: 'standard', defaultActive: true,
-    size: 'small', component: lazy(() => import('@/widgets/clock-widget/clock-widget')),
+    size: 'small', align: 'center', component: lazy(() => import('@/widgets/clock-widget/clock-widget')),
   },
   {
     id: 'quicknote', name: 'Quick Note', description: 'Quick sticky note',
@@ -45,7 +46,7 @@ export const widgets: WidgetDefinition[] = [
   {
     id: 'quote', name: 'Quote', description: 'Daily inspiration',
     icon: 'lucide:quote', category: 'standard', defaultActive: false,
-    size: 'small', component: lazy(() => import('@/widgets/quote-widget/quote-widget')),
+    size: 'small', align: 'center', component: lazy(() => import('@/widgets/quote-widget/quote-widget')),
   },
   {
     id: 'countdown', name: 'Countdown', description: 'Countdown timer',
@@ -60,7 +61,7 @@ export const widgets: WidgetDefinition[] = [
   {
     id: 'weather', name: 'Weather', description: 'Current weather',
     icon: 'lucide:cloud-sun', category: 'app', defaultActive: false,
-    size: 'medium', component: lazy(() => import('@/apps/weather/widgets/weather-widget')),
+    size: 'medium', align: 'center', component: lazy(() => import('@/apps/weather/widgets/weather-widget')),
   },
   {
     id: 'calendar', name: 'Calendar', description: 'Upcoming events',
@@ -70,7 +71,7 @@ export const widgets: WidgetDefinition[] = [
   {
     id: 'nowplaying', name: 'Now Playing', description: 'Current track',
     icon: 'lucide:music', category: 'app', defaultActive: false,
-    size: 'small', component: lazy(() => import('@/widgets/now-playing-widget/now-playing-widget')),
+    size: 'small', align: 'center', component: lazy(() => import('@/widgets/now-playing-widget/now-playing-widget')),
   },
   {
     id: 'password', name: 'Password', description: 'Password generator',

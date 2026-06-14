@@ -1,5 +1,6 @@
 import { Text, Stack, Badge } from '@mantine/core'
 import { usePlayerIsPlaying, usePlayerPlayingTitle, usePlayerSubtitle, usePlayerType } from '@/stores/player-store'
+import { WidgetEmpty } from '@/ui/widget-container'
 
 export default function NowPlayingWidget() {
   const isPlaying = usePlayerIsPlaying()
@@ -8,11 +9,7 @@ export default function NowPlayingWidget() {
   const type = usePlayerType()
 
   if (!isPlaying) {
-    return (
-      <Stack align="center" gap="xs">
-        <Text size="sm" c="dimmed">Nothing playing</Text>
-      </Stack>
-    )
+    return <WidgetEmpty>Nothing playing</WidgetEmpty>
   }
 
   const typeLabel = type === 'somafm' ? 'Radio' : type === 'moodist' ? 'Ambient' : 'Stream'

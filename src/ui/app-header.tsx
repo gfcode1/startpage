@@ -28,7 +28,7 @@ export function AppHeader({ title, subtitle, badge, actions, search }: AppHeader
       <Group gap="xs" wrap="nowrap" style={{ minWidth: 0 }}>
         <div style={{ minWidth: 0 }}>
           <Group gap="xs" wrap="nowrap">
-            <Text fw={700} size="lg" style={{ fontFamily: 'Space Grotesk, sans-serif' }} truncate="end">
+            <Text fw={700} size="lg" style={{ fontFamily: 'var(--mantine-heading-font-family)' }} truncate="end">
               {title}
             </Text>
             {badge}

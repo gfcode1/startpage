@@ -44,7 +44,7 @@ function NoteItem({ note, isActive, onSelect, onDelete }: { note: Note; isActive
         transition,
         opacity: isDragging ? 0.4 : 1,
         cursor: 'grab',
-        backgroundColor: isActive ? 'var(--mantine-color-blue-light)' : undefined,
+        backgroundColor: isActive ? 'var(--mantine-color-accent-light)' : undefined,
       }}
       {...attributes}
       {...listeners}
@@ -102,7 +102,7 @@ function FolderSection({ folderId, folderName, notes, activeNote, onSelect, onDe
   return (
     <Box ref={setNodeRef} style={{
       borderRadius: 'var(--mantine-radius-sm)',
-      backgroundColor: isOver ? 'var(--mantine-color-blue-light)' : undefined,
+      backgroundColor: isOver ? 'var(--mantine-color-accent-light)' : undefined,
       transition: 'background-color 0.15s',
     }}>
       {editing ? (
@@ -326,7 +326,7 @@ export default function NotesApp() {
         }}
       >
         <Group p="sm" gap="xs" justify="space-between">
-          <Text fw={700} size="sm" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+          <Text fw={700} size="sm" style={{ fontFamily: 'var(--mantine-heading-font-family)' }}>
             Notes
           </Text>
           <Group gap={4}>
@@ -428,7 +428,7 @@ export default function NotesApp() {
                   size="lg"
                   fw={700}
                   style={{ flex: 1, minWidth: 0 }}
-                  styles={{ input: { fontFamily: 'Space Grotesk, sans-serif', fontSize: '1.2rem' } }}
+                  styles={{ input: { fontFamily: 'var(--mantine-heading-font-family)', fontSize: '1.2rem' } }}
                 />
                 <Text size="xs" c="dimmed" style={{ whiteSpace: 'nowrap' }}>
                   {savedAt > 0

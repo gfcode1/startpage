@@ -46,36 +46,36 @@ export function Dock() {
                       alignItems: 'center',
                       gap: 2,
                       padding: '4px 8px',
-                      borderRadius: 8,
-                      background: isActive ? 'var(--mantine-color-dark-6)' : 'transparent',
+                      borderRadius: 'var(--mantine-radius-md)',
+                      background: isActive ? 'light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-6))' : 'transparent',
                       transition: 'background 0.15s, transform 0.12s',
                       transform: isActive ? 'translateY(-2px)' : 'none',
                     }}
-                    onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.background = 'var(--mantine-color-dark-6)' }}
+                    onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.background = 'light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-6))' }}
                     onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.background = 'transparent' }}
                   >
                     <div
                       style={{
                         width: 36,
                         height: 36,
-                        borderRadius: 8,
+                        borderRadius: 'var(--mantine-radius-md)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         background: app.color,
-                        color: '#fff',
+                        color: 'var(--mantine-color-white)',
                       }}
                     >
                       <Icon icon={app.icon} width={18} />
                     </div>
-                    <Text size="xs" c="dimmed" style={{ fontSize: '0.6rem', lineHeight: 1 }}>
+                    <Text size="xs" c="dimmed">
                       {app.name}
                     </Text>
                   </UnstyledButton>
                 </Tooltip>
               )
             })}
-            <div style={{ width: 1, height: 32, background: 'var(--mantine-color-dark-6)', margin: '0 4px' }} />
+            <div style={{ width: 1, height: 32, background: 'light-dark(var(--mantine-color-gray-4), var(--mantine-color-dark-6))', margin: '0 4px' }} />
           </div>
         )
       })}

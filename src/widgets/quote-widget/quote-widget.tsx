@@ -1,5 +1,6 @@
-import { Text, Stack, Center, Loader } from '@mantine/core'
+import { Text, Stack } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
+import { WidgetLoading, WidgetEmpty } from '@/ui/widget-container'
 
 interface QuoteData {
   content: string
@@ -21,8 +22,8 @@ export default function QuoteWidget() {
     refetchInterval: 1000 * 60 * 60 * 24,
   })
 
-  if (isLoading) return <Center py="md"><Loader size="sm" /></Center>
-  if (!data) return null
+  if (isLoading) return <WidgetLoading />
+  if (!data) return <WidgetEmpty>No quote available</WidgetEmpty>
 
   return (
     <Stack align="center" gap="xs">

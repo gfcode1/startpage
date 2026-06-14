@@ -2,6 +2,10 @@
 @import '@mantine/notifications/styles.css';
 @import '@mantine/spotlight/styles.css';
 
+:root {
+  --app-font-mono: 'JetBrains Mono', monospace;
+}
+
 /* View transitions */
 ::view-transition-old(root) {
   animation: 0.25s ease-out both view-old;
@@ -33,12 +37,20 @@
 /* Scrollbar styling */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb {
+[data-mantine-color-scheme="dark"] ::-webkit-scrollbar-thumb {
   background: var(--mantine-color-dark-6);
-  border-radius: 4px;
 }
-::-webkit-scrollbar-thumb:hover {
+[data-mantine-color-scheme="light"] ::-webkit-scrollbar-thumb {
+  background: var(--mantine-color-gray-4);
+}
+::-webkit-scrollbar-thumb {
+  border-radius: var(--mantine-radius-sm);
+}
+[data-mantine-color-scheme="dark"] ::-webkit-scrollbar-thumb:hover {
   background: var(--mantine-color-dark-3);
+}
+[data-mantine-color-scheme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--mantine-color-gray-5);
 }
 
 @media (prefers-reduced-motion: reduce) {

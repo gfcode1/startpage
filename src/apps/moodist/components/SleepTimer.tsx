@@ -51,7 +51,7 @@ export function SleepTimer({ onSleep }: SleepTimerProps) {
         />
         {isActive ? (
           <>
-            <Text fw={700} style={{ fontFamily: 'monospace' }}>{formatTime(remaining)}</Text>
+            <Text fw={700} style={{ fontFamily: 'var(--app-font-mono)' }}>{formatTime(remaining)}</Text>
             <Button size="compact-sm" variant="light" color="red" onClick={stop}>Cancel</Button>
           </>
         ) : (

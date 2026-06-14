@@ -214,7 +214,7 @@ export default function KanbanApp() {
   if (board.columns.length === 0) {
     return (
       <Container size="xl" py="md">
-        <Text fw={700} size="lg" mb="md" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+        <Text fw={700} size="lg" mb="md" style={{ fontFamily: 'var(--mantine-heading-font-family)' }}>
           Kanban
         </Text>
         <Center py="xl">
@@ -237,7 +237,7 @@ export default function KanbanApp() {
   return (
     <Container size="xl" py="md">
       <Group justify="space-between" mb="md">
-        <Text fw={700} size="lg" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+        <Text fw={700} size="lg" style={{ fontFamily: 'var(--mantine-heading-font-family)' }}>
           Kanban
         </Text>
         <Group gap="xs">

@@ -116,7 +116,7 @@ export default function WeatherApp() {
 
   return (
     <Container size="lg" py="md">
-      <Text fw={700} size="lg" mb="md" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+      <Text fw={700} size="lg" mb="md" style={{ fontFamily: 'var(--mantine-heading-font-family)' }}>
         Weather — {locationName}
       </Text>
 
@@ -204,7 +204,7 @@ export default function WeatherApp() {
         <MapContainer
           center={[lat, lon]}
           zoom={10}
-          style={{ height: '100%', borderRadius: 6 }}
+          style={{ height: '100%', borderRadius: 'var(--mantine-radius-md)' }}
           zoomControl={false}
         >
           <TileLayer

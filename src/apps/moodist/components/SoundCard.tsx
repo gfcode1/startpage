@@ -47,12 +47,12 @@ export const SoundCard = memo(function SoundCard({
       style={{
         position: 'relative',
         padding: 12,
-        borderRadius: 5,
-        border: '1px solid var(--mantine-color-dark-6)',
+        borderRadius: 'var(--mantine-radius-md)',
+        border: '1px solid var(--mantine-color-default-border)',
         cursor: 'pointer',
         background: state.selected
           ? 'var(--mantine-color-accent-5)'
-          : 'var(--mantine-color-dark-8)',
+          : 'light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-8))',
         transition: 'all 0.15s',
         display: state.selected && isActive ? 'block' : undefined,
         boxShadow: isActive ? '0 0 12px var(--mantine-color-accent-5)' : undefined,

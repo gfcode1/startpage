@@ -104,7 +104,7 @@ export default function CalendarApp() {
     <Container size="lg" py="md">
       <Group justify="space-between" mb="md">
         <Group gap="xs">
-          <Text fw={700} size="lg" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+          <Text fw={700} size="lg" style={{ fontFamily: 'var(--mantine-heading-font-family)' }}>
             {MONTHS[month]} {year}
           </Text>
           <ActionIcon variant="subtle" onClick={prevMonth} aria-label="Previous month">
@@ -156,7 +156,7 @@ export default function CalendarApp() {
               }}
               onClick={() => openNewEvent(dateStr)}
             >
-              <Text size="xs" fw={isToday ? 700 : 400} style={{ color: isToday ? '#fff' : undefined }}>
+              <Text size="xs" fw={isToday ? 700 : 400} style={{ color: isToday ? 'var(--mantine-color-white)' : undefined }}>
                 {day}
               </Text>
               {dayEvents.slice(0, 2).map((e) => (

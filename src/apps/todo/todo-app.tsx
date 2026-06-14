@@ -67,7 +67,7 @@ export default function TodoApp() {
     <Container size="sm" py="md">
       <Group justify="space-between" mb="md">
         <div>
-          <Text fw={700} size="lg" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+          <Text fw={700} size="lg" style={{ fontFamily: 'var(--mantine-heading-font-family)' }}>
             Todo
           </Text>
           <Text size="sm" c="dimmed">{pendingCount} pending</Text>
@@ -111,7 +111,7 @@ export default function TodoApp() {
             px="md"
             py="sm"
             style={{
-              borderBottom: '1px solid var(--mantine-color-dark-6)',
+              borderBottom: '1px solid var(--mantine-color-default-border)',
               opacity: task.done ? 0.5 : 1,
             }}
             wrap="nowrap"

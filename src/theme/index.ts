@@ -1,4 +1,4 @@
-import { createTheme } from '@mantine/core'
+import { createTheme, Paper } from '@mantine/core'
 
 export const theme = createTheme({
   colors: {
@@ -26,10 +26,23 @@ export const theme = createTheme({
       '#78401e',
       '#5a3016',
     ],
+    gray: [
+      '#f7f6f4',
+      '#efede9',
+      '#e4e1db',
+      '#d4cfc7',
+      '#b8b2a8',
+      '#9c958a',
+      '#7e776e',
+      '#605a52',
+      '#423d38',
+      '#24211e',
+    ],
   },
   primaryColor: 'accent',
   primaryShade: { light: 6, dark: 5 },
   fontFamily: 'Inter, sans-serif',
+  fontFamilyMonospace: 'JetBrains Mono, monospace',
   headings: {
     fontFamily: 'Space Grotesk, sans-serif',
     fontWeight: '700',
@@ -37,11 +50,18 @@ export const theme = createTheme({
   radius: {
     xs: '2px',
     sm: '4px',
-    md: '5px',
-    lg: '8px',
-    xl: '12px',
+    md: '8px',
+    lg: '12px',
+    xl: '16px',
   },
   defaultRadius: 'md',
   cursorType: 'pointer',
   respectReducedMotion: true,
+  components: {
+    Paper: Paper.extend({
+      defaultProps: {
+        shadow: 'sm',
+      },
+    }),
+  },
 })

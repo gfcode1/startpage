@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { SimpleGrid, Button, Text, Paper } from '@mantine/core'
+import { SimpleGrid, Button, Text } from '@mantine/core'
 
 type Op = '+' | '-' | '*' | '/' | null
 
@@ -86,9 +86,9 @@ export default function CalculatorWidget() {
 
   return (
     <div>
-      <Paper p="sm" mb="xs" style={{ textAlign: 'right' }}>
-        <Text fw={700} style={{ fontSize: '1.5rem', fontFamily: 'monospace' }}>{display}</Text>
-      </Paper>
+      <div style={{ textAlign: 'right', marginBottom: 'var(--mantine-spacing-xs)' }}>
+        <Text fw={700} style={{ fontSize: '1.5rem', fontFamily: 'var(--app-font-mono)' }}>{display}</Text>
+      </div>
       <SimpleGrid cols={4} spacing={4}>
         {buttons.map((label) => (
           <Button
@@ -96,7 +96,7 @@ export default function CalculatorWidget() {
             variant={['C', '±', '%'].includes(label) ? 'light' : ['÷', '×', '−', '+', '='].includes(label) ? 'filled' : 'default'}
             size="compact-sm"
             onClick={() => handleButton(label)}
-            style={{ height: 32, padding: 0, fontSize: '0.8rem' }}
+            style={{ height: 32, padding: 0 }}
           >
             {label}
           </Button>

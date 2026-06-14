@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Text, Stack, Group } from '@mantine/core'
 import type { CalendarEvent } from '../types'
+import { WidgetEmpty } from '@/ui/widget-container'
 import { loadEvents } from '../utils'
 import { getStorage } from '@/lib/storage/engine'
 
@@ -26,7 +27,7 @@ export default function CalendarWidget() {
   const display = todayEvents.length > 0 ? todayEvents : upcoming
 
   if (display.length === 0) {
-    return <Text ta="center" size="sm" c="dimmed">No events today</Text>
+    return <WidgetEmpty>No events today</WidgetEmpty>
   }
 
   return (

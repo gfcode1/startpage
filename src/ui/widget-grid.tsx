@@ -19,8 +19,17 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useWidgetActiveWidgets, useWidgetRemoveWidget, useWidgetReorderWidgets } from '@/stores/widget-store'
-import { widgets, type WidgetDefinition } from '@/registry/widgets'
+import { widgets, type WidgetDefinition, type WidgetSize } from '@/registry/widgets'
 import { WidgetPickerDialog } from './widget-picker-dialog'
+import { WidgetContainer } from './widget-container'
+
+function getWidgetSpan(size: WidgetSize): string {
+  switch (size) {
+    case 'large': return '1 / -1'
+    case 'medium': return 'span 2'
+    default: return 'span 1'
+  }
+}
 
 function SortableWidget({ widget }: { widget: WidgetDefinition }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -34,6 +43,7 @@ function SortableWidget({ widget }: { widget: WidgetDefinition }) {
     transition,
     opacity: isDragging ? 0.4 : 1,
     position: 'relative' as const,
+    gridColumn: getWidgetSpan(widget.size),
   }
 
   return (
@@ -43,13 +53,14 @@ function SortableWidget({ widget }: { widget: WidgetDefinition }) {
       withBorder
       p="md"
       radius="md"
-      bg="var(--mantine-color-dark-8)"
+      bg="var(--mantine-color-body)"
     >
       <Group gap="xs" mb="xs" wrap="nowrap">
         <Box
           {...attributes}
           {...listeners}
-          style={{ cursor: 'grab', display: 'flex', alignItems: 'center', color: 'var(--mantine-color-dark-3)' }}
+          style={{ cursor: 'grab', display: 'flex', alignItems: 'center' }}
+          c="dimmed"
         >
           <Icon icon="lucide:grip-vertical" width={14} />
         </Box>
@@ -65,7 +76,9 @@ function SortableWidget({ widget }: { widget: WidgetDefinition }) {
           <Icon icon="lucide:x" width={14} />
         </ActionIcon>
       </Group>
-      <WidgetComponent />
+      <WidgetContainer align={widget.align ?? 'left'}>
+        <WidgetComponent />
+      </WidgetContainer>
     </Paper>
   )
 }
@@ -106,8 +119,10 @@ export function WidgetGrid() {
       {systemWidgets.map((w) => {
         const W = w.component
         return (
-          <Paper key={w.id} withBorder p="md" radius="md" mb="md" bg="var(--mantine-color-dark-8)">
-            <W />
+          <Paper key={w.id} withBorder p="md" radius="md" mb="md" bg="var(--mantine-color-body)">
+            <WidgetContainer align={w.align ?? 'left'}>
+              <W />
+            </WidgetContainer>
           </Paper>
         )
       })}

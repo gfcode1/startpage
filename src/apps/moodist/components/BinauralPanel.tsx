@@ -25,7 +25,7 @@ export function BinauralPanel() {
   }, [active, frequency, carrier, volume, beat])
 
   return (
-    <div style={{ padding: 16, marginBottom: 16, border: '1px solid var(--mantine-color-dark-6)', borderRadius: 5 }}>
+    <div style={{ padding: 16, marginBottom: 16, border: '1px solid var(--mantine-color-default-border)', borderRadius: 'var(--mantine-radius-md)' }}>
       <Text fw={600} mb="sm">Binaural Beats</Text>
       <Stack gap="sm">
         <Select value={frequency} onChange={(v) => { const f = FREQ_OPTIONS.find((o) => o.value === v); if (f) { setFrequency(f.value); if (active) beat.start(f.value, carrier, volume) } }} data={FREQ_OPTIONS} size="sm" />

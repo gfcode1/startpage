@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Text, Checkbox, Group, Stack } from '@mantine/core'
 import type { Task } from '../types'
+import { WidgetEmpty } from '@/ui/widget-container'
 import { loadTasks, saveTasks } from '../utils'
 import { getStorage } from '@/lib/storage/engine'
 
@@ -26,11 +27,7 @@ export default function TodoWidget() {
   const totalPending = tasks.filter((t) => !t.done).length
 
   if (totalPending === 0) {
-    return (
-      <Stack align="center" gap="xs">
-        <Text size="sm" c="dimmed">All done!</Text>
-      </Stack>
-    )
+    return <WidgetEmpty>All done!</WidgetEmpty>
   }
 
   return (
