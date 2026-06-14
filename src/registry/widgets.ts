@@ -88,4 +88,9 @@ export const widgets: WidgetDefinition[] = [
     icon: 'lucide:globe', category: 'standard', defaultActive: false,
     size: 'small', component: lazy(() => import('@/widgets/world-clock-widget/world-clock-widget')),
   },
+  {
+    id: 'kanban', name: 'Kanban', description: 'Board summary',
+    icon: 'lucide:columns-3', category: 'app', defaultActive: false,
+    size: 'medium', component: lazy(() => import('@/apps/kanban/widgets/kanban-widget')),
+  },
 ]

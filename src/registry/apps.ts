@@ -31,6 +31,7 @@ export const apps: AppDefinition[] = [
     id: 'kanban', name: 'Kanban', description: 'Project board',
     path: '/kanban', color: '#4a9eff', icon: 'lucide:columns-3',
     category: 'productivity', component: lazy(() => import('@/apps/kanban/kanban-app')),
+    widgets: ['kanban'],
   },
   {
     id: 'calendar', name: 'Calendar', description: 'Events & schedule',

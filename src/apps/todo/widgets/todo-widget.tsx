@@ -1,52 +1,86 @@
-import { useState, useEffect } from 'react'
-import { Text, Checkbox, Group, Stack } from '@mantine/core'
-import type { Task } from '../types'
+import { useMemo } from 'react'
+import { Text, Checkbox, Group, Stack, Select } from '@mantine/core'
+import { Link } from 'react-router-dom'
 import { WidgetEmpty } from '@/ui/widget-container'
-import { loadTasks, saveTasks } from '../utils'
-import { getStorage } from '@/lib/storage/engine'
+import {
+  useTodoTasks,
+  useTodoLists,
+  useTodoToggleTask,
+} from '@/stores/todo-store'
+import { useWidgetOptionsStore } from '@/stores/widget-options-store'
 
-const STORAGE_KEY = 'todo:tasks'
+const WIDGET_ID = 'todo'
 
 export default function TodoWidget() {
-  const [tasks, setTasks] = useState<Task[]>(loadTasks)
+  const allTasks = useTodoTasks()
+  const lists = useTodoLists()
+  const toggleTask = useTodoToggleTask()
 
-  useEffect(() => {
-    const unsub = getStorage().subscribe(STORAGE_KEY, () => {
-      setTasks(loadTasks())
-    })
-    return unsub
-  }, [])
+  const listId = useWidgetOptionsStore(
+    (s) => (s.options[WIDGET_ID]?.listId as string | undefined) ?? null,
+  )
+  const setOption = useWidgetOptionsStore((s) => s.setOption)
 
-  const handleToggle = (id: string) => {
-    const updated = tasks.map((t) => (t.id === id ? { ...t, done: !t.done } : t))
-    setTasks(updated)
-    saveTasks(updated)
-  }
+  const listOptions = useMemo(
+    () => lists.map((l) => ({ value: l.id, label: l.name })),
+    [lists],
+  )
 
-  const pending = tasks.filter((t) => !t.done).slice(0, 5)
-  const totalPending = tasks.filter((t) => !t.done).length
+  const filteredTasks = useMemo(() => {
+    return listId ? allTasks.filter((t) => t.listId === listId) : allTasks
+  }, [allTasks, listId])
 
-  if (totalPending === 0) {
-    return <WidgetEmpty>All done!</WidgetEmpty>
+  const pendingCount = useMemo(() => filteredTasks.filter((t) => !t.done).length, [filteredTasks])
+  const pending = useMemo(() => filteredTasks.filter((t) => !t.done).slice(0, 5), [filteredTasks])
+
+  const listSelect = (
+    <Select
+      data={listOptions}
+      value={listId}
+      onChange={(v) => setOption(WIDGET_ID, 'listId', v ?? '')}
+      placeholder="All lists"
+      size="xs"
+      clearable
+      aria-label="Select list"
+    />
+  )
+
+  if (pendingCount === 0) {
+    return (
+      <Stack gap="xs">
+        {listSelect}
+        <WidgetEmpty>All done!</WidgetEmpty>
+      </Stack>
+    )
   }
 
   return (
     <Stack gap="xs">
-      <Text size="xs" c="dimmed">{totalPending} pending</Text>
+      {listSelect}
+
+      <Text size="xs" c="dimmed">{pendingCount} pending</Text>
       {pending.map((task) => (
         <Group key={task.id} gap="xs" wrap="nowrap">
           <Checkbox
             checked={task.done}
             size="xs"
-            onChange={() => handleToggle(task.id)}
+            onChange={() => toggleTask(task.id)}
           />
-          <Text size="sm" truncate="end" style={{ flex: 1 }}>
+          <Text
+            size="sm"
+            truncate="end"
+            style={{ flex: 1, textDecoration: task.done ? 'line-through' : 'none' }}
+            component={Link}
+            to="/todo"
+          >
             {task.text}
           </Text>
         </Group>
       ))}
-      {totalPending > 5 && (
-        <Text size="xs" c="dimmed">+{totalPending - 5} more</Text>
+      {pendingCount > 5 && (
+        <Text size="xs" c="dimmed" component={Link} to="/todo">
+          +{pendingCount - 5} more
+        </Text>
       )}
     </Stack>
   )
