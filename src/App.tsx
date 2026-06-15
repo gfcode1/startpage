@@ -1,4 +1,4 @@
-import { Suspense } from 'react'
+import { Suspense, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'
 import { Icon } from '@iconify/react'
 import { Loader, Center } from '@mantine/core'
@@ -8,10 +8,19 @@ import { APP_CONFIG } from './config/app'
 import { AppShellWrapper } from './layout/app-shell'
 import { Launcher } from './pages/launcher'
 import { NotFound } from './pages/not-found'
+import { ProfileGate } from './ui/profile-gate'
 import { apps } from './registry/apps'
+import { useProfileStore, useIsReady, useIsUnlocked } from './stores/profile-store'
 
 function AppInner() {
   const navigate = useNavigate()
+  const { loadProfiles } = useProfileStore()
+  const isReady = useIsReady()
+  const isUnlocked = useIsUnlocked()
+
+  useEffect(() => {
+    loadProfiles()
+  }, [loadProfiles])
 
   useHotkeys([['mod + K', spotlight.open]])
 
@@ -22,6 +31,14 @@ function AppInner() {
     onClick: () => navigate(app.path),
     leftSection: <Icon icon={app.icon} width={18} />,
   }))
+
+  if (!isReady) {
+    return <Center h="100vh"><Loader /></Center>
+  }
+
+  if (!isUnlocked) {
+    return <ProfileGate />
+  }
 
   return (
     <>

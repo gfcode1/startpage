@@ -6,6 +6,7 @@ import { APP_CONFIG } from '@/config/app'
 import { PlayerBar } from '@/ui/player-bar'
 import { InstallPrompt } from '@/ui/install-prompt'
 import { SettingsModal } from '@/ui/settings-modal'
+import { ProfileHeader } from '@/ui/profile-header'
 import { usePlayerIsPlaying } from '@/stores/player-store'
 
 interface AppShellWrapperProps {
@@ -47,6 +48,7 @@ export function AppShellWrapper({ children }: AppShellWrapperProps) {
           </Group>
 
           <Group gap="xs">
+            <ProfileHeader />
             <Tooltip label={colorScheme === 'dark' ? 'Light mode' : 'Dark mode'}>
               <ActionIcon variant="subtle" onClick={toggleColorScheme} aria-label="Toggle theme">
                 <Icon icon={colorScheme === 'dark' ? 'lucide:sun' : 'lucide:moon'} width={18} />

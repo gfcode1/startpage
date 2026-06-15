@@ -67,6 +67,9 @@ export const widgets: WidgetDefinition[] = [
     id: 'calendar', name: 'Calendar', description: 'Upcoming events',
     icon: 'lucide:calendar', category: 'app', defaultActive: false,
     size: 'medium', component: lazy(() => import('@/apps/calendar/widgets/calendar-widget')),
+    options: [
+      { key: 'daysToShow', label: 'Days ahead', type: 'number', defaultValue: 7, min: 1, max: 30 },
+    ],
   },
   {
     id: 'nowplaying', name: 'Now Playing', description: 'Current track',
