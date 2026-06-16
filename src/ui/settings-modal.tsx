@@ -4,7 +4,7 @@ import { Icon } from '@iconify/react'
 import { APP_CONFIG } from '@/config/app'
 import { useWidgetResetDefaults } from '@/stores/widget-store'
 import { downloadBackup, uploadBackup } from '@/lib/persistence'
-import { useProfileStore, useCloudLinked, useCloudEmail, useLastSyncAt, useIsSyncing } from '@/stores/profile-store'
+import { useProfileStore, useCloudLinked, useCloudEmail, useLastSyncAt, useIsSyncing, useSyncError } from '@/stores/profile-store'
 import { SyncService } from '@/lib/sync/sync-service'
 
 interface SettingsModalProps {
@@ -21,6 +21,7 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
   const cloudEmail = useCloudEmail()
   const lastSyncAt = useLastSyncAt()
   const isSyncing = useIsSyncing()
+  const syncError = useSyncError()
   const { linkToCloud, unlinkFromCloud, updateSyncStatus } = useProfileStore()
 
   const [cloudEmailInput, setCloudEmailInput] = useState(cloudEmail ?? '')
@@ -69,13 +70,14 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
   }
 
   async function handleSyncNow() {
-    updateSyncStatus(null, true)
+    updateSyncStatus(null, true, null)
     try {
       const svc = SyncService.getInstance()
       await svc.syncNow()
-      updateSyncStatus(Date.now(), false)
+      updateSyncStatus(Date.now(), false, svc.lastError)
     } catch {
-      updateSyncStatus(null, false)
+      const svc = SyncService.getInstance()
+      updateSyncStatus(null, false, svc.lastError)
     }
   }
 
@@ -160,6 +162,12 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
                   Sync now
                 </Button>
               </Group>
+
+              {syncError && (
+                <Alert color="red" variant="light" icon={<Icon icon="lucide:alert-circle" width={18} />}>
+                  <Text size="sm">{syncError}</Text>
+                </Alert>
+              )}
 
               <Text size="xs" c="dimmed">
                 Your data is end-to-end encrypted before reaching the server.

@@ -32,9 +32,9 @@ function AppInner() {
     const doSync = async () => {
       try {
         await svc.syncNow()
-        updateSyncStatus(svc.lastSyncAt, svc.isSyncing)
+        updateSyncStatus(svc.lastSyncAt, svc.isSyncing, svc.lastError)
       } catch {
-        // sync errors handled internally
+        updateSyncStatus(null, false, svc.lastError)
       }
     }
     doSync()

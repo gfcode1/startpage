@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { getStorage, setStorage, setEncryptedProfileId, getEncryptedProfileId } from '@/lib/storage/engine'
+import { getStorage, setStorage, setEncryptedProfileId, getEncryptedProfileId, resetStorage } from '@/lib/storage/engine'
 import { generateId } from '@/lib/utils/id'
 import {
   deriveKey,
@@ -13,6 +13,13 @@ import { usePlayerStore } from './player-store'
 import { useWidgetStore } from './widget-store'
 import type { WidgetState } from './widget-store'
 import { SyncService } from '@/lib/sync/sync-service'
+
+export interface CloudProfile {
+  id: string
+  name: string
+  salt: string
+  verification: string
+}
 
 export interface Profile {
   id: string
@@ -33,6 +40,10 @@ interface ProfileState {
   cloudEmail: string | null
   lastSyncAt: number | null
   isSyncing: boolean
+  syncError: string | null
+  cloudProfiles: CloudProfile[]
+  cloudAuthEmail: string | null
+  cloudAuthLoading: boolean
 }
 
 interface ProfileActions {
@@ -44,7 +55,10 @@ interface ProfileActions {
   clearError: () => void
   linkToCloud: (email: string, password: string) => Promise<void>
   unlinkFromCloud: () => Promise<void>
-  updateSyncStatus: (lastSyncAt: number | null, isSyncing: boolean) => void
+  updateSyncStatus: (lastSyncAt: number | null, isSyncing: boolean, syncError?: string | null) => void
+  cloudLogin: (email: string, password: string) => Promise<void>
+  cloudLogout: () => void
+  adoptCloudProfile: (cloudProfile: CloudProfile, password: string) => Promise<void>
 }
 
 type ProfileStore = ProfileState & ProfileActions
@@ -72,6 +86,27 @@ function saveProfilesToStorage(profiles: Profile[]) {
   }
 }
 
+function migrateProfileKeys(oldId: string, newId: string) {
+  const oldPrefix = `sd:${oldId}:`
+  const newPrefix = `sd:${newId}:`
+  const toRename: Array<{ oldKey: string; newKey: string }> = []
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i)
+    if (!k?.startsWith(oldPrefix)) continue
+    const rest = k.slice(oldPrefix.length)
+    toRename.push({ oldKey: k, newKey: `${newPrefix}${rest}` })
+  }
+
+  for (const { oldKey, newKey } of toRename) {
+    const value = localStorage.getItem(oldKey)
+    if (value !== null) {
+      localStorage.setItem(newKey, value)
+    }
+    localStorage.removeItem(oldKey)
+  }
+}
+
 function rehydrateEagerStores() {
   const storage = getStorage()
 
@@ -82,7 +117,7 @@ function rehydrateEagerStores() {
   if (widgetConfig) useWidgetStore.setState(widgetConfig)
 }
 
-export const useProfileStore = create<ProfileStore>()((set, _get) => ({
+export const useProfileStore = create<ProfileStore>()((set, get) => ({
   profiles: [],
   activeProfileId: null,
   isUnlocked: false,
@@ -92,6 +127,10 @@ export const useProfileStore = create<ProfileStore>()((set, _get) => ({
   cloudEmail: null,
   lastSyncAt: null,
   isSyncing: false,
+  syncError: null,
+  cloudProfiles: [],
+  cloudAuthEmail: null,
+  cloudAuthLoading: false,
 
   loadProfiles: () => {
     const profiles = loadProfilesFromStorage()
@@ -137,6 +176,7 @@ export const useProfileStore = create<ProfileStore>()((set, _get) => ({
         cloudEmail: null,
         lastSyncAt: null,
         isSyncing: false,
+        syncError: null,
       })
     } catch {
       set({ error: 'Failed to create profile' })
@@ -145,7 +185,7 @@ export const useProfileStore = create<ProfileStore>()((set, _get) => ({
 
   unlockProfile: async (id, password) => {
     try {
-      const profiles = loadProfilesFromStorage()
+      let profiles = loadProfilesFromStorage()
       const profile = profiles.find((p) => p.id === id)
       if (!profile) {
         set({ error: 'Profile not found' })
@@ -185,6 +225,9 @@ export const useProfileStore = create<ProfileStore>()((set, _get) => ({
 
       let cloudLinked = false
       let cloudEmail: string | null = null
+      let lastSyncAt: number | null = null
+      let syncError: string | null = null
+      let finalProfileId = id
       if (profile.cloudEmail) {
         cloudEmail = profile.cloudEmail
         cloudLinked = true
@@ -197,15 +240,51 @@ export const useProfileStore = create<ProfileStore>()((set, _get) => ({
         }
       }
 
+      // If cloud is connected, check if remote profileId differs from local
+      if (cloudLinked) {
+        try {
+          const svc = SyncService.getInstance()
+          const remote = await svc.findProfileByName(profile.name)
+          if (remote && remote.profileId !== finalProfileId) {
+            migrateProfileKeys(finalProfileId, remote.profileId)
+
+            const updatedProfiles = loadProfilesFromStorage().map((p) =>
+              p.id === finalProfileId ? { ...p, id: remote.profileId } : p,
+            )
+            saveProfilesToStorage(updatedProfiles)
+
+            const cache = await decryptAllForProfile(storage, remote.profileId, key)
+            const encrypted = createEncryptedAdapter(storage, { profileId: remote.profileId, key })
+            for (const [k, v] of cache) {
+              encrypted.set(k, v)
+            }
+            setStorage(encrypted)
+            setEncryptedProfileId(remote.profileId)
+
+            finalProfileId = remote.profileId
+            profiles = updatedProfiles
+          }
+        } catch {
+          // registry lookup failed, continue with local id
+        }
+      }
+
+      const syncMeta = getStorage().get<{ lastSyncAt: number | null; lastError: string | null }>('_sync:meta')
+      if (syncMeta) {
+        lastSyncAt = syncMeta.lastSyncAt
+        syncError = syncMeta.lastError
+      }
+
       set({
         profiles,
-        activeProfileId: id,
+        activeProfileId: finalProfileId,
         isUnlocked: true,
         error: null,
         cloudLinked,
         cloudEmail,
-        lastSyncAt: null,
+        lastSyncAt,
         isSyncing: false,
+        syncError,
       })
       return true
     } catch {
@@ -225,9 +304,7 @@ export const useProfileStore = create<ProfileStore>()((set, _get) => ({
     svc.stop()
 
     sessionKey = null
-    getStorage()
-    setStorage(getStorage())
-    setEncryptedProfileId(null)
+    resetStorage()
 
     const profiles = loadProfilesFromStorage()
     set({
@@ -239,6 +316,7 @@ export const useProfileStore = create<ProfileStore>()((set, _get) => ({
       cloudEmail: null,
       lastSyncAt: null,
       isSyncing: false,
+      syncError: null,
     })
   },
 
@@ -257,12 +335,10 @@ export const useProfileStore = create<ProfileStore>()((set, _get) => ({
     if (getEncryptedProfileId() === id) {
       sessionKey = null
       SyncService.getInstance().stop()
-      getStorage()
-      setStorage(getStorage())
-      setEncryptedProfileId(null)
+      resetStorage()
     }
 
-    set({ profiles, activeProfileId: null, isUnlocked: false, error: null, cloudLinked: false, cloudEmail: null, lastSyncAt: null, isSyncing: false })
+    set({ profiles, activeProfileId: null, isUnlocked: false, error: null, cloudLinked: false, cloudEmail: null, lastSyncAt: null, isSyncing: false, syncError: null })
   },
 
   linkToCloud: async (email, password) => {
@@ -270,18 +346,73 @@ export const useProfileStore = create<ProfileStore>()((set, _get) => ({
       const svc = SyncService.getInstance()
       await svc.login(email, password)
 
+      const localId = getEncryptedProfileId()
       const raw = localStorage.getItem('sd:_profiles')
-      if (raw) {
-        const profiles = JSON.parse(raw) as Profile[]
-        const updated = profiles.map((p) =>
-          p.id === getEncryptedProfileId() ? { ...p, cloudEmail: email } : p,
-        )
-        localStorage.setItem('sd:_profiles', JSON.stringify(updated))
-      }
+      let profiles: Profile[] = raw ? JSON.parse(raw) : []
+      const localProfile = profiles.find((p) => p.id === localId)
+      const profileName = localProfile?.name ?? 'Default'
 
-      set({ cloudLinked: true, cloudEmail: email, error: null })
-    } catch {
-      set({ error: 'Failed to connect cloud account. Check your credentials.' })
+      // Check if a remote profile with this name already exists
+      const remote = await svc.findProfileByName(profileName)
+
+      if (remote && localId && remote.profileId !== localId) {
+        // Second device: adopt remote profileId, migrate local keys
+        migrateProfileKeys(localId, remote.profileId)
+
+        profiles = profiles.map((p) =>
+          p.id === localId ? { ...p, id: remote.profileId, cloudEmail: email } : p,
+        )
+        localStorage.setItem('sd:_profiles', JSON.stringify(profiles))
+
+        // Re-create encrypted adapter with new profileId
+        const key = sessionKey
+        if (key) {
+          const storage = getStorage()
+          const cache = await decryptAllForProfile(storage, remote.profileId, key)
+          const encrypted = createEncryptedAdapter(storage, {
+            profileId: remote.profileId,
+            key,
+          })
+          for (const [k, v] of cache) {
+            encrypted.set(k, v)
+          }
+          setStorage(encrypted)
+          setEncryptedProfileId(remote.profileId)
+        }
+
+        set({
+          profiles,
+          activeProfileId: remote.profileId,
+          cloudLinked: true,
+          cloudEmail: email,
+          error: null,
+        })
+      } else {
+        // First device or same profileId: register on cloud
+        if (localId) {
+          await svc.registerProfile(localId, profileName)
+        }
+
+        profiles = profiles.map((p) =>
+          p.id === localId ? { ...p, cloudEmail: email } : p,
+        )
+        localStorage.setItem('sd:_profiles', JSON.stringify(profiles))
+
+        // Push all profile metadata to cloud for cross-device discovery
+        const allProfiles = loadProfilesFromStorage()
+        const metaProfiles = allProfiles.map((p) => ({
+          id: p.id,
+          name: p.name,
+          salt: p.salt,
+          verification: p.verification,
+        }))
+        await svc.pushProfileMeta(metaProfiles).catch(() => {})
+
+        set({ cloudLinked: true, cloudEmail: email, error: null })
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Failed to connect cloud account'
+      set({ error: msg })
     }
   },
 
@@ -307,10 +438,100 @@ export const useProfileStore = create<ProfileStore>()((set, _get) => ({
       // ignore logout errors
     }
 
-    set({ cloudLinked: false, cloudEmail: null, lastSyncAt: null, isSyncing: false })
+    set({ cloudLinked: false, cloudEmail: null, lastSyncAt: null, isSyncing: false, syncError: null })
   },
 
-  updateSyncStatus: (lastSyncAt, isSyncing) => set({ lastSyncAt, isSyncing }),
+  updateSyncStatus: (lastSyncAt, isSyncing, syncError) =>
+    set({ lastSyncAt, isSyncing, syncError: syncError ?? null }),
+
+  cloudLogin: async (email, password) => {
+    set({ cloudAuthLoading: true, error: null })
+    try {
+      const svc = SyncService.getInstance()
+      await svc.login(email, password)
+      const profiles = await svc.fetchCloudProfiles()
+      set({ cloudProfiles: profiles, cloudAuthEmail: email, cloudAuthLoading: false, error: null })
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Failed to connect'
+      set({ cloudAuthLoading: false, error: msg })
+    }
+  },
+
+  cloudLogout: () => {
+    SyncService.getInstance().logout().catch(() => {})
+    set({ cloudProfiles: [], cloudAuthEmail: null, cloudAuthLoading: false })
+  },
+
+  adoptCloudProfile: async (cloudProfile, password) => {
+    try {
+      const salt = new Uint8Array(
+        atob(cloudProfile.salt)
+          .split('')
+          .map((c) => c.charCodeAt(0)),
+      )
+      const key = await deriveKey(password, salt)
+
+      const check = await decrypt<string>(cloudProfile.verification, key)
+      if (check !== 'ok') {
+        set({ error: 'Wrong password' })
+        return
+      }
+
+      const localProfiles = loadProfilesFromStorage()
+      const existing = localProfiles.find((p) => p.id === cloudProfile.id)
+
+      if (existing) {
+        // Delegate to existing unlock logic
+        const act = get().unlockProfile
+        await act(cloudProfile.id, password)
+        return
+      }
+
+      const newProfile: Profile = {
+        id: cloudProfile.id,
+        name: cloudProfile.name,
+        salt: cloudProfile.salt,
+        verification: cloudProfile.verification,
+        created: Date.now(),
+        cloudEmail: get().cloudAuthEmail ?? undefined,
+      }
+
+      const updatedProfiles = [...localProfiles, newProfile]
+      saveProfilesToStorage(updatedProfiles)
+
+      const storage = getStorage()
+      const cache = await decryptAllForProfile(storage, cloudProfile.id, key)
+      const encrypted = createEncryptedAdapter(storage, {
+        profileId: cloudProfile.id,
+        key,
+      })
+      for (const [k, v] of cache) {
+        encrypted.set(k, v)
+      }
+
+      sessionKey = key
+      setStorage(encrypted)
+      setEncryptedProfileId(cloudProfile.id)
+
+      rehydrateEagerStores()
+
+      set({
+        profiles: updatedProfiles,
+        activeProfileId: cloudProfile.id,
+        isUnlocked: true,
+        error: null,
+        cloudLinked: true,
+        cloudEmail: get().cloudAuthEmail,
+        lastSyncAt: null,
+        isSyncing: false,
+        syncError: null,
+        cloudProfiles: [],
+        cloudAuthEmail: null,
+      })
+    } catch {
+      set({ error: 'Wrong password' })
+    }
+  },
 
   clearError: () => set({ error: null }),
 }))
@@ -325,6 +546,10 @@ export const useCloudLinked = () => useProfileStore((s) => s.cloudLinked)
 export const useCloudEmail = () => useProfileStore((s) => s.cloudEmail)
 export const useLastSyncAt = () => useProfileStore((s) => s.lastSyncAt)
 export const useIsSyncing = () => useProfileStore((s) => s.isSyncing)
+export const useSyncError = () => useProfileStore((s) => s.syncError)
+export const useCloudProfiles = () => useProfileStore((s) => s.cloudProfiles)
+export const useCloudAuthEmail = () => useProfileStore((s) => s.cloudAuthEmail)
+export const useCloudAuthLoading = () => useProfileStore((s) => s.cloudAuthLoading)
 
 export const useActiveProfile = () =>
   useProfileStore((s) => s.profiles.find((p) => p.id === s.activeProfileId) ?? null)

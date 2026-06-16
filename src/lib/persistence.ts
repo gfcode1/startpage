@@ -1,5 +1,6 @@
 import { getStorage } from './storage/engine'
 import { APP_CONFIG } from '@/config/app'
+import { rehydrateAllStores } from './sync/rehydrate'
 
 export interface BackupData {
   version: string
@@ -23,6 +24,7 @@ export function importBackup(json: string): boolean {
     const backup = JSON.parse(json) as BackupData
     if (!backup.version || !backup.data) return false
     getStorage().import(backup.data)
+    rehydrateAllStores()
     return true
   } catch {
     return false

@@ -88,6 +88,11 @@ export function createEncryptedAdapter(
   const { profileId, key } = options
   const cache = new Map<string, unknown>()
   const pendingWrites = new Map<string, Promise<void>>()
+  const listeners = new Map<string, Set<(value: unknown) => void>>()
+
+  function notify(key: string, value: unknown) {
+    listeners.get(key)?.forEach((cb) => cb(value))
+  }
 
   function profileKey(k: string): string {
     return `${profileId}:${k}`
@@ -140,6 +145,7 @@ export function createEncryptedAdapter(
         return
       }
       cache.set(k, value)
+      notify(k, value)
       scheduleWrite(profileKey(k), value)
     },
 
@@ -149,13 +155,16 @@ export function createEncryptedAdapter(
         return
       }
       cache.delete(k)
+      notify(k, undefined)
       scheduleRemove(profileKey(k))
     },
 
     subscribe(k: string, callback: (value: unknown) => void): () => void {
-      return inner.subscribe(profileKey(k), (v) => {
-        callback(v)
-      })
+      if (!listeners.has(k)) listeners.set(k, new Set())
+      listeners.get(k)!.add(callback)
+      return () => {
+        listeners.get(k)?.delete(callback)
+      }
     },
 
     getAll(): Record<string, Record<string, unknown>> {
@@ -180,6 +189,7 @@ export function createEncryptedAdapter(
             continue
           }
           cache.set(fullKey, value)
+          notify(fullKey, value)
           scheduleWrite(profileKey(fullKey), value)
         }
       }

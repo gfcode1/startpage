@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Tooltip, ActionIcon, Text, Avatar, Menu } from '@mantine/core'
 import { Icon } from '@iconify/react'
-import { useActiveProfile, useProfileStore, useProfiles, useIsUnlocked, useCloudLinked, useLastSyncAt, useIsSyncing } from '@/stores/profile-store'
+import { useActiveProfile, useProfileStore, useProfiles, useIsUnlocked, useCloudLinked, useLastSyncAt, useIsSyncing, useSyncError } from '@/stores/profile-store'
 
 export function ProfileHeader() {
   const activeProfile = useActiveProfile()
@@ -11,6 +11,7 @@ export function ProfileHeader() {
   const cloudLinked = useCloudLinked()
   const lastSyncAt = useLastSyncAt()
   const isSyncing = useIsSyncing()
+  const syncError = useSyncError()
   const [now, setNow] = useState(0)
 
   useEffect(() => {
@@ -57,14 +58,22 @@ export function ProfileHeader() {
             <Menu.Item
               leftSection={
                 <Icon
-                  icon={isSyncing ? 'lucide:loader' : 'lucide:cloud'}
+                  icon={isSyncing ? 'lucide:loader' : syncError ? 'lucide:alert-triangle' : 'lucide:cloud'}
                   width={16}
                   className={isSyncing ? 'animate-spin' : ''}
+                  color={syncError ? 'red' : undefined}
                 />
               }
             >
-              <Text size="xs" c="dimmed">Sync: {formatLastSync(lastSyncAt)}</Text>
+              <Text size="xs" c={syncError ? 'red' : 'dimmed'}>
+                {syncError ? 'Sync error' : `Sync: ${formatLastSync(lastSyncAt)}`}
+              </Text>
             </Menu.Item>
+            {syncError && (
+              <Menu.Item>
+                <Text size="xs" c="red">{syncError}</Text>
+              </Menu.Item>
+            )}
           </>
         )}
 
