@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { Text, Paper, Group, ActionIcon, Badge, TextInput, Stack } from '@mantine/core'
 import { Icon } from '@iconify/react'
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { useDroppable } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import type { Column, Card } from '../types'
@@ -26,6 +27,7 @@ export function KanbanColumn({
   const [editName, setEditName] = useState(column.title)
   const searchQuery = useKanbanSearchQuery()
   const filter = useKanbanFilter()
+  const [parent] = useAutoAnimate()
 
   const cards = useMemo(() => {
     let result = column.cards
@@ -96,7 +98,7 @@ export function KanbanColumn({
 
       <div ref={setDroppableRef} style={{ flex: 1, overflowY: 'auto', minHeight: 40 }}>
         <SortableContext items={column.cards.map((c) => c.id)} strategy={verticalListSortingStrategy}>
-          <Stack gap="xs">
+          <Stack gap="xs" ref={parent}>
             {cards.map((card) => (
               <KanbanCard
                 key={card.id}

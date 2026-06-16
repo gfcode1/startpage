@@ -1,4 +1,5 @@
 import { useRef, useCallback, useEffect } from 'react'
+import { ensureAudioContext } from '../lib/audio-context'
 
 type NoiseColor = 'white' | 'pink' | 'brown'
 type BinauralFreq = 'delta' | 'theta' | 'alpha' | 'beta' | 'gamma'
@@ -7,15 +8,9 @@ const BINAURAL_MAP: Record<BinauralFreq, number> = {
   delta: 3, theta: 6, alpha: 10, beta: 20, gamma: 40,
 }
 
-function getAudioCtx(ctxRef: React.MutableRefObject<AudioContext | null>) {
-  if (!ctxRef.current || ctxRef.current.state === 'closed') {
-    ctxRef.current = new AudioContext()
-  }
-  return ctxRef.current
-}
+const CROSSFADE_SAMPLES = 512
 
 export function useNoiseGenerator() {
-  const ctxRef = useRef<AudioContext | null>(null)
   const sourceRef = useRef<AudioBufferSourceNode | null>(null)
   const gainRef = useRef<GainNode | null>(null)
   const isPlaying = useRef(false)
@@ -27,13 +22,12 @@ export function useNoiseGenerator() {
     isPlaying.current = false
   }, [])
 
-  const startNoise = useCallback((color: NoiseColor, volume: number) => {
+  const startNoise = useCallback(async (color: NoiseColor, volume: number) => {
     stopNoise()
-    const ctx = getAudioCtx(ctxRef)
-    if (ctx.state === 'suspended') ctx.resume()
+    const ctx = await ensureAudioContext()
 
     const sr = ctx.sampleRate
-    const len = sr * 4
+    const len = sr * 30
     const buffer = ctx.createBuffer(1, len, sr)
     const _data = buffer.getChannelData(0); const data = _data as unknown as number[]
 
@@ -61,6 +55,12 @@ export function useNoiseGenerator() {
       for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1
     }
 
+    for (let i = 0; i < CROSSFADE_SAMPLES; i++) {
+      const t = i / CROSSFADE_SAMPLES
+      data[i]! *= t
+      data[len - 1 - i]! *= t
+    }
+
     const source = ctx.createBufferSource()
     source.buffer = buffer; source.loop = true
     const gain = ctx.createGain(); gain.gain.value = volume
@@ -75,15 +75,13 @@ export function useNoiseGenerator() {
   }, [])
 
   useEffect(() => {
-    const ctx = ctxRef.current
-    return () => { stopNoise(); ctx?.close() }
+    return () => { stopNoise() }
   }, [stopNoise])
 
   return { startNoise, stopNoise, setNoiseVolume, isPlaying }
 }
 
 export function useBinauralBeat() {
-  const ctxRef = useRef<AudioContext | null>(null)
   const oscLeft = useRef<OscillatorNode | null>(null)
   const oscRight = useRef<OscillatorNode | null>(null)
   const gainLeft = useRef<GainNode | null>(null)
@@ -99,10 +97,9 @@ export function useBinauralBeat() {
     isPlaying.current = false
   }, [])
 
-  const start = useCallback((freq: BinauralFreq, carrierHz: number, volume: number) => {
+  const start = useCallback(async (freq: BinauralFreq, carrierHz: number, volume: number) => {
     stop()
-    const ctx = getAudioCtx(ctxRef)
-    if (ctx.state === 'suspended') ctx.resume()
+    const ctx = await ensureAudioContext()
 
     const beatHz = BINAURAL_MAP[freq]
     const gL = ctx.createGain(); gL.gain.value = 1
@@ -127,8 +124,7 @@ export function useBinauralBeat() {
   }, [])
 
   useEffect(() => {
-    const ctx = ctxRef.current
-    return () => { stop(); ctx?.close() }
+    return () => { stop() }
   }, [stop])
 
   return { start, stop, setVolume, isPlaying }

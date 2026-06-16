@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { Text, Paper } from '@mantine/core'
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 import {
   useTodoTasks,
   useTodoActiveListId,
@@ -19,6 +20,7 @@ export default function TaskList() {
   const searchQuery = useTodoSearchQuery()
   const sortField = useTodoSortField()
   const sortOrder = useTodoSortOrder()
+  const [parent] = useAutoAnimate()
 
   const tasks = useMemo(
     () => allTasks.filter((t) => t.listId === activeListId),
@@ -39,7 +41,7 @@ export default function TaskList() {
   }
 
   return (
-    <Paper withBorder>
+    <Paper withBorder ref={parent}>
       {filteredTasks.map((task) => (
         <TaskItem key={task.id} task={task} />
       ))}

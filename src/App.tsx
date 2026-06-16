@@ -10,17 +10,38 @@ import { Launcher } from './pages/launcher'
 import { NotFound } from './pages/not-found'
 import { ProfileGate } from './ui/profile-gate'
 import { apps } from './registry/apps'
-import { useProfileStore, useIsReady, useIsUnlocked } from './stores/profile-store'
+import { useProfileStore, useIsReady, useIsUnlocked, useCloudLinked } from './stores/profile-store'
+import { SyncService } from './lib/sync/sync-service'
+import { CLOUD_CONFIG } from './config/cloud'
 
 function AppInner() {
   const navigate = useNavigate()
-  const { loadProfiles } = useProfileStore()
+  const { loadProfiles, updateSyncStatus } = useProfileStore()
   const isReady = useIsReady()
   const isUnlocked = useIsUnlocked()
+  const cloudLinked = useCloudLinked()
 
   useEffect(() => {
     loadProfiles()
   }, [loadProfiles])
+
+  useEffect(() => {
+    if (!isUnlocked || !cloudLinked) return
+
+    const svc = SyncService.getInstance()
+    const doSync = async () => {
+      try {
+        await svc.syncNow()
+        updateSyncStatus(svc.lastSyncAt, svc.isSyncing)
+      } catch {
+        // sync errors handled internally
+      }
+    }
+    doSync()
+    svc.start(CLOUD_CONFIG.syncInterval)
+
+    return () => svc.stop()
+  }, [isUnlocked, cloudLinked, updateSyncStatus])
 
   useHotkeys([['mod + K', spotlight.open]])
 

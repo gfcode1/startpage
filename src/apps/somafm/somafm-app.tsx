@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Container, Text, SimpleGrid, Paper, Group, Badge, Loader, Center, ActionIcon } from '@mantine/core'
+import { Container, Text, SimpleGrid, Paper, Group, Badge, Loader, Center, ActionIcon, Slider } from '@mantine/core'
 import { Icon } from '@iconify/react'
 import { Howl } from 'howler'
-import { usePlayerPlay, usePlayerStop, usePlayerSetPlaying, usePlayerSetLoading, usePlayerSetPlayInfo } from '@/stores/player-store'
+import { usePlayerPlay, usePlayerStop, usePlayerSetPlaying, usePlayerSetLoading, usePlayerSetPlayInfo, usePlayerVolume, usePlayerSetVolume } from '@/stores/player-store'
 
 interface SomaChannel {
   id: string
@@ -60,7 +60,10 @@ export default function SomafmApp() {
   const setPlaying = usePlayerSetPlaying()
   const setStoreLoading = usePlayerSetLoading()
   const setPlayInfo = usePlayerSetPlayInfo()
+  const volume = usePlayerVolume()
+  const setVolume = usePlayerSetVolume()
 
+  // Fetch channels
   useEffect(() => {
     const abort = new AbortController()
     fetchChannels(abort.signal)
@@ -70,12 +73,22 @@ export default function SomafmApp() {
         setError('Failed to load channels')
         setLocalLoading(false)
       })
+    return () => abort.abort()
+  }, [])
+
+  // Stop player and unload Howl on unmount
+  useEffect(() => {
     return () => {
-      abort.abort()
       howlRef.current?.unload()
       howlRef.current = null
+      stop()
     }
-  }, [])
+  }, [stop])
+
+  // Sync volume to active Howl
+  useEffect(() => {
+    if (howlRef.current) howlRef.current.volume(volume)
+  }, [volume])
 
   const togglePlay = useCallback(async (channel: SomaChannel) => {
     if (togglingRef.current) return
@@ -104,7 +117,7 @@ export default function SomafmApp() {
       const howl = new Howl({
         src: [streamUrl],
         html5: true,
-        volume: 0.5,
+        volume,
         onplay: () => {
           setPlaying(true)
           setStoreLoading(false)
@@ -131,16 +144,31 @@ export default function SomafmApp() {
     }
 
     togglingRef.current = false
-  }, [playingId, play, stop, setPlaying, setStoreLoading, setPlayInfo])
+  }, [playingId, play, stop, setPlaying, setStoreLoading, setPlayInfo, volume])
 
   if (loading) return <Center py="xl"><Loader /></Center>
   if (error) return <Center py="xl"><Text c="red">{error}</Text></Center>
 
   return (
     <Container size="xl" py="md">
-      <Text fw={700} size="lg" mb="md" style={{ fontFamily: 'var(--mantine-heading-font-family)' }}>
-        SomaFM
-      </Text>
+      <Group justify="space-between" mb="md">
+        <Text fw={700} size="lg" style={{ fontFamily: 'var(--mantine-heading-font-family)' }}>
+          SomaFM
+        </Text>
+        <Group gap="xs">
+          <Icon icon={volume > 0 ? 'lucide:volume-2' : 'lucide:volume-x'} width={16} />
+          <Slider
+            value={volume}
+            onChange={setVolume}
+            min={0}
+            max={1}
+            step={0.01}
+            size="xs"
+            style={{ width: 80 }}
+            aria-label="Volume"
+          />
+        </Group>
+      </Group>
 
       {channels.length === 0 ? (
         <Center py="xl"><Text c="dimmed">No channels available</Text></Center>

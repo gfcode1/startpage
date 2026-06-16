@@ -12,6 +12,7 @@ import {
 import { usePlayerStore } from './player-store'
 import { useWidgetStore } from './widget-store'
 import type { WidgetState } from './widget-store'
+import { SyncService } from '@/lib/sync/sync-service'
 
 export interface Profile {
   id: string
@@ -19,6 +20,7 @@ export interface Profile {
   salt: string
   verification: string
   created: number
+  cloudEmail?: string
 }
 
 interface ProfileState {
@@ -27,6 +29,10 @@ interface ProfileState {
   isUnlocked: boolean
   isReady: boolean
   error: string | null
+  cloudLinked: boolean
+  cloudEmail: string | null
+  lastSyncAt: number | null
+  isSyncing: boolean
 }
 
 interface ProfileActions {
@@ -36,6 +42,9 @@ interface ProfileActions {
   lockProfile: () => Promise<void>
   deleteProfile: (id: string) => Promise<void>
   clearError: () => void
+  linkToCloud: (email: string, password: string) => Promise<void>
+  unlinkFromCloud: () => Promise<void>
+  updateSyncStatus: (lastSyncAt: number | null, isSyncing: boolean) => void
 }
 
 type ProfileStore = ProfileState & ProfileActions
@@ -79,6 +88,10 @@ export const useProfileStore = create<ProfileStore>()((set, _get) => ({
   isUnlocked: false,
   isReady: false,
   error: null,
+  cloudLinked: false,
+  cloudEmail: null,
+  lastSyncAt: null,
+  isSyncing: false,
 
   loadProfiles: () => {
     const profiles = loadProfilesFromStorage()
@@ -120,6 +133,10 @@ export const useProfileStore = create<ProfileStore>()((set, _get) => ({
         activeProfileId: id,
         isUnlocked: true,
         error: null,
+        cloudLinked: false,
+        cloudEmail: null,
+        lastSyncAt: null,
+        isSyncing: false,
       })
     } catch {
       set({ error: 'Failed to create profile' })
@@ -166,11 +183,29 @@ export const useProfileStore = create<ProfileStore>()((set, _get) => ({
 
       rehydrateEagerStores()
 
+      let cloudLinked = false
+      let cloudEmail: string | null = null
+      if (profile.cloudEmail) {
+        cloudEmail = profile.cloudEmail
+        cloudLinked = true
+        try {
+          const svc = SyncService.getInstance()
+          await svc.restore(password, profile.cloudEmail)
+        } catch {
+          // cloud session restore failed, continue without sync
+          cloudLinked = false
+        }
+      }
+
       set({
         profiles,
         activeProfileId: id,
         isUnlocked: true,
         error: null,
+        cloudLinked,
+        cloudEmail,
+        lastSyncAt: null,
+        isSyncing: false,
       })
       return true
     } catch {
@@ -182,9 +217,12 @@ export const useProfileStore = create<ProfileStore>()((set, _get) => ({
   lockProfile: async () => {
     const id = getEncryptedProfileId()
     if (!id) {
-      set({ isUnlocked: false, activeProfileId: null })
+      set({ isUnlocked: false, activeProfileId: null, cloudLinked: false, cloudEmail: null })
       return
     }
+
+    const svc = SyncService.getInstance()
+    svc.stop()
 
     sessionKey = null
     getStorage()
@@ -197,6 +235,10 @@ export const useProfileStore = create<ProfileStore>()((set, _get) => ({
       activeProfileId: null,
       isUnlocked: false,
       error: null,
+      cloudLinked: false,
+      cloudEmail: null,
+      lastSyncAt: null,
+      isSyncing: false,
     })
   },
 
@@ -214,13 +256,61 @@ export const useProfileStore = create<ProfileStore>()((set, _get) => ({
 
     if (getEncryptedProfileId() === id) {
       sessionKey = null
+      SyncService.getInstance().stop()
       getStorage()
       setStorage(getStorage())
       setEncryptedProfileId(null)
     }
 
-    set({ profiles, activeProfileId: null, isUnlocked: false, error: null })
+    set({ profiles, activeProfileId: null, isUnlocked: false, error: null, cloudLinked: false, cloudEmail: null, lastSyncAt: null, isSyncing: false })
   },
+
+  linkToCloud: async (email, password) => {
+    try {
+      const svc = SyncService.getInstance()
+      await svc.login(email, password)
+
+      const raw = localStorage.getItem('sd:_profiles')
+      if (raw) {
+        const profiles = JSON.parse(raw) as Profile[]
+        const updated = profiles.map((p) =>
+          p.id === getEncryptedProfileId() ? { ...p, cloudEmail: email } : p,
+        )
+        localStorage.setItem('sd:_profiles', JSON.stringify(updated))
+      }
+
+      set({ cloudLinked: true, cloudEmail: email, error: null })
+    } catch {
+      set({ error: 'Failed to connect cloud account. Check your credentials.' })
+    }
+  },
+
+  unlinkFromCloud: async () => {
+    try {
+      const svc = SyncService.getInstance()
+      await svc.logout()
+
+      const raw = localStorage.getItem('sd:_profiles')
+      if (raw) {
+        const profiles = JSON.parse(raw) as Profile[]
+        const updated = profiles.map((p) => {
+          if (p.id === getEncryptedProfileId()) {
+            const copy = { ...p }
+            delete copy.cloudEmail
+            return copy
+          }
+          return p
+        })
+        localStorage.setItem('sd:_profiles', JSON.stringify(updated))
+      }
+    } catch {
+      // ignore logout errors
+    }
+
+    set({ cloudLinked: false, cloudEmail: null, lastSyncAt: null, isSyncing: false })
+  },
+
+  updateSyncStatus: (lastSyncAt, isSyncing) => set({ lastSyncAt, isSyncing }),
 
   clearError: () => set({ error: null }),
 }))
@@ -231,6 +321,10 @@ export const useActiveProfileId = () => useProfileStore((s) => s.activeProfileId
 export const useIsUnlocked = () => useProfileStore((s) => s.isUnlocked)
 export const useIsReady = () => useProfileStore((s) => s.isReady)
 export const useProfileError = () => useProfileStore((s) => s.error)
+export const useCloudLinked = () => useProfileStore((s) => s.cloudLinked)
+export const useCloudEmail = () => useProfileStore((s) => s.cloudEmail)
+export const useLastSyncAt = () => useProfileStore((s) => s.lastSyncAt)
+export const useIsSyncing = () => useProfileStore((s) => s.isSyncing)
 
 export const useActiveProfile = () =>
   useProfileStore((s) => s.profiles.find((p) => p.id === s.activeProfileId) ?? null)

@@ -51,14 +51,16 @@ export const apps: AppDefinition[] = [
     widgets: ['weather'],
   },
   {
-    id: 'rssreader', name: 'RSS Reader', description: 'Feed aggregator',
-    path: '/rssreader', color: '#d4a43a', icon: 'lucide:rss',
-    category: 'utilities', component: lazy(() => import('@/apps/rss-reader/rss-reader-app')),
+    id: 'news', name: 'News', description: 'World news aggregator',
+    path: '/news', color: '#d4a43a', icon: 'lucide:rss',
+    category: 'utilities', component: lazy(() => import('@/apps/news/news-app')),
+    widgets: ['news'],
   },
   {
     id: 'wikipedia', name: 'Wikipedia', description: 'Article browser',
     path: '/wikipedia', color: '#636363', icon: 'lucide:book-open',
     category: 'utilities', component: lazy(() => import('@/apps/wikipedia/wikipedia-app')),
+    widgets: ['wikipedia'],
   },
   {
     id: 'somafm', name: 'SomaFM', description: 'Internet radio channels',
@@ -71,6 +73,18 @@ export const apps: AppDefinition[] = [
     path: '/moodist', color: '#8a5ad4', icon: 'lucide:headphones',
     category: 'music', component: lazy(() => import('@/apps/moodist/moodist-app')),
     widgets: ['nowplaying'],
+  },
+  {
+    id: 'password-vault', name: 'Passwords', description: 'Encrypted credential manager',
+    path: '/passwords', color: '#22c55e', icon: 'lucide:key-round',
+    category: 'utilities', component: lazy(() => import('@/apps/password-vault/password-vault-app')),
+    widgets: ['password-vault'],
+  },
+  {
+    id: 'bookmarks', name: 'Bookmarks', description: 'Bookmark manager',
+    path: '/bookmarks', color: '#d4a43a', icon: 'lucide:bookmark',
+    category: 'productivity', component: lazy(() => import('@/apps/bookmarks/bookmarks-app')),
+    widgets: ['bookmarks'],
   },
 ]
 

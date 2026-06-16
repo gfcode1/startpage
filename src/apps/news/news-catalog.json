@@ -1,0 +1,5097 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-06-16T05:05:41.180Z",
+  "total": 763,
+  "feeds": [
+    {
+      "id": "all-about-android-audio",
+      "title": "All About Android (Audio)",
+      "url": "https://feeds.twit.tv/aaa.xml",
+      "category": "Android"
+    },
+    {
+      "id": "android",
+      "title": "Android",
+      "url": "https://blog.google/products/android/rss",
+      "category": "Android"
+    },
+    {
+      "id": "android-2iqp",
+      "title": "Android",
+      "url": "https://www.reddit.com/r/android/.rss",
+      "category": "Android"
+    },
+    {
+      "id": "android-authority",
+      "title": "Android Authority",
+      "url": "https://www.androidauthority.com/feed",
+      "category": "Android"
+    },
+    {
+      "id": "android-authority-3j39",
+      "title": "Android Authority",
+      "url": "https://www.youtube.com/feeds/videos.xml?user=AndroidAuthority",
+      "category": "Android"
+    },
+    {
+      "id": "android-authority-podcast",
+      "title": "Android Authority Podcast",
+      "url": "https://androidauthority.libsyn.com/rss",
+      "category": "Android"
+    },
+    {
+      "id": "android-central-android-forums-news-reviews-help-and-android-wallpapers",
+      "title": "Android Central - Android Forums, News, Reviews, Help and Android Wallpapers",
+      "url": "http://feeds.androidcentral.com/androidcentral",
+      "category": "Android"
+    },
+    {
+      "id": "android-central-podcast",
+      "title": "Android Central Podcast",
+      "url": "http://feeds.feedburner.com/AndroidCentralPodcast",
+      "category": "Android"
+    },
+    {
+      "id": "android-community",
+      "title": "Android Community",
+      "url": "https://androidcommunity.com/feed/",
+      "category": "Android"
+    },
+    {
+      "id": "android-police-android-news-reviews-apps-games-phones-tablets",
+      "title": "Android Police – Android news, reviews, apps, games, phones, tablets",
+      "url": "http://feeds.feedburner.com/AndroidPolice",
+      "category": "Android"
+    },
+    {
+      "id": "androidguys",
+      "title": "AndroidGuys",
+      "url": "https://www.androidguys.com/feed",
+      "category": "Android"
+    },
+    {
+      "id": "cult-of-android",
+      "title": "Cult of Android",
+      "url": "https://www.cultofandroid.com/feed",
+      "category": "Android"
+    },
+    {
+      "id": "cyanogen-mods",
+      "title": "Cyanogen Mods",
+      "url": "https://www.cyanogenmods.org/feed",
+      "category": "Android"
+    },
+    {
+      "id": "droid-life",
+      "title": "Droid Life",
+      "url": "https://www.droid-life.com/feed",
+      "category": "Android"
+    },
+    {
+      "id": "gsmarena-com-latest-articles",
+      "title": "GSMArena.com - Latest articles",
+      "url": "https://www.gsmarena.com/rss-news-reviews.php3",
+      "category": "Android"
+    },
+    {
+      "id": "phandroid",
+      "title": "Phandroid",
+      "url": "http://feeds2.feedburner.com/AndroidPhoneFans",
+      "category": "Android"
+    },
+    {
+      "id": "talkandroid",
+      "title": "TalkAndroid",
+      "url": "http://feeds.feedburner.com/AndroidNewsGoogleAndroidForums",
+      "category": "Android"
+    },
+    {
+      "id": "xda-developers",
+      "title": "xda-developers",
+      "url": "https://data.xda-developers.com/portal-feed",
+      "category": "Android"
+    },
+    {
+      "id": "android-buffer-resources",
+      "title": "Android - Buffer Resources",
+      "url": "https://buffer.com/resources/android/rss/",
+      "category": "Android Development"
+    },
+    {
+      "id": "android-developers",
+      "title": "Android Developers",
+      "url": "https://www.youtube.com/feeds/videos.xml?user=androiddevelopers",
+      "category": "Android Development"
+    },
+    {
+      "id": "android-developers-medium",
+      "title": "Android Developers - Medium",
+      "url": "https://medium.com/feed/androiddevelopers",
+      "category": "Android Development"
+    },
+    {
+      "id": "android-developers-backstage",
+      "title": "Android Developers Backstage",
+      "url": "http://feeds.feedburner.com/blogspot/androiddevelopersbackstage",
+      "category": "Android Development"
+    },
+    {
+      "id": "android-developers-blog",
+      "title": "Android Developers Blog",
+      "url": "http://feeds.feedburner.com/blogspot/hsDu",
+      "category": "Android Development"
+    },
+    {
+      "id": "android-in-instagram-engineering-on-medium",
+      "title": "Android in Instagram Engineering on Medium",
+      "url": "https://instagram-engineering.com/feed/tagged/android",
+      "category": "Android Development"
+    },
+    {
+      "id": "android-in-mindorks-on-medium",
+      "title": "Android in MindOrks on Medium",
+      "url": "https://medium.com/feed/mindorks/tagged/android",
+      "category": "Android Development"
+    },
+    {
+      "id": "android-in-the-airbnb-tech-blog-on-medium",
+      "title": "Android in The Airbnb Tech Blog on Medium",
+      "url": "https://medium.com/feed/airbnb-engineering/tagged/android",
+      "category": "Android Development"
+    },
+    {
+      "id": "android-weekly-archive-feed",
+      "title": "Android Weekly Archive Feed",
+      "url": "https://us2.campaign-archive.com/feed?u=887caf4f48db76fd91e20a06d&id=4eb677ad19",
+      "category": "Android Development"
+    },
+    {
+      "id": "chrynan-codes",
+      "title": "chRyNaN Codes",
+      "url": "https://chrynan.codes/rss/",
+      "category": "Android Development"
+    },
+    {
+      "id": "dan-lew-codes",
+      "title": "Dan Lew Codes",
+      "url": "https://blog.danlew.net/rss/",
+      "category": "Android Development"
+    },
+    {
+      "id": "developing-android-apps",
+      "title": "Developing Android Apps",
+      "url": "https://reddit.com/r/androiddev.rss",
+      "category": "Android Development"
+    },
+    {
+      "id": "droidcon-nyc",
+      "title": "droidcon NYC",
+      "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCSLXy31j2Z0sdDeeAX5JpPw",
+      "category": "Android Development"
+    },
+    {
+      "id": "droidcon-sf",
+      "title": "droidcon SF",
+      "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCKubKoe1CBw_-n_GXetEQbg",
+      "category": "Android Development"
+    },
+    {
+      "id": "fragmented-the-software-podcast",
+      "title": "Fragmented - The Software Podcast",
+      "url": "https://feeds.simplecast.com/LpAGSLnY",
+      "category": "Android Development"
+    },
+    {
+      "id": "goobar",
+      "title": "goobar",
+      "url": "https://goobar.io/feed",
+      "category": "Android Development"
+    },
+    {
+      "id": "handstand-sam",
+      "title": "Handstand Sam",
+      "url": "https://handstandsam.com/feed/",
+      "category": "Android Development"
+    },
+    {
+      "id": "jake-wharton",
+      "title": "Jake Wharton",
+      "url": "https://jakewharton.com/atom.xml",
+      "category": "Android Development"
+    },
+    {
+      "id": "jetbrains-news-jetbrains-blog",
+      "title": "JetBrains News | JetBrains Blog",
+      "url": "https://blog.jetbrains.com/blog/feed",
+      "category": "Android Development"
+    },
+    {
+      "id": "joe-birch",
+      "title": "Joe Birch",
+      "url": "https://joebirch.co/feed",
+      "category": "Android Development"
+    },
+    {
+      "id": "kotlin",
+      "title": "Kotlin",
+      "url": "https://www.youtube.com/feeds/videos.xml?playlist_id=PLQ176FUIyIUa6SChjajjVc-LMzxWiz6dy",
+      "category": "Android Development"
+    },
+    {
+      "id": "kt-academy-medium",
+      "title": "Kt. Academy - Medium",
+      "url": "https://blog.kotlin-academy.com/feed",
+      "category": "Android Development"
+    },
+    {
+      "id": "okkotlin",
+      "title": "OkKotlin",
+      "url": "https://okkotlin.com/rss.xml",
+      "category": "Android Development"
+    },
+    {
+      "id": "proandroiddev-medium",
+      "title": "ProAndroidDev - Medium",
+      "url": "https://proandroiddev.com/feed",
+      "category": "Android Development"
+    },
+    {
+      "id": "public-object",
+      "title": "Public Object",
+      "url": "https://publicobject.com/rss/",
+      "category": "Android Development"
+    },
+    {
+      "id": "styling-android",
+      "title": "Styling Android",
+      "url": "http://feeds.feedburner.com/StylingAndroid",
+      "category": "Android Development"
+    },
+    {
+      "id": "talking-kotlin",
+      "title": "Talking Kotlin",
+      "url": "https://feeds.soundcloud.com/users/soundcloud:users:280353173/sounds.rss",
+      "category": "Android Development"
+    },
+    {
+      "id": "the-android-arsenal",
+      "title": "The Android Arsenal",
+      "url": "https://feeds.feedburner.com/Android_Arsenal",
+      "category": "Android Development"
+    },
+    {
+      "id": "zac-sweers",
+      "title": "Zac Sweers",
+      "url": "https://www.zacsweers.dev/rss/",
+      "category": "Android Development"
+    },
+    {
+      "id": "zarah-dominguez",
+      "title": "Zarah Dominguez",
+      "url": "https://zarah.dev/feed.xml",
+      "category": "Android Development"
+    },
+    {
+      "id": "zsmb-co",
+      "title": "zsmb.co",
+      "url": "https://zsmb.co/index.xml",
+      "category": "Android Development"
+    },
+    {
+      "id": "9to5mac",
+      "title": "9to5Mac",
+      "url": "https://9to5mac.com/feed",
+      "category": "Apple"
+    },
+    {
+      "id": "apple",
+      "title": "Apple",
+      "url": "https://www.youtube.com/feeds/videos.xml?user=Apple",
+      "category": "Apple"
+    },
+    {
+      "id": "apple-newsroom",
+      "title": "Apple Newsroom",
+      "url": "https://www.apple.com/newsroom/rss-feed.rss",
+      "category": "Apple"
+    },
+    {
+      "id": "appleinsider-news",
+      "title": "AppleInsider News",
+      "url": "https://appleinsider.com/rss/news/",
+      "category": "Apple"
+    },
+    {
+      "id": "cult-of-mac",
+      "title": "Cult of Mac",
+      "url": "https://www.cultofmac.com/feed",
+      "category": "Apple"
+    },
+    {
+      "id": "daring-fireball",
+      "title": "Daring Fireball",
+      "url": "https://daringfireball.net/feeds/main",
+      "category": "Apple"
+    },
+    {
+      "id": "imore-the-1-iphone-ipad-and-ipod-touch-blog",
+      "title": "iMore - The #1 iPhone, iPad, and iPod touch blog",
+      "url": "http://feeds.feedburner.com/TheiPhoneBlog",
+      "category": "Apple"
+    },
+    {
+      "id": "macrumors",
+      "title": "MacRumors",
+      "url": "https://www.youtube.com/feeds/videos.xml?user=macrumors",
+      "category": "Apple"
+    },
+    {
+      "id": "macrumors-mac-news-and-rumors-mac-blog",
+      "title": "MacRumors: Mac News and Rumors - Mac Blog",
+      "url": "http://feeds.macrumors.com/MacRumors-Mac",
+      "category": "Apple"
+    },
+    {
+      "id": "macstories",
+      "title": "MacStories",
+      "url": "https://www.macstories.net/feed",
+      "category": "Apple"
+    },
+    {
+      "id": "macworld-com",
+      "title": "Macworld.com",
+      "url": "https://www.macworld.com/index.rss",
+      "category": "Apple"
+    },
+    {
+      "id": "marco-org",
+      "title": "Marco.org",
+      "url": "https://marco.org/rss",
+      "category": "Apple"
+    },
+    {
+      "id": "os-x-daily",
+      "title": "OS X Daily",
+      "url": "http://feeds.feedburner.com/osxdaily",
+      "category": "Apple"
+    },
+    {
+      "id": "r-iphone",
+      "title": "r/iPhone",
+      "url": "https://www.reddit.com/r/iphone/.rss",
+      "category": "Apple"
+    },
+    {
+      "id": "the-loop",
+      "title": "The Loop",
+      "url": "https://www.loopinsight.com/feed",
+      "category": "Apple"
+    },
+    {
+      "id": "the-unofficial-apple-community",
+      "title": "The unofficial Apple community",
+      "url": "https://www.reddit.com/r/apple/.rss",
+      "category": "Apple"
+    },
+    {
+      "id": "a-daily-dose-of-architecture-books",
+      "title": "A Daily Dose of Architecture Books",
+      "url": "http://feeds.feedburner.com/archidose",
+      "category": "Architecture"
+    },
+    {
+      "id": "archdaily",
+      "title": "ArchDaily",
+      "url": "http://feeds.feedburner.com/Archdaily",
+      "category": "Architecture"
+    },
+    {
+      "id": "archinect-news",
+      "title": "Archinect - News",
+      "url": "https://archinect.com/feed/1/news",
+      "category": "Architecture"
+    },
+    {
+      "id": "architectural-digest",
+      "title": "Architectural Digest",
+      "url": "https://www.architecturaldigest.com/feed/rss",
+      "category": "Architecture"
+    },
+    {
+      "id": "architectural-digest-98v1",
+      "title": "Architectural Digest",
+      "url": "https://www.youtube.com/feeds/videos.xml?user=ArchitecturalDigest",
+      "category": "Architecture"
+    },
+    {
+      "id": "architecture",
+      "title": "Architecture",
+      "url": "https://www.reddit.com/r/architecture/.rss",
+      "category": "Architecture"
+    },
+    {
+      "id": "architecture-designboom-architecture-design-magazine",
+      "title": "architecture – designboom | architecture & design magazine",
+      "url": "https://www.designboom.com/architecture/feed/",
+      "category": "Architecture"
+    },
+    {
+      "id": "architecture-dezeen",
+      "title": "Architecture – Dezeen",
+      "url": "https://www.dezeen.com/architecture/feed/",
+      "category": "Architecture"
+    },
+    {
+      "id": "comments-on",
+      "title": "Comments on:",
+      "url": "https://inhabitat.com/architecture/feed/",
+      "category": "Architecture"
+    },
+    {
+      "id": "contemporist",
+      "title": "CONTEMPORIST",
+      "url": "https://www.contemporist.com/feed/",
+      "category": "Architecture"
+    },
+    {
+      "id": "design-milkarchitecture-design-milk",
+      "title": "Design MilkArchitecture – Design Milk",
+      "url": "https://design-milk.com/category/architecture/feed/",
+      "category": "Architecture"
+    },
+    {
+      "id": "journal",
+      "title": "Journal",
+      "url": "https://architizer.wpengine.com/feed/",
+      "category": "Architecture"
+    },
+    {
+      "id": "living-big-in-a-tiny-house",
+      "title": "Living Big In A Tiny House",
+      "url": "https://www.youtube.com/feeds/videos.xml?user=livingbigtinyhouse",
+      "category": "Architecture"
+    },
+    {
+      "id": "the-architect-s-newspaper",
+      "title": "The Architect’s Newspaper",
+      "url": "https://archpaper.com/feed",
+      "category": "Architecture"
+    },
+    {
+      "id": "beauty-elle",
+      "title": "Beauty - ELLE",
+      "url": "https://www.elle.com/rss/beauty.xml/",
+      "category": "Beauty"
+    },
+    {
+      "id": "beauty-fashionista",
+      "title": "Beauty - Fashionista",
+      "url": "https://fashionista.com/.rss/excerpt/beauty",
+      "category": "Beauty"
+    },
+    {
+      "id": "beauty-indian-fashion-blog",
+      "title": "Beauty – Indian Fashion Blog",
+      "url": "https://www.fashionlady.in/category/beauty-tips/feed",
+      "category": "Beauty"
+    },
+    {
+      "id": "blog-the-beauty-brains",
+      "title": "Blog – The Beauty Brains",
+      "url": "https://thebeautybrains.com/blog/feed/",
+      "category": "Beauty"
+    },
+    {
+      "id": "dor",
+      "title": "DORÉ",
+      "url": "https://www.wearedore.com/feed",
+      "category": "Beauty"
+    },
+    {
+      "id": "from-head-to-toe",
+      "title": "From Head To Toe",
+      "url": "http://feeds.feedburner.com/frmheadtotoe",
+      "category": "Beauty"
+    },
+    {
+      "id": "into-the-gloss-beauty-tips-trends-and-product-reviews",
+      "title": "Into The Gloss - Beauty Tips, Trends, And Product Reviews",
+      "url": "https://feeds.feedburner.com/intothegloss/oqoU",
+      "category": "Beauty"
+    },
+    {
+      "id": "popsugar-beauty",
+      "title": "POPSUGAR Beauty",
+      "url": "https://www.popsugar.com/beauty/feed",
+      "category": "Beauty"
+    },
+    {
+      "id": "refinery29",
+      "title": "Refinery29",
+      "url": "https://www.refinery29.com/beauty/rss.xml",
+      "category": "Beauty"
+    },
+    {
+      "id": "the-beauty-look-book",
+      "title": "The Beauty Look Book",
+      "url": "https://thebeautylookbook.com/feed",
+      "category": "Beauty"
+    },
+    {
+      "id": "the-yesstylist-asian-fashion-blog-brought-to-you-by-yesstyle-com",
+      "title": "THE YESSTYLIST – Asian Fashion Blog – brought to you by YesStyle.com",
+      "url": "https://www.yesstyle.com/blog/category/the-beauty-blog/feed/",
+      "category": "Beauty"
+    },
+    {
+      "id": "a-year-of-reading-the-world",
+      "title": "A year of reading the world",
+      "url": "https://ayearofreadingtheworld.com/feed/",
+      "category": "Books"
+    },
+    {
+      "id": "aestas-book-blog",
+      "title": "Aestas Book Blog",
+      "url": "https://aestasbookblog.com/feed/",
+      "category": "Books"
+    },
+    {
+      "id": "book-riot",
+      "title": "BOOK RIOT",
+      "url": "https://bookriot.com/feed/",
+      "category": "Books"
+    },
+    {
+      "id": "kirkus-reviews",
+      "title": "Kirkus Reviews",
+      "url": "https://www.kirkusreviews.com/feeds/rss/",
+      "category": "Books"
+    },
+    {
+      "id": "page-array-newinbooks",
+      "title": "Page Array – NewInBooks",
+      "url": "https://www.newinbooks.com/feed/",
+      "category": "Books"
+    },
+    {
+      "id": "so-many-books-so-little-time",
+      "title": "So many books, so little time",
+      "url": "https://reddit.com/r/books/.rss",
+      "category": "Books"
+    },
+    {
+      "id": "wokeread",
+      "title": "Wokeread",
+      "url": "https://wokeread.home.blog/feed/",
+      "category": "Books"
+    },
+    {
+      "id": "all-news",
+      "title": "All News",
+      "url": "https://www.investing.com/rss/news.rss",
+      "category": "Business & Economy"
+    },
+    {
+      "id": "bloomberg-quicktake",
+      "title": "Bloomberg Quicktake",
+      "url": "https://www.youtube.com/feeds/videos.xml?user=Bloomberg",
+      "category": "Business & Economy"
+    },
+    {
+      "id": "breaking-news-on-seeking-alpha",
+      "title": "Breaking News on Seeking Alpha",
+      "url": "https://seekingalpha.com/market_currents.xml",
+      "category": "Business & Economy"
+    },
+    {
+      "id": "business-insider",
+      "title": "Business Insider",
+      "url": "https://www.youtube.com/feeds/videos.xml?user=businessinsider",
+      "category": "Business & Economy"
+    },
+    {
+      "id": "duct-tape-marketing",
+      "title": "Duct Tape Marketing",
+      "url": "https://ducttape.libsyn.com/rss",
+      "category": "Business & Economy"
+    },
+    {
+      "id": "forbes-business",
+      "title": "Forbes - Business",
+      "url": "https://www.forbes.com/business/feed/",
+      "category": "Business & Economy"
+    },
+    {
+      "id": "fortune",
+      "title": "Fortune",
+      "url": "https://fortune.com/feed",
+      "category": "Business & Economy"
+    },
+    {
+      "id": "hbr-ideacast",
+      "title": "HBR IdeaCast",
+      "url": "http://feeds.harvardbusiness.org/harvardbusiness/ideacast",
+      "category": "Business & Economy"
+    },
+    {
+      "id": "startup-stories-mixergy",
+      "title": "Startup Stories - Mixergy",
+      "url": "https://feeds.feedburner.com/Mixergy-main-podcast",
+      "category": "Business & Economy"
+    },
+    {
+      "id": "the-blog-of-author-tim-ferriss",
+      "title": "The Blog of Author Tim Ferriss",
+      "url": "https://tim.blog/feed/",
+      "category": "Business & Economy"
+    },
+    {
+      "id": "the-growth-show",
+      "title": "The Growth Show",
+      "url": "http://thegrowthshow.hubspot.libsynpro.com/",
+      "category": "Business & Economy"
+    },
+    {
+      "id": "yahoo-finance",
+      "title": "Yahoo Finance",
+      "url": "https://finance.yahoo.com/news/rssindex",
+      "category": "Business & Economy"
+    },
+    {
+      "id": "autoblog",
+      "title": "Autoblog",
+      "url": "https://www.autoblog.com/rss.xml",
+      "category": "Cars"
+    },
+    {
+      "id": "autocar-india-all-bike-reviews",
+      "title": "Autocar India - All Bike Reviews",
+      "url": "https://www.autocarindia.com/RSS/rss.ashx?type=all_bikes",
+      "category": "Cars"
+    },
+    {
+      "id": "autocar-india-all-car-reviews",
+      "title": "Autocar India - All Car Reviews",
+      "url": "https://www.autocarindia.com/RSS/rss.ashx?type=all_cars",
+      "category": "Cars"
+    },
+    {
+      "id": "autocar-india-news",
+      "title": "Autocar India - News",
+      "url": "https://www.autocarindia.com/RSS/rss.ashx?type=News",
+      "category": "Cars"
+    },
+    {
+      "id": "autocar-rss-feed",
+      "title": "Autocar RSS Feed",
+      "url": "https://www.autocar.co.uk/rss",
+      "category": "Cars"
+    },
+    {
+      "id": "bike-exif",
+      "title": "Bike EXIF",
+      "url": "https://www.bikeexif.com/feed",
+      "category": "Cars"
+    },
+    {
+      "id": "bmw-blog",
+      "title": "BMW BLOG",
+      "url": "https://feeds.feedburner.com/BmwBlog",
+      "category": "Cars"
+    },
+    {
+      "id": "car-body-design",
+      "title": "Car Body Design",
+      "url": "https://www.carbodydesign.com/feed/",
+      "category": "Cars"
+    },
+    {
+      "id": "carscoops",
+      "title": "Carscoops",
+      "url": "https://www.carscoops.com/feed/",
+      "category": "Cars"
+    },
+    {
+      "id": "formula-1",
+      "title": "Formula 1",
+      "url": "https://www.reddit.com/r/formula1/.rss",
+      "category": "Cars"
+    },
+    {
+      "id": "jalopnik",
+      "title": "Jalopnik",
+      "url": "https://jalopnik.com/rss",
+      "category": "Cars"
+    },
+    {
+      "id": "latest-content-car-and-driver",
+      "title": "Latest Content - Car and Driver",
+      "url": "https://www.caranddriver.com/rss/all.xml/",
+      "category": "Cars"
+    },
+    {
+      "id": "petrolicious",
+      "title": "Petrolicious",
+      "url": "https://petrolicious.com/feed",
+      "category": "Cars"
+    },
+    {
+      "id": "section-page-news-automotive-news",
+      "title": "Section Page News - Automotive News",
+      "url": "http://feeds.feedburner.com/autonews/AutomakerNews",
+      "category": "Cars"
+    },
+    {
+      "id": "section-page-news-automotive-news-2bh3",
+      "title": "Section Page News - Automotive News",
+      "url": "http://feeds.feedburner.com/autonews/EditorsPicks",
+      "category": "Cars"
+    },
+    {
+      "id": "speedhunters",
+      "title": "Speedhunters",
+      "url": "http://feeds.feedburner.com/speedhunters",
+      "category": "Cars"
+    },
+    {
+      "id": "the-best-vintage-and-classic-cars-for-sale-online-bring-a-trailer",
+      "title": "The best vintage and classic cars for sale online | Bring a Trailer",
+      "url": "https://bringatrailer.com/feed/",
+      "category": "Cars"
+    },
+    {
+      "id": "the-truth-about-cars",
+      "title": "The Truth About Cars",
+      "url": "https://www.thetruthaboutcars.com/feed/",
+      "category": "Cars"
+    },
+    {
+      "id": "bbc-sport-cricket",
+      "title": "BBC Sport - Cricket",
+      "url": "http://feeds.bbci.co.uk/sport/cricket/rss.xml",
+      "category": "Cricket"
+    },
+    {
+      "id": "can-t-bowl-can-t-throw-cricket-show",
+      "title": "Can't Bowl Can't Throw Cricket Show",
+      "url": "http://feeds.feedburner.com/cantbowlcantthrow",
+      "category": "Cricket"
+    },
+    {
+      "id": "cricbuzz",
+      "title": "Cricbuzz",
+      "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCSRQXk5yErn4e14vN76upOw",
+      "category": "Cricket"
+    },
+    {
+      "id": "cricket",
+      "title": "Cricket",
+      "url": "https://www.reddit.com/r/Cricket/.rss",
+      "category": "Cricket"
+    },
+    {
+      "id": "cricket-the-roar",
+      "title": "Cricket – The Roar",
+      "url": "https://www.theroar.com.au/cricket/feed/",
+      "category": "Cricket"
+    },
+    {
+      "id": "cricket-the-guardian",
+      "title": "Cricket | The Guardian",
+      "url": "https://www.theguardian.com/sport/cricket/rss",
+      "category": "Cricket"
+    },
+    {
+      "id": "cricket-news-from-espn-cricinfo-com",
+      "title": "Cricket news from ESPN Cricinfo.com",
+      "url": "http://www.espncricinfo.com/rss/content/story/feeds/0.xml",
+      "category": "Cricket"
+    },
+    {
+      "id": "cricket-com-au",
+      "title": "cricket.com.au",
+      "url": "https://www.youtube.com/feeds/videos.xml?user=cricketaustraliatv",
+      "category": "Cricket"
+    },
+    {
+      "id": "england-wales-cricket-board",
+      "title": "England & Wales Cricket Board",
+      "url": "https://www.youtube.com/feeds/videos.xml?user=ecbcricket",
+      "category": "Cricket"
+    },
+    {
+      "id": "ndtv-sports-cricket",
+      "title": "NDTV Sports - Cricket",
+      "url": "http://feeds.feedburner.com/ndtvsports-cricket",
+      "category": "Cricket"
+    },
+    {
+      "id": "pakistan-cricket",
+      "title": "Pakistan Cricket",
+      "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCiWrjBhlICf_L_RK5y6Vrxw",
+      "category": "Cricket"
+    },
+    {
+      "id": "sky-sports-cricket-podcast",
+      "title": "Sky Sports Cricket Podcast",
+      "url": "https://www.spreaker.com/show/3387348/episodes/feed",
+      "category": "Cricket"
+    },
+    {
+      "id": "sri-lanka-cricket",
+      "title": "Sri Lanka Cricket",
+      "url": "https://www.youtube.com/feeds/videos.xml?user=TheOfficialSLC",
+      "category": "Cricket"
+    },
+    {
+      "id": "stumped",
+      "title": "Stumped",
+      "url": "https://podcasts.files.bbci.co.uk/p02gsrmh.rss",
+      "category": "Cricket"
+    },
+    {
+      "id": "switch-hit-podcast",
+      "title": "Switch Hit Podcast",
+      "url": "https://feeds.megaphone.fm/ESP9247246951",
+      "category": "Cricket"
+    },
+    {
+      "id": "tailenders",
+      "title": "Tailenders",
+      "url": "https://podcasts.files.bbci.co.uk/p02pcb4w.rss",
+      "category": "Cricket"
+    },
+    {
+      "id": "test-match-special",
+      "title": "Test Match Special",
+      "url": "https://podcasts.files.bbci.co.uk/p02nrsl2.rss",
+      "category": "Cricket"
+    },
+    {
+      "id": "the-grade-cricketer",
+      "title": "The Grade Cricketer",
+      "url": "https://rss.whooshkaa.com/rss/podcast/id/1308",
+      "category": "Cricket"
+    },
+    {
+      "id": "wisden",
+      "title": "Wisden",
+      "url": "https://www.wisden.com/feed",
+      "category": "Cricket"
+    },
+    {
+      "id": "wisden-cricket-weekly",
+      "title": "Wisden Cricket Weekly",
+      "url": "http://feeds.soundcloud.com/users/soundcloud:users:341034518/sounds.rss",
+      "category": "Cricket"
+    },
+    {
+      "id": "a-beautiful-mess",
+      "title": "A Beautiful Mess",
+      "url": "https://abeautifulmess.com/feed",
+      "category": "DIY"
+    },
+    {
+      "id": "apartment-therapy-saving-the-world-one-room-at-a-time",
+      "title": "Apartment Therapy| Saving the world, one room at a time",
+      "url": "https://www.apartmenttherapy.com/projects.rss",
+      "category": "DIY"
+    },
+    {
+      "id": "blog-hackaday",
+      "title": "Blog – Hackaday",
+      "url": "https://hackaday.com/blog/feed/",
+      "category": "DIY"
+    },
+    {
+      "id": "centsational-style",
+      "title": "Centsational Style",
+      "url": "https://centsationalstyle.com/feed/",
+      "category": "DIY"
+    },
+    {
+      "id": "doityourself-com",
+      "title": "Doityourself.com",
+      "url": "https://www.doityourself.com/feed",
+      "category": "DIY"
+    },
+    {
+      "id": "etsy-journal",
+      "title": "Etsy Journal",
+      "url": "https://blog.etsy.com/en/feed/",
+      "category": "DIY"
+    },
+    {
+      "id": "how-to-geek",
+      "title": "How-To Geek",
+      "url": "https://www.howtogeek.com/feed/",
+      "category": "DIY"
+    },
+    {
+      "id": "ikea-hackers",
+      "title": "IKEA Hackers",
+      "url": "https://www.ikeahackers.net/feed",
+      "category": "DIY"
+    },
+    {
+      "id": "muo-feed",
+      "title": "MUO - Feed",
+      "url": "https://www.makeuseof.com/feed/",
+      "category": "DIY"
+    },
+    {
+      "id": "oh-happy-day",
+      "title": "Oh Happy Day!",
+      "url": "http://ohhappyday.com/feed/",
+      "category": "DIY"
+    },
+    {
+      "id": "wonderhowto",
+      "title": "WonderHowTo",
+      "url": "https://www.wonderhowto.com/rss.xml",
+      "category": "DIY"
+    },
+    {
+      "id": "fashion-elle",
+      "title": "Fashion - ELLE",
+      "url": "https://www.elle.com/rss/fashion.xml/",
+      "category": "Fashion"
+    },
+    {
+      "id": "fashion-indian-fashion-blog",
+      "title": "Fashion – Indian Fashion Blog",
+      "url": "https://www.fashionlady.in/category/fashion/feed",
+      "category": "Fashion"
+    },
+    {
+      "id": "fashion-the-guardian",
+      "title": "Fashion | The Guardian",
+      "url": "https://www.theguardian.com/fashion/rss",
+      "category": "Fashion"
+    },
+    {
+      "id": "fashionbeans-men-s-fashion-and-style-feed",
+      "title": "FashionBeans Men's Fashion and Style Feed",
+      "url": "https://www.fashionbeans.com/rss-feed/?category=fashion",
+      "category": "Fashion"
+    },
+    {
+      "id": "fashionista",
+      "title": "Fashionista",
+      "url": "https://fashionista.com/.rss/excerpt/",
+      "category": "Fashion"
+    },
+    {
+      "id": "popsugar-fashion",
+      "title": "POPSUGAR Fashion",
+      "url": "https://www.popsugar.com/fashion/feed",
+      "category": "Fashion"
+    },
+    {
+      "id": "refinery29-dzaz",
+      "title": "Refinery29",
+      "url": "https://www.refinery29.com/fashion/rss.xml",
+      "category": "Fashion"
+    },
+    {
+      "id": "the-yesstylist-asian-fashion-blog-brought-to-you-by-yesstyle-com-6n70",
+      "title": "THE YESSTYLIST – Asian Fashion Blog – brought to you by YesStyle.com",
+      "url": "https://www.yesstyle.com/blog/category/trend-and-style/feed/",
+      "category": "Fashion"
+    },
+    {
+      "id": "who-what-wear",
+      "title": "Who What Wear",
+      "url": "https://www.whowhatwear.com/rss",
+      "category": "Fashion"
+    },
+    {
+      "id": "101-cookbooks",
+      "title": "101 Cookbooks",
+      "url": "https://www.101cookbooks.com/feed",
+      "category": "Food"
+    },
+    {
+      "id": "babish-culinary-universe",
+      "title": "Babish Culinary Universe",
+      "url": "https://www.youtube.com/feeds/videos.xml?user=bgfilms",
+      "category": "Food"
+    },
+    {
+      "id": "bon-app-tit",
+      "title": "Bon Appétit",
+      "url": "https://www.youtube.com/feeds/videos.xml?user=BonAppetitDotCom",
+      "category": "Food"
+    },
+    {
+      "id": "chocolate-zucchini",
+      "title": "Chocolate & Zucchini",
+      "url": "https://cnz.to/feed/",
+      "category": "Food"
+    },
+    {
+      "id": "david-lebovitz",
+      "title": "David Lebovitz",
+      "url": "https://www.davidlebovitz.com/feed/",
+      "category": "Food"
+    },
+    {
+      "id": "food52",
+      "title": "Food52",
+      "url": "http://feeds.feedburner.com/food52-TheAandMBlog",
+      "category": "Food"
+    },
+    {
+      "id": "green-kitchen-stories",
+      "title": "Green Kitchen Stories",
+      "url": "https://greenkitchenstories.com/feed/",
+      "category": "Food"
+    },
+    {
+      "id": "how-sweet-eats",
+      "title": "How Sweet Eats",
+      "url": "https://www.howsweeteats.com/feed/",
+      "category": "Food"
+    },
+    {
+      "id": "joy-the-baker",
+      "title": "Joy the Baker",
+      "url": "http://joythebaker.com/feed/",
+      "category": "Food"
+    },
+    {
+      "id": "kitchn-inspiring-cooks-nourishing-homes",
+      "title": "Kitchn | Inspiring cooks, nourishing homes",
+      "url": "https://www.thekitchn.com/main.rss",
+      "category": "Food"
+    },
+    {
+      "id": "laura-in-the-kitchen",
+      "title": "Laura in the Kitchen",
+      "url": "https://www.youtube.com/feeds/videos.xml?user=LauraVitalesKitchen",
+      "category": "Food"
+    },
+    {
+      "id": "love-and-olive-oil",
+      "title": "Love and Olive Oil",
+      "url": "https://www.loveandoliveoil.com/feed",
+      "category": "Food"
+    },
+    {
+      "id": "oh-she-glows",
+      "title": "Oh She Glows",
+      "url": "https://ohsheglows.com/feed/",
+      "category": "Food"
+    },
+    {
+      "id": "serious-eats",
+      "title": "Serious Eats",
+      "url": "https://www.youtube.com/feeds/videos.xml?user=SeriousEats",
+      "category": "Food"
+    },
+    {
+      "id": "serious-eats-recipes",
+      "title": "Serious Eats: Recipes",
+      "url": "http://feeds.feedburner.com/seriouseats/recipes",
+      "category": "Food"
+    },
+    {
+      "id": "shutterbean",
+      "title": "Shutterbean",
+      "url": "http://www.shutterbean.com/feed/",
+      "category": "Food"
+    },
+    {
+      "id": "skinnytaste",
+      "title": "Skinnytaste",
+      "url": "https://www.skinnytaste.com/feed/",
+      "category": "Food"
+    },
+    {
+      "id": "smitten-kitchen",
+      "title": "smitten kitchen",
+      "url": "http://feeds.feedburner.com/smittenkitchen",
+      "category": "Food"
+    },
+    {
+      "id": "sprouted-kitchen",
+      "title": "Sprouted Kitchen",
+      "url": "https://www.sproutedkitchen.com/home?format=rss",
+      "category": "Food"
+    },
+    {
+      "id": "williams-sonoma-taste",
+      "title": "Williams-Sonoma Taste",
+      "url": "https://blog.williams-sonoma.com/feed/",
+      "category": "Food"
+    },
+    {
+      "id": "efl-championship",
+      "title": "EFL Championship",
+      "url": "https://www.reddit.com/r/Championship/.rss?format=xml",
+      "category": "Football"
+    },
+    {
+      "id": "football-the-people-s-sport",
+      "title": "Football - The People's Sport",
+      "url": "https://www.reddit.com/r/football/.rss?format=xml",
+      "category": "Football"
+    },
+    {
+      "id": "football-news-live-scores-results-amp-transfers-goal-com",
+      "title": "Football News, Live Scores, Results &amp; Transfers | Goal.com",
+      "url": "https://www.goal.com/feeds/en/news",
+      "category": "Football"
+    },
+    {
+      "id": "football365",
+      "title": "Football365",
+      "url": "https://www.football365.com/feed",
+      "category": "Football"
+    },
+    {
+      "id": "soccer-news",
+      "title": "Soccer News",
+      "url": "https://www.soccernews.com/feed",
+      "category": "Football"
+    },
+    {
+      "id": "awkwardfamilyphotos-com",
+      "title": "AwkwardFamilyPhotos.com",
+      "url": "https://awkwardfamilyphotos.com/feed/",
+      "category": "Funny"
+    },
+    {
+      "id": "cracked-all-posts",
+      "title": "Cracked: All Posts",
+      "url": "http://feeds.feedburner.com/CrackedRSS",
+      "category": "Funny"
+    },
+    {
+      "id": "explosm-net",
+      "title": "Explosm.net",
+      "url": "http://feeds.feedburner.com/Explosm",
+      "category": "Funny"
+    },
+    {
+      "id": "fail-blog",
+      "title": "FAIL Blog",
+      "url": "http://feeds.feedburner.com/failblog",
+      "category": "Funny"
+    },
+    {
+      "id": "i-can-has-cheezburger",
+      "title": "I Can Has Cheezburger?",
+      "url": "http://feeds.feedburner.com/icanhascheezburger",
+      "category": "Funny"
+    },
+    {
+      "id": "penny-arcade",
+      "title": "Penny Arcade",
+      "url": "https://www.penny-arcade.com/feed",
+      "category": "Funny"
+    },
+    {
+      "id": "phd-comics",
+      "title": "PHD Comics",
+      "url": "http://phdcomics.com/gradfeed.php",
+      "category": "Funny"
+    },
+    {
+      "id": "postsecret",
+      "title": "PostSecret",
+      "url": "https://postsecret.com/feed/?alt=rss",
+      "category": "Funny"
+    },
+    {
+      "id": "saturday-morning-breakfast-cereal",
+      "title": "Saturday Morning Breakfast Cereal",
+      "url": "https://www.smbc-comics.com/comic/rss",
+      "category": "Funny"
+    },
+    {
+      "id": "the-bloggess",
+      "title": "The Bloggess",
+      "url": "https://thebloggess.com/feed/",
+      "category": "Funny"
+    },
+    {
+      "id": "the-daily-wtf",
+      "title": "The Daily WTF",
+      "url": "http://syndication.thedailywtf.com/TheDailyWtf",
+      "category": "Funny"
+    },
+    {
+      "id": "the-oatmeal-comics-by-matthew-inman",
+      "title": "The Oatmeal - Comics by Matthew Inman",
+      "url": "http://feeds.feedburner.com/oatmealfeed",
+      "category": "Funny"
+    },
+    {
+      "id": "the-onion",
+      "title": "The Onion",
+      "url": "https://www.theonion.com/rss",
+      "category": "Funny"
+    },
+    {
+      "id": "xkcd-com",
+      "title": "xkcd.com",
+      "url": "https://xkcd.com/rss.xml",
+      "category": "Funny"
+    },
+    {
+      "id": "escapist-magazine",
+      "title": "Escapist Magazine",
+      "url": "https://www.escapistmagazine.com/v2/feed/",
+      "category": "Gaming"
+    },
+    {
+      "id": "eurogamer-net",
+      "title": "Eurogamer.net",
+      "url": "https://www.eurogamer.net/?format=rss",
+      "category": "Gaming"
+    },
+    {
+      "id": "gamasutra-news",
+      "title": "Gamasutra News",
+      "url": "http://feeds.feedburner.com/GamasutraNews",
+      "category": "Gaming"
+    },
+    {
+      "id": "gamespot-all-content",
+      "title": "GameSpot - All Content",
+      "url": "https://www.gamespot.com/feeds/mashup/",
+      "category": "Gaming"
+    },
+    {
+      "id": "ign-all",
+      "title": "IGN All",
+      "url": "http://feeds.ign.com/ign/all",
+      "category": "Gaming"
+    },
+    {
+      "id": "indie-games-plus",
+      "title": "Indie Games Plus",
+      "url": "https://indiegamesplus.com/feed",
+      "category": "Gaming"
+    },
+    {
+      "id": "kotaku",
+      "title": "Kotaku",
+      "url": "https://kotaku.com/rss",
+      "category": "Gaming"
+    },
+    {
+      "id": "makeup-and-beauty-blog-makeup-reviews-swatches-and-how-to-makeup",
+      "title": "Makeup and Beauty Blog | Makeup Reviews, Swatches and How-To Makeup",
+      "url": "https://www.makeupandbeautyblog.com/feed/",
+      "category": "Gaming"
+    },
+    {
+      "id": "playstation-blog",
+      "title": "PlayStation.Blog",
+      "url": "http://feeds.feedburner.com/psblog",
+      "category": "Gaming"
+    },
+    {
+      "id": "polygon-all",
+      "title": "Polygon -  All",
+      "url": "https://www.polygon.com/rss/index.xml",
+      "category": "Gaming"
+    },
+    {
+      "id": "r-gaming",
+      "title": "r/gaming",
+      "url": "https://www.reddit.com/r/gaming.rss",
+      "category": "Gaming"
+    },
+    {
+      "id": "rock-paper-shotgun",
+      "title": "Rock, Paper, Shotgun",
+      "url": "http://feeds.feedburner.com/RockPaperShotgun",
+      "category": "Gaming"
+    },
+    {
+      "id": "steam-rss-news-feed",
+      "title": "Steam RSS News Feed",
+      "url": "https://store.steampowered.com/feeds/news.xml",
+      "category": "Gaming"
+    },
+    {
+      "id": "the-ancient-gaming-noob",
+      "title": "The Ancient Gaming Noob",
+      "url": "http://feeds.feedburner.com/TheAncientGamingNoob",
+      "category": "Gaming"
+    },
+    {
+      "id": "toucharcade-iphone-ipad-android-games-forum",
+      "title": "TouchArcade - iPhone, iPad, Android Games Forum",
+      "url": "https://toucharcade.com/community/forums/-/index.rss",
+      "category": "Gaming"
+    },
+    {
+      "id": "xbox-s-major-nelson",
+      "title": "Xbox's Major Nelson",
+      "url": "https://majornelson.com/feed/",
+      "category": "Gaming"
+    },
+    {
+      "id": "30-for-30-podcasts",
+      "title": "30 For 30 Podcasts",
+      "url": "https://feeds.megaphone.fm/ESP5765452710",
+      "category": "History"
+    },
+    {
+      "id": "blog-feed",
+      "title": "Blog Feed",
+      "url": "https://americanhistory.si.edu/blog/feed",
+      "category": "History"
+    },
+    {
+      "id": "dan-carlin-s-hardcore-history",
+      "title": "Dan Carlin's Hardcore History",
+      "url": "https://feeds.feedburner.com/dancarlin/history?format=xml",
+      "category": "History"
+    },
+    {
+      "id": "history-in-28-minutes",
+      "title": "History in 28-minutes",
+      "url": "https://www.historyisnowmagazine.com/blog?format=RSS",
+      "category": "History"
+    },
+    {
+      "id": "historynet",
+      "title": "HistoryNet",
+      "url": "http://www.historynet.com/feed",
+      "category": "History"
+    },
+    {
+      "id": "lore",
+      "title": "Lore",
+      "url": "https://feeds.megaphone.fm/lore",
+      "category": "History"
+    },
+    {
+      "id": "revisionist-history",
+      "title": "Revisionist History",
+      "url": "https://feeds.megaphone.fm/revisionisthistory",
+      "category": "History"
+    },
+    {
+      "id": "the-history-reader",
+      "title": "The History Reader",
+      "url": "https://www.thehistoryreader.com/feed/",
+      "category": "History"
+    },
+    {
+      "id": "throughline",
+      "title": "Throughline",
+      "url": "https://feeds.npr.org/510333/podcast.xml",
+      "category": "History"
+    },
+    {
+      "id": "you-must-remember-this",
+      "title": "You Must Remember This",
+      "url": "https://feeds.megaphone.fm/YMRT7068253588",
+      "category": "History"
+    },
+    {
+      "id": "apartment-therapy-saving-the-world-one-room-at-a-time-mvqp",
+      "title": "Apartment Therapy| Saving the world, one room at a time",
+      "url": "https://www.apartmenttherapy.com/design.rss",
+      "category": "Interior design"
+    },
+    {
+      "id": "better-living-through-design",
+      "title": "Better Living Through Design",
+      "url": "http://www.betterlivingthroughdesign.com/feed/",
+      "category": "Interior design"
+    },
+    {
+      "id": "core77",
+      "title": "Core77",
+      "url": "http://feeds.feedburner.com/core77/blog",
+      "category": "Interior design"
+    },
+    {
+      "id": "decoist",
+      "title": "decoist",
+      "url": "https://www.decoist.com/feed/",
+      "category": "Interior design"
+    },
+    {
+      "id": "design-designboom-architecture-design-magazine",
+      "title": "design – designboom | architecture & design magazine",
+      "url": "https://www.designboom.com/design/feed",
+      "category": "Interior design"
+    },
+    {
+      "id": "design-milkinterior-design-design-milk",
+      "title": "Design MilkInterior Design – Design Milk",
+      "url": "https://design-milk.com/category/interior-design/feed/",
+      "category": "Interior design"
+    },
+    {
+      "id": "fubiz-media",
+      "title": "Fubiz Media",
+      "url": "http://feeds.feedburner.com/fubiz",
+      "category": "Interior design"
+    },
+    {
+      "id": "ideal-home",
+      "title": "Ideal Home",
+      "url": "https://www.idealhome.co.uk/feed",
+      "category": "Interior design"
+    },
+    {
+      "id": "in-my-own-style",
+      "title": "In My Own Style",
+      "url": "https://inmyownstyle.com/feed",
+      "category": "Interior design"
+    },
+    {
+      "id": "inhabitat-green-design-innovation-architecture-green-building",
+      "title": "Inhabitat - Green Design, Innovation, Architecture, Green Building",
+      "url": "https://inhabitat.com/design/feed/",
+      "category": "Interior design"
+    },
+    {
+      "id": "interior-design-interior-architecture",
+      "title": "Interior Design (Interior Architecture)",
+      "url": "https://www.reddit.com/r/InteriorDesign/.rss",
+      "category": "Interior design"
+    },
+    {
+      "id": "interior-design-ideas",
+      "title": "Interior Design Ideas",
+      "url": "http://www.home-designing.com/feed",
+      "category": "Interior design"
+    },
+    {
+      "id": "interior-design-latest",
+      "title": "Interior Design Latest",
+      "url": "https://www.interiordesign.net/rss/",
+      "category": "Interior design"
+    },
+    {
+      "id": "interiors-dezeen",
+      "title": "Interiors – Dezeen",
+      "url": "https://www.dezeen.com/interiors/feed/",
+      "category": "Interior design"
+    },
+    {
+      "id": "liz-marie-blog",
+      "title": "Liz Marie Blog",
+      "url": "https://www.lizmarieblog.com/feed/",
+      "category": "Interior design"
+    },
+    {
+      "id": "sfgirlbybay",
+      "title": "sfgirlbybay",
+      "url": "https://www.sfgirlbybay.com/feed/",
+      "category": "Interior design"
+    },
+    {
+      "id": "the-design-files-australia-s-most-popular-design-blog-the-design-files-australia-s-most-popular-design-blog",
+      "title": "The Design Files | Australia's most popular design blog.The Design Files | Australia's most popular design blog.",
+      "url": "https://thedesignfiles.net/feed/",
+      "category": "Interior design"
+    },
+    {
+      "id": "the-inspired-room",
+      "title": "The Inspired Room",
+      "url": "https://theinspiredroom.net/feed/",
+      "category": "Interior design"
+    },
+    {
+      "id": "thrifty-decor-chick",
+      "title": "Thrifty Decor Chick",
+      "url": "http://feeds.feedburner.com/blogspot/ZBcZ",
+      "category": "Interior design"
+    },
+    {
+      "id": "trendir",
+      "title": "Trendir",
+      "url": "https://www.trendir.com/feed/",
+      "category": "Interior design"
+    },
+    {
+      "id": "yanko-design",
+      "title": "Yanko Design",
+      "url": "http://feeds.feedburner.com/yankodesign",
+      "category": "Interior design"
+    },
+    {
+      "id": "yatzer-rss-feed",
+      "title": "Yatzer RSS Feed",
+      "url": "https://www.yatzer.com/rss.xml",
+      "category": "Interior design"
+    },
+    {
+      "id": "young-house-love",
+      "title": "Young House Love",
+      "url": "https://www.younghouselove.com/feed/",
+      "category": "Interior design"
+    },
+    {
+      "id": "alberto-de-bortoli",
+      "title": "Alberto De Bortoli",
+      "url": "https://albertodebortoli.com/rss/",
+      "category": "iOS Development"
+    },
+    {
+      "id": "all-shows-devchat-tv",
+      "title": "ALL SHOWS - Devchat.tv",
+      "url": "https://feeds.feedwrench.com/all-shows-devchattv.rss",
+      "category": "iOS Development"
+    },
+    {
+      "id": "augmented-code",
+      "title": "Augmented Code",
+      "url": "https://augmentedcode.io/feed/",
+      "category": "iOS Development"
+    },
+    {
+      "id": "benoit-pasquier-swift-data-and-more",
+      "title": "Benoit Pasquier - Swift, Data and more",
+      "url": "https://benoitpasquier.com/index.xml",
+      "category": "iOS Development"
+    },
+    {
+      "id": "fabisevi-ch",
+      "title": "Fabisevi.ch",
+      "url": "https://www.fabisevi.ch/feed.xml",
+      "category": "iOS Development"
+    },
+    {
+      "id": "inessential-com",
+      "title": "inessential.com",
+      "url": "https://inessential.com/xml/rss.xml",
+      "category": "iOS Development"
+    },
+    {
+      "id": "mobile-a11y",
+      "title": "Mobile A11y",
+      "url": "https://mobilea11y.com/index.xml",
+      "category": "iOS Development"
+    },
+    {
+      "id": "more-than-just-code-podcast-ios-and-swift-development-news-and-advice",
+      "title": "More Than Just Code podcast - iOS and Swift development, news and advice",
+      "url": "https://feeds.fireside.fm/mtjc/rss",
+      "category": "iOS Development"
+    },
+    {
+      "id": "news-apple-developer",
+      "title": "News - Apple Developer",
+      "url": "https://developer.apple.com/news/rss/news.rss",
+      "category": "iOS Development"
+    },
+    {
+      "id": "ole-begemann",
+      "title": "Ole Begemann",
+      "url": "https://oleb.net/blog/atom.xml",
+      "category": "iOS Development"
+    },
+    {
+      "id": "pavel-zak-s-dev-blog",
+      "title": "Pavel Zak’s dev blog",
+      "url": "https://nerdyak.tech/feed.xml",
+      "category": "iOS Development"
+    },
+    {
+      "id": "swift-by-sundell",
+      "title": "Swift by Sundell",
+      "url": "https://www.swiftbysundell.com/feed.rss",
+      "category": "iOS Development"
+    },
+    {
+      "id": "swift-by-sundell-xvko",
+      "title": "Swift by Sundell",
+      "url": "https://swiftbysundell.com/feed.rss",
+      "category": "iOS Development"
+    },
+    {
+      "id": "swiftrocks",
+      "title": "SwiftRocks",
+      "url": "https://swiftrocks.com/rss.xml",
+      "category": "iOS Development"
+    },
+    {
+      "id": "the-atomic-birdhouse",
+      "title": "The Atomic Birdhouse",
+      "url": "https://atomicbird.com/index.xml",
+      "category": "iOS Development"
+    },
+    {
+      "id": "tyler-io",
+      "title": "tyler.io",
+      "url": "https://tyler.io/feed/",
+      "category": "iOS Development"
+    },
+    {
+      "id": "under-the-radar",
+      "title": "Under the Radar",
+      "url": "https://www.relay.fm/radar/feed",
+      "category": "iOS Development"
+    },
+    {
+      "id": "use-your-loaf-ios-development-news-tips",
+      "title": "Use Your Loaf - iOS Development News & Tips",
+      "url": "https://useyourloaf.com/blog/rss.xml",
+      "category": "iOS Development"
+    },
+    {
+      "id": "film",
+      "title": "/Film",
+      "url": "https://feeds2.feedburner.com/slashfilm",
+      "category": "Movies"
+    },
+    {
+      "id": "ain-t-it-cool-news-feed",
+      "title": "Ain't It Cool News Feed",
+      "url": "https://www.aintitcool.com/node/feed/",
+      "category": "Movies"
+    },
+    {
+      "id": "comingsoon-net",
+      "title": "ComingSoon.net",
+      "url": "https://www.comingsoon.net/feed",
+      "category": "Movies"
+    },
+    {
+      "id": "deadline",
+      "title": "Deadline",
+      "url": "https://deadline.com/feed/",
+      "category": "Movies"
+    },
+    {
+      "id": "film-school-rejects",
+      "title": "Film School Rejects",
+      "url": "https://filmschoolrejects.com/feed/",
+      "category": "Movies"
+    },
+    {
+      "id": "firstshowing-net",
+      "title": "FirstShowing.net",
+      "url": "https://www.firstshowing.net/feed/",
+      "category": "Movies"
+    },
+    {
+      "id": "indiewire",
+      "title": "IndieWire",
+      "url": "https://www.indiewire.com/feed",
+      "category": "Movies"
+    },
+    {
+      "id": "movie-news-and-discussion",
+      "title": "Movie News and Discussion",
+      "url": "https://reddit.com/r/movies/.rss",
+      "category": "Movies"
+    },
+    {
+      "id": "movies",
+      "title": "Movies",
+      "url": "https://www.bleedingcool.com/movies/feed/",
+      "category": "Movies"
+    },
+    {
+      "id": "the-a-v-club",
+      "title": "The A.V. Club",
+      "url": "https://film.avclub.com/rss",
+      "category": "Movies"
+    },
+    {
+      "id": "variety",
+      "title": "Variety",
+      "url": "https://variety.com/feed/",
+      "category": "Movies"
+    },
+    {
+      "id": "billboard",
+      "title": "Billboard",
+      "url": "https://www.billboard.com/articles/rss.xml",
+      "category": "Music"
+    },
+    {
+      "id": "consequence",
+      "title": "Consequence",
+      "url": "http://consequenceofsound.net/feed",
+      "category": "Music"
+    },
+    {
+      "id": "edm-com-the-latest-electronic-dance-music-news-reviews-artists",
+      "title": "EDM.com - The Latest Electronic Dance Music News, Reviews & Artists",
+      "url": "https://edm.com/.rss/full/",
+      "category": "Music"
+    },
+    {
+      "id": "metal-injection",
+      "title": "Metal Injection",
+      "url": "http://feeds.feedburner.com/metalinjection",
+      "category": "Music"
+    },
+    {
+      "id": "music-business-worldwide",
+      "title": "Music Business Worldwide",
+      "url": "https://www.musicbusinessworldwide.com/feed/",
+      "category": "Music"
+    },
+    {
+      "id": "rss-news",
+      "title": "RSS: News",
+      "url": "http://pitchfork.com/rss/news",
+      "category": "Music"
+    },
+    {
+      "id": "song-exploder",
+      "title": "Song Exploder",
+      "url": "http://songexploder.net/feed",
+      "category": "Music"
+    },
+    {
+      "id": "your-edm",
+      "title": "Your EDM",
+      "url": "https://www.youredm.com/feed",
+      "category": "Music"
+    },
+    {
+      "id": "the-manila-times",
+      "title": "- The Manila Times",
+      "url": "https://www.manilatimes.net/rssfeed/",
+      "category": "News",
+      "country": "Philippines",
+      "language": "en"
+    },
+    {
+      "id": "24-horas",
+      "title": "24 Horas",
+      "url": "https://www.24-horas.mx/feed/",
+      "category": "News",
+      "country": "Mexico",
+      "language": "en"
+    },
+    {
+      "id": "8-columnas",
+      "title": "8 Columnas",
+      "url": "https://8columnas.com.mx/feed/",
+      "category": "News",
+      "country": "Mexico",
+      "language": "en"
+    },
+    {
+      "id": "abante-tonite",
+      "title": "Abante Tonite",
+      "url": "https://tonite.abante.com.ph/feed/",
+      "category": "News",
+      "country": "Philippines",
+      "language": "en"
+    },
+    {
+      "id": "abc-news",
+      "title": "ABC News",
+      "url": "https://www.abc.net.au/news/feed/1948/rss.xml",
+      "category": "News",
+      "country": "Australia",
+      "language": "en"
+    },
+    {
+      "id": "adnkronos-ultimoratop",
+      "title": "Adnkronos - ultimoratop",
+      "url": "http://rss.adnkronos.com/RSS_PrimaPagina.xml",
+      "category": "News",
+      "country": "Italy",
+      "language": "en"
+    },
+    {
+      "id": "agencia-efe-www-efe-com-english-edition",
+      "title": "Agencia EFE | www.efe.com | English edition",
+      "url": "https://www.efe.com/efe/english/4/rss",
+      "category": "News",
+      "country": "Spain",
+      "language": "en"
+    },
+    {
+      "id": "aktuell-faz-net",
+      "title": "Aktuell - FAZ.NET",
+      "url": "https://www.faz.net/rss/aktuell/",
+      "category": "News",
+      "country": "Germany",
+      "language": "en"
+    },
+    {
+      "id": "all-kyodo-news",
+      "title": "All - Kyodo News+",
+      "url": "https://english.kyodonews.net/rss/all.xml",
+      "category": "News",
+      "country": "Japan",
+      "language": "en"
+    },
+    {
+      "id": "all-content",
+      "title": "All Content",
+      "url": "http://saharareporters.com/feeds/latest/feed",
+      "category": "News",
+      "country": "Nigeria",
+      "language": "en"
+    },
+    {
+      "id": "all-breakingnews-ie",
+      "title": "All: BreakingNews.ie",
+      "url": "https://feeds.breakingnews.ie/bntopstories",
+      "category": "News",
+      "country": "Ireland",
+      "language": "en"
+    },
+    {
+      "id": "axios",
+      "title": "Axios",
+      "url": "https://api.axios.com/feed/",
+      "category": "News",
+      "country": "South Africa",
+      "language": "en"
+    },
+    {
+      "id": "bangla-news",
+      "title": "Bangla News",
+      "url": "https://www.banglanews24.com/rss/rss.xml",
+      "category": "News",
+      "country": "Bangladesh",
+      "language": "en"
+    },
+    {
+      "id": "bbc-news-home",
+      "title": "BBC News - Home",
+      "url": "http://feeds.bbci.co.uk/news/rss.xml",
+      "category": "News",
+      "country": "United Kingdom",
+      "language": "en"
+    },
+    {
+      "id": "bbc-news-india",
+      "title": "BBC News - India",
+      "url": "http://feeds.bbci.co.uk/news/world/asia/india/rss.xml",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "bbc-news-world",
+      "title": "BBC News - World",
+      "url": "http://feeds.bbci.co.uk/news/world/rss.xml",
+      "category": "News"
+    },
+    {
+      "id": "bd24live-com",
+      "title": "BD24Live.com",
+      "url": "https://www.bd24live.com/feed",
+      "category": "News",
+      "country": "Bangladesh",
+      "language": "en"
+    },
+    {
+      "id": "bdnews24-com-home",
+      "title": "bdnews24.com - Home",
+      "url": "https://bdnews24.com/?widgetName=rssfeed&widgetId=1150&getXmlFeed=true",
+      "category": "News",
+      "country": "Bangladesh",
+      "language": "en"
+    },
+    {
+      "id": "bicol-standard-bicol-news-bicol-newspaper",
+      "title": "BICOL STANDARD | Bicol News | Bicol Newspaper",
+      "url": "http://www.bicolstandard.com/feeds/posts/default?alt=rss",
+      "category": "News",
+      "country": "Philippines",
+      "language": "en"
+    },
+    {
+      "id": "brasil-wire",
+      "title": "Brasil Wire",
+      "url": "http://www.brasilwire.com/feed/",
+      "category": "News",
+      "country": "Brazil",
+      "language": "en"
+    },
+    {
+      "id": "bridge",
+      "title": "BRIDGE（ブリッジ）テクノロジー＆スタートアップ情報",
+      "url": "http://feeds.feedburner.com/SdJapan",
+      "category": "News",
+      "country": "Japan",
+      "language": "en"
+    },
+    {
+      "id": "brisbane-times-latest-news",
+      "title": "Brisbane Times - Latest News",
+      "url": "https://www.brisbanetimes.com.au/rss/feed.xml",
+      "category": "News",
+      "country": "Australia",
+      "language": "en"
+    },
+    {
+      "id": "business-line-home",
+      "title": "Business Line - Home",
+      "url": "https://www.thehindubusinessline.com/feeder/default.rss",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "business-news-latest-headlines",
+      "title": "Business News - Latest Headlines",
+      "url": "https://www.businessnews.com.au/rssfeed/latest.rss",
+      "category": "News",
+      "country": "Australia",
+      "language": "en"
+    },
+    {
+      "id": "businessmirror",
+      "title": "BusinessMirror",
+      "url": "https://businessmirror.com.ph/feed/",
+      "category": "News",
+      "country": "Philippines",
+      "language": "en"
+    },
+    {
+      "id": "businessworld",
+      "title": "BusinessWorld",
+      "url": "https://www.bworldonline.com/feed/",
+      "category": "News",
+      "country": "Philippines",
+      "language": "en"
+    },
+    {
+      "id": "cbc-top-stories-news",
+      "title": "CBC | Top Stories News",
+      "url": "https://www.cbc.ca/cmlink/rss-topstories",
+      "category": "News",
+      "country": "Canada",
+      "language": "en"
+    },
+    {
+      "id": "cnn-com-rss-channel-app-international-edition",
+      "title": "CNN.com - RSS Channel - App International Edition",
+      "url": "http://rss.cnn.com/rss/edition.rss",
+      "category": "News",
+      "country": "United States",
+      "language": "en"
+    },
+    {
+      "id": "cnn-com-rss-channel-world",
+      "title": "CNN.com - RSS Channel - World",
+      "url": "http://rss.cnn.com/rss/edition_world.rss",
+      "category": "News"
+    },
+    {
+      "id": "crikey",
+      "title": "Crikey",
+      "url": "https://feeds.feedburner.com/com/rCTl",
+      "category": "News",
+      "country": "Australia",
+      "language": "en"
+    },
+    {
+      "id": "ctvnews-ca-top-stories-public-rss",
+      "title": "CTVNews.ca - Top Stories - Public RSS",
+      "url": "https://www.ctvnews.ca/rss/ctvnews-ca-top-stories-public-rss-1.822009",
+      "category": "News",
+      "country": "Canada",
+      "language": "en"
+    },
+    {
+      "id": "current-ph",
+      "title": "Current PH",
+      "url": "https://currentph.com/feed/",
+      "category": "News",
+      "country": "Philippines",
+      "language": "en"
+    },
+    {
+      "id": "daily-express-news-feed",
+      "title": "Daily Express :: News Feed",
+      "url": "http://feeds.feedburner.com/daily-express-news-showbiz",
+      "category": "News",
+      "country": "United Kingdom",
+      "language": "en"
+    },
+    {
+      "id": "daily-maverick",
+      "title": "Daily Maverick",
+      "url": "https://www.dailymaverick.co.za/dmrss/",
+      "category": "News",
+      "country": "South Africa",
+      "language": "en"
+    },
+    {
+      "id": "daily-post-nigeria",
+      "title": "Daily Post Nigeria",
+      "url": "https://dailypost.ng/feed",
+      "category": "News",
+      "country": "Nigeria",
+      "language": "en"
+    },
+    {
+      "id": "debate",
+      "title": "DEBATE",
+      "url": "https://www.debate.com.mx/rss/feed.xml",
+      "category": "News",
+      "country": "Mexico",
+      "language": "en"
+    },
+    {
+      "id": "deccan-chronicle-latest-india-news-breaking-news-hyderabad-news-world-news-business-news-politics-technology-news",
+      "title": "Deccan Chronicle - Latest India news | Breaking news | Hyderabad News | World news | Business news | Politics | Technology news",
+      "url": "https://www.deccanchronicle.com/rss_feed/",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "deutsche-welle",
+      "title": "Deutsche Welle",
+      "url": "https://rss.dw.com/rdf/rss-en-all",
+      "category": "News",
+      "country": "Germany",
+      "language": "en"
+    },
+    {
+      "id": "dvb-multimedia-group",
+      "title": "DVB Multimedia Group",
+      "url": "http://www.dvb.no/feed",
+      "category": "News",
+      "country": "Myanmar (Burma)",
+      "language": "en"
+    },
+    {
+      "id": "dziennik-pl-dziennik-dziennik-pl",
+      "title": "Dziennik.pl Dziennik - dziennik.pl",
+      "url": "http://rss.dziennik.pl/Dziennik-PL/",
+      "category": "News",
+      "country": "Poland",
+      "language": "en"
+    },
+    {
+      "id": "eagle-news",
+      "title": "Eagle News",
+      "url": "https://www.eaglenews.ph/feed/",
+      "category": "News",
+      "country": "Philippines",
+      "language": "en"
+    },
+    {
+      "id": "economic-times",
+      "title": "Economic Times",
+      "url": "https://economictimes.indiatimes.com/rssfeedsdefault.cms",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "el-diario",
+      "title": "El Diario",
+      "url": "https://diario.mx/jrz/media/sitemaps/rss.xml",
+      "category": "News",
+      "country": "Mexico",
+      "language": "en"
+    },
+    {
+      "id": "el-financiero",
+      "title": "El Financiero",
+      "url": "https://www.elfinanciero.com.mx/arc/outboundfeeds/rss/?outputType=xml",
+      "category": "News",
+      "country": "Mexico",
+      "language": "en"
+    },
+    {
+      "id": "el-informador-noticias-de-jalisco-m-xico-deportes-entretenimiento",
+      "title": "El Informador :: Noticias de Jalisco, México, Deportes & Entretenimiento",
+      "url": "https://www.informador.mx/rss/ultimas-noticias.xml",
+      "category": "News",
+      "country": "Mexico",
+      "language": "en"
+    },
+    {
+      "id": "el-pa-s-el-peri-dico-global",
+      "title": "EL PAÍS: el periódico global",
+      "url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/portada",
+      "category": "News",
+      "country": "Spain",
+      "language": "en"
+    },
+    {
+      "id": "el-peri-dico-portada",
+      "title": "El Periódico - portada",
+      "url": "https://www.elperiodico.com/es/rss/rss_portada.xml",
+      "category": "News",
+      "country": "Spain",
+      "language": "en"
+    },
+    {
+      "id": "eldiario-es-eldiario-es",
+      "title": "ElDiario.es - ElDiario.es",
+      "url": "https://www.eldiario.es/rss/",
+      "category": "News",
+      "country": "Spain",
+      "language": "en"
+    },
+    {
+      "id": "elnorte",
+      "title": "ElNorte",
+      "url": "https://www.elnorte.com/rss/portada.xml",
+      "category": "News",
+      "country": "Mexico",
+      "language": "en"
+    },
+    {
+      "id": "espa-a",
+      "title": "España",
+      "url": "https://rss.elconfidencial.com/espana/",
+      "category": "News",
+      "country": "Spain",
+      "language": "en"
+    },
+    {
+      "id": "euro-weekly-news-spain",
+      "title": "Euro Weekly News Spain",
+      "url": "https://www.euroweeklynews.com/feed/",
+      "category": "News",
+      "country": "Spain",
+      "language": "en"
+    },
+    {
+      "id": "exc-lsior-rss",
+      "title": "Excélsior - RSS",
+      "url": "https://www.excelsior.com.mx/rss.xml",
+      "category": "News",
+      "country": "Mexico",
+      "language": "en"
+    },
+    {
+      "id": "eyewitness-news-latest-news",
+      "title": "Eyewitness News | Latest News",
+      "url": "https://ewn.co.za/RSS%20Feeds/Latest%20News",
+      "category": "News",
+      "country": "South Africa",
+      "language": "en"
+    },
+    {
+      "id": "fanpage",
+      "title": "Fanpage",
+      "url": "https://www.fanpage.it/feed/",
+      "category": "News",
+      "country": "Italy",
+      "language": "en"
+    },
+    {
+      "id": "financial-post",
+      "title": "Financial Post",
+      "url": "https://business.financialpost.com/feed/",
+      "category": "News",
+      "country": "Canada",
+      "language": "en"
+    },
+    {
+      "id": "firstpost-india-latest-news",
+      "title": "Firstpost India Latest News",
+      "url": "https://www.firstpost.com/rss/india.xml",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "focus-online",
+      "title": "FOCUS Online",
+      "url": "https://rss.focus.de/fol/XML/rss_folnews.xml",
+      "category": "News",
+      "country": "Germany",
+      "language": "en"
+    },
+    {
+      "id": "folha-de-s-paulo-em-cima-da-hora-principal",
+      "title": "Folha de S.Paulo - Em cima da hora - Principal",
+      "url": "https://feeds.folha.uol.com.br/emcimadahora/rss091.xml",
+      "category": "News",
+      "country": "Brazil",
+      "language": "en"
+    },
+    {
+      "id": "fox-news",
+      "title": "FOX News",
+      "url": "http://feeds.foxnews.com/foxnews/latest",
+      "category": "News",
+      "country": "United States",
+      "language": "en"
+    },
+    {
+      "id": "france24-com",
+      "title": "france24.com",
+      "url": "https://www.france24.com/en/rss",
+      "category": "News",
+      "country": "France",
+      "language": "en"
+    },
+    {
+      "id": "franceinfo-les-titres",
+      "title": "Franceinfo - Les Titres",
+      "url": "https://www.francetvinfo.fr/titres.rss",
+      "category": "News",
+      "country": "France",
+      "language": "en"
+    },
+    {
+      "id": "free-press-journal",
+      "title": "Free Press Journal",
+      "url": "https://www.freepressjournal.in/stories.rss",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "front-page-the-indian-express",
+      "title": "Front Page | The Indian Express",
+      "url": "http://indianexpress.com/print/front-page/feed/",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "gazeta-ua",
+      "title": "Gazeta.ua",
+      "url": "https://gazeta.ua/rss",
+      "category": "News",
+      "country": "Ukraine",
+      "language": "en"
+    },
+    {
+      "id": "gazetaprawna-pl-biznes-podatki-prawo-finanse-wiadomo-ci-praca",
+      "title": "GazetaPrawna.pl - biznes, podatki, prawo, finanse, wiadomości, praca",
+      "url": "http://rss.gazetaprawna.pl/GazetaPrawna",
+      "category": "News",
+      "country": "Poland",
+      "language": "en"
+    },
+    {
+      "id": "gma-news-online-news",
+      "title": "GMA News Online / News",
+      "url": "https://data.gmanews.tv/gno/rss/news/feed.xml",
+      "category": "News",
+      "country": "Philippines",
+      "language": "en"
+    },
+    {
+      "id": "home-mail-online",
+      "title": "Home | Mail Online",
+      "url": "https://www.dailymail.co.uk/home/index.rss",
+      "category": "News",
+      "country": "United Kingdom",
+      "language": "en"
+    },
+    {
+      "id": "home-page",
+      "title": "Home Page",
+      "url": "https://www.business-standard.com/rss/home_page_top_stories.rss",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "hong-kong-free-press-hkfp",
+      "title": "Hong Kong Free Press HKFP",
+      "url": "https://www.hongkongfp.com/feed/",
+      "category": "News",
+      "country": "Hong Kong SAR China",
+      "language": "en"
+    },
+    {
+      "id": "hongkongnews-net-latest-rss-headlines",
+      "title": "hongkongnews.net latest rss headlines",
+      "url": "http://feeds.hongkongnews.net/rss/b82693edf38ebff8",
+      "category": "News",
+      "country": "Hong Kong SAR China",
+      "language": "en"
+    },
+    {
+      "id": "https-globalnews-ca-feed",
+      "title": "https://globalnews.ca/feed/",
+      "url": "https://globalnews.ca/feed/",
+      "category": "News",
+      "country": "Canada",
+      "language": "en"
+    },
+    {
+      "id": "https-www-eluniversal-com-mx-seccion-1671-rss-xml",
+      "title": "https://www.eluniversal.com.mx/seccion/1671/rss.xml",
+      "url": "https://www.eluniversal.com.mx/seccion/1671/rss.xml",
+      "category": "News",
+      "country": "Mexico",
+      "language": "en"
+    },
+    {
+      "id": "https-www-rp-pl",
+      "title": "https://www.rp.pl",
+      "url": "https://www.rp.pl/rss/1019",
+      "category": "News",
+      "country": "Poland",
+      "language": "en"
+    },
+    {
+      "id": "https-www-sunstar-com-ph",
+      "title": "https://www.sunstar.com.ph/",
+      "url": "https://www.sunstar.com.ph/rssFeed/selected",
+      "category": "News",
+      "country": "Philippines",
+      "language": "en"
+    },
+    {
+      "id": "huffingtonpost-es",
+      "title": "huffingtonpost.es",
+      "url": "https://www.huffingtonpost.es/feeds/index.xml",
+      "category": "News",
+      "country": "Spain",
+      "language": "en"
+    },
+    {
+      "id": "il-mattino-web",
+      "title": "Il Mattino Web",
+      "url": "https://www.ilmattino.it/?sez=XML&args&p=search&args[box]=Home&limit=20&layout=rss",
+      "category": "News",
+      "country": "Italy",
+      "language": "en"
+    },
+    {
+      "id": "il-post",
+      "title": "Il Post",
+      "url": "https://www.ilpost.it/feed/",
+      "category": "News",
+      "country": "Italy",
+      "language": "en"
+    },
+    {
+      "id": "indaily",
+      "title": "InDaily",
+      "url": "https://indaily.com.au/feed/",
+      "category": "News",
+      "country": "Australia",
+      "language": "en"
+    },
+    {
+      "id": "independent-australia",
+      "title": "Independent Australia",
+      "url": "http://feeds.feedburner.com/IndependentAustralia",
+      "category": "News",
+      "country": "Australia",
+      "language": "en"
+    },
+    {
+      "id": "india-the-guardian",
+      "title": "India | The Guardian",
+      "url": "https://www.theguardian.com/world/india/rss",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "india-news",
+      "title": "India News",
+      "url": "https://www.dnaindia.com/feeds/india.xml",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "india-today-latest-stories",
+      "title": "India Today | Latest Stories",
+      "url": "https://www.indiatoday.in/rss/home",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "information-nigeria",
+      "title": "Information Nigeria",
+      "url": "https://www.informationng.com/feed",
+      "category": "News",
+      "country": "Nigeria",
+      "language": "en"
+    },
+    {
+      "id": "inquirer-net",
+      "title": "INQUIRER.net",
+      "url": "https://www.inquirer.net/fullfeed",
+      "category": "News",
+      "country": "Philippines",
+      "language": "en"
+    },
+    {
+      "id": "interaksyon",
+      "title": "Interaksyon",
+      "url": "https://www.interaksyon.com/feed/",
+      "category": "News",
+      "country": "Philippines",
+      "language": "en"
+    },
+    {
+      "id": "international-top-news-and-analysis",
+      "title": "International: Top News And Analysis",
+      "url": "https://www.cnbc.com/id/100727362/device/rss/rss.html",
+      "category": "News"
+    },
+    {
+      "id": "internazionale",
+      "title": "Internazionale",
+      "url": "https://www.internazionale.it/sitemaps/rss.xml",
+      "category": "News",
+      "country": "Italy",
+      "language": "en"
+    },
+    {
+      "id": "iol-section-feed-for-news",
+      "title": "IOL section feed for News",
+      "url": "http://rss.iol.io/iol/news",
+      "category": "News",
+      "country": "South Africa",
+      "language": "en"
+    },
+    {
+      "id": "irish-mirror-home",
+      "title": "Irish Mirror - Home",
+      "url": "https://www.irishmirror.ie/?service=rss",
+      "category": "News",
+      "country": "Ireland",
+      "language": "en"
+    },
+    {
+      "id": "irishcentral-com-top-stories",
+      "title": "IrishCentral.com - Top Stories",
+      "url": "https://feeds.feedburner.com/IrishCentral",
+      "category": "News",
+      "country": "Ireland",
+      "language": "en"
+    },
+    {
+      "id": "irishexaminer-com",
+      "title": "IrishExaminer.com",
+      "url": "https://feeds.feedburner.com/ietopstories",
+      "category": "News",
+      "country": "Ireland",
+      "language": "en"
+    },
+    {
+      "id": "italy-the-guardian",
+      "title": "Italy | The Guardian",
+      "url": "https://www.theguardian.com/world/italy/rss",
+      "category": "News",
+      "country": "Italy",
+      "language": "en"
+    },
+    {
+      "id": "jagonews24-com-rss-feed",
+      "title": "jagonews24.com | rss Feed",
+      "url": "https://www.jagonews24.com/rss/rss.xml",
+      "category": "News",
+      "country": "Bangladesh",
+      "language": "en"
+    },
+    {
+      "id": "jansattajansatta",
+      "title": "JansattaJansatta",
+      "url": "https://www.jansatta.com/feed/",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "japan-times-latest-articles",
+      "title": "Japan Times latest articles",
+      "url": "https://www.japantimes.co.jp/feed/topstories/",
+      "category": "News",
+      "country": "Japan",
+      "language": "en"
+    },
+    {
+      "id": "japan-today",
+      "title": "Japan Today",
+      "url": "https://japantoday.com/feed",
+      "category": "News",
+      "country": "Japan",
+      "language": "en"
+    },
+    {
+      "id": "jornal-de-bras-lia",
+      "title": "Jornal de Brasília",
+      "url": "https://jornaldebrasilia.com.br/feed/",
+      "category": "News",
+      "country": "Brazil",
+      "language": "en"
+    },
+    {
+      "id": "jugantor",
+      "title": "JUGANTOR",
+      "url": "https://www.jugantor.com/feed/rss.xml",
+      "category": "News",
+      "country": "Bangladesh",
+      "language": "en"
+    },
+    {
+      "id": "kalerkantho-kantho",
+      "title": "kalerkantho Kantho",
+      "url": "https://www.kalerkantho.com/rss.xml",
+      "category": "News",
+      "country": "Bangladesh",
+      "language": "en"
+    },
+    {
+      "id": "kusa-news",
+      "title": "KUSA - News",
+      "url": "http://rssfeeds.9news.com/kusa/home&x=1",
+      "category": "News",
+      "country": "Australia",
+      "language": "en"
+    },
+    {
+      "id": "l-obs-a-la-une",
+      "title": "L'Obs - A la une",
+      "url": "https://www.nouvelobs.com/a-la-une/rss.xml",
+      "category": "News",
+      "country": "France",
+      "language": "en"
+    },
+    {
+      "id": "l-039-essentiel",
+      "title": "L&#039;essentiel",
+      "url": "https://www.sudouest.fr/essentiel/rss.xml",
+      "category": "News",
+      "country": "France",
+      "language": "en"
+    },
+    {
+      "id": "la-d-p-che-du-midi-actualit-s-et-info-en-direct-de-la-r-gion-occitanie-et-des-environs-ladepeche-fr",
+      "title": "La Dépêche du Midi : actualités et info en direct de la région Occitanie et des environs - ladepeche.fr",
+      "url": "https://www.ladepeche.fr/rss.xml",
+      "category": "News",
+      "country": "France",
+      "language": "en"
+    },
+    {
+      "id": "lapresse-ca-actualit-s",
+      "title": "LaPresse.ca - Actualités",
+      "url": "https://www.lapresse.ca/actualites/rss",
+      "category": "News",
+      "country": "Canada",
+      "language": "en"
+    },
+    {
+      "id": "latest-and-breaking-hindi-news-headlines-news-in-hindi-amar-ujala",
+      "title": "Latest And Breaking Hindi News Headlines, News In Hindi | अमर उजाला हिंदी न्यूज़ | - Amar Ujala",
+      "url": "https://www.amarujala.com/rss/breaking-news.xml",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "latest-news-philippine-information-agency",
+      "title": "Latest News | Philippine Information Agency",
+      "url": "https://pia.gov.ph/news/feed.rss",
+      "category": "News",
+      "country": "Philippines",
+      "language": "en"
+    },
+    {
+      "id": "latest-news-philippine-news-agency",
+      "title": "Latest News | Philippine News Agency",
+      "url": "https://www.pna.gov.ph/latest.rss",
+      "category": "News",
+      "country": "Philippines",
+      "language": "en"
+    },
+    {
+      "id": "latest-news-and-news-headlines-daily-telegraph",
+      "title": "Latest News and News Headlines | Daily Telegraph",
+      "url": "https://www.dailytelegraph.com.au/news/breaking-news/rss",
+      "category": "News",
+      "country": "Australia",
+      "language": "en"
+    },
+    {
+      "id": "latest-news-and-news-headlines-herald-sun",
+      "title": "Latest News and News Headlines | Herald Sun",
+      "url": "https://www.heraldsun.com.au/news/breaking-news/rss",
+      "category": "News",
+      "country": "Australia",
+      "language": "en"
+    },
+    {
+      "id": "latest-news-program-news18-lokmat",
+      "title": "Latest News program News18 Lokmat",
+      "url": "https://lokmat.news18.com/rss/program.xml",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "latest-nigeria-news-nigerian-newspapers-politics",
+      "title": "Latest Nigeria News, Nigerian Newspapers, Politics",
+      "url": "https://thenationonlineng.net/feed/",
+      "category": "News",
+      "country": "Nigeria",
+      "language": "en"
+    },
+    {
+      "id": "le-huffington-post",
+      "title": "Le Huffington Post",
+      "url": "https://www.huffingtonpost.fr/feeds/index.xml",
+      "category": "News",
+      "country": "France",
+      "language": "en"
+    },
+    {
+      "id": "le-monde-fr-actualit-s-et-infos-en-france-et-dans-le-monde",
+      "title": "Le Monde.fr - Actualités et Infos en France et dans le monde",
+      "url": "https://www.lemonde.fr/rss/une.xml",
+      "category": "News",
+      "country": "France",
+      "language": "en"
+    },
+    {
+      "id": "legit-ng",
+      "title": "Legit.ng",
+      "url": "https://www.legit.ng/rss/all.rss",
+      "category": "News",
+      "country": "Nigeria",
+      "language": "en"
+    },
+    {
+      "id": "lenta-ru",
+      "title": "Lenta.ru : Новости",
+      "url": "https://lenta.ru/rss",
+      "category": "News",
+      "country": "Russia",
+      "language": "en"
+    },
+    {
+      "id": "libero-quotidiano",
+      "title": "Libero Quotidiano",
+      "url": "https://www.liberoquotidiano.it/rss.xml",
+      "category": "News",
+      "country": "Italy",
+      "language": "en"
+    },
+    {
+      "id": "live-hindustan-rss-feed",
+      "title": "Live Hindustan Rss feed",
+      "url": "https://feed.livehindustan.com/rss/3127",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "lo-ltimo-en-vanguardia-mx",
+      "title": "Lo último en Vanguardia MX",
+      "url": "https://vanguardia.com.mx/rss.xml",
+      "category": "News",
+      "country": "Mexico",
+      "language": "en"
+    },
+    {
+      "id": "loksatta-8211-loksatta",
+      "title": "Loksattaदेश-विदेश &#8211; Loksatta",
+      "url": "https://www.loksatta.com/desh-videsh/feed/",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "manila-standard",
+      "title": "Manila Standard",
+      "url": "https://manilastandard.net/feed/all",
+      "category": "News",
+      "country": "Philippines",
+      "language": "en"
+    },
+    {
+      "id": "marathi-news-latest-news-in-marathi-breaking-marathi-news-marathi-news-paper-maharashtra-times",
+      "title": "Marathi News: मराठी बातम्या,  Latest News in Marathi, Breaking Marathi News, Marathi News Paper | Maharashtra Times",
+      "url": "https://maharashtratimes.com/rssfeedsdefault.cms",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "mediapart",
+      "title": "Mediapart",
+      "url": "https://www.mediapart.fr/articles/feed",
+      "category": "News",
+      "country": "France",
+      "language": "en"
+    },
+    {
+      "id": "meduza-io",
+      "title": "Meduza.io",
+      "url": "https://meduza.io/rss/all",
+      "category": "News",
+      "country": "Russia",
+      "language": "en"
+    },
+    {
+      "id": "merdeka-com",
+      "title": "Merdeka.com",
+      "url": "https://www.merdeka.com/feed/",
+      "category": "News",
+      "country": "Indonesia",
+      "language": "en"
+    },
+    {
+      "id": "mexico-the-guardian",
+      "title": "Mexico | The Guardian",
+      "url": "https://www.theguardian.com/world/mexico/rss",
+      "category": "News",
+      "country": "Mexico",
+      "language": "en"
+    },
+    {
+      "id": "mexico-news-daily",
+      "title": "Mexico News Daily",
+      "url": "https://mexiconewsdaily.com/feed/",
+      "category": "News",
+      "country": "Mexico",
+      "language": "en"
+    },
+    {
+      "id": "michael-west",
+      "title": "Michael West",
+      "url": "https://www.michaelwest.com.au/feed/",
+      "category": "News",
+      "country": "Australia",
+      "language": "en"
+    },
+    {
+      "id": "milan-news",
+      "title": "Milan News",
+      "url": "https://www.milannews.it/rss/",
+      "category": "News",
+      "country": "Italy",
+      "language": "en"
+    },
+    {
+      "id": "ministry-for-europe-and-foreign-affairs-actualit-s",
+      "title": "Ministry for Europe and Foreign Affairs - Actualités",
+      "url": "https://www.diplomatie.gouv.fr/spip.php?page=backend-fd&lang=en",
+      "category": "News",
+      "country": "France",
+      "language": "en"
+    },
+    {
+      "id": "moneycontrol-latest-news",
+      "title": "Moneycontrol Latest News",
+      "url": "http://www.moneycontrol.com/rss/latestnews.xml",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "moneyweb",
+      "title": "Moneyweb",
+      "url": "https://www.moneyweb.co.za/feed/",
+      "category": "News",
+      "country": "South Africa",
+      "language": "en"
+    },
+    {
+      "id": "myanmar-gazette-news-media-forum-network",
+      "title": "Myanmar Gazette News Media Forum Network",
+      "url": "http://myanmargazette.net/feed",
+      "category": "News",
+      "country": "Myanmar (Burma)",
+      "language": "en"
+    },
+    {
+      "id": "najnowsze",
+      "title": "Najnowsze",
+      "url": "http://feeds.feedburner.com/wPolitycepl",
+      "category": "News",
+      "country": "Poland",
+      "language": "en"
+    },
+    {
+      "id": "national-post",
+      "title": "National Post",
+      "url": "https://nationalpost.com/feed/",
+      "category": "News",
+      "country": "Canada",
+      "language": "en"
+    },
+    {
+      "id": "navbharat-times",
+      "title": "Navbharat Times",
+      "url": "https://navbharattimes.indiatimes.com/rssfeedsdefault.cms",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "ndtv-news-topstories",
+      "title": "NDTV News -   Topstories",
+      "url": "https://feeds.feedburner.com/ndtvnews-top-stories",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "ndtv-news-world-news",
+      "title": "NDTV News - World-news",
+      "url": "http://feeds.feedburner.com/ndtvnews-world-news",
+      "category": "News"
+    },
+    {
+      "id": "news-agency-unian",
+      "title": "News Agency UNIAN",
+      "url": "https://rss.unian.net/site/news_eng.rss",
+      "category": "News",
+      "country": "Ukraine",
+      "language": "en"
+    },
+    {
+      "id": "news-blog",
+      "title": "News Blog",
+      "url": "https://newsnblogs.com/feed/",
+      "category": "News",
+      "country": "Pakistan",
+      "language": "en"
+    },
+    {
+      "id": "news-on-japan",
+      "title": "News On Japan",
+      "url": "http://www.newsonjapan.com/rss/top.xml",
+      "category": "News",
+      "country": "Japan",
+      "language": "en"
+    },
+    {
+      "id": "news-latest-news-today-s-news-headlines-breaking-news-live-news-oneindia",
+      "title": "News, Latest News, Today's News Headlines, Breaking News, LIVE News - Oneindia",
+      "url": "https://www.oneindia.com/rss/news-fb.xml",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "news24-top-stories",
+      "title": "News24 Top Stories",
+      "url": "http://feeds.news24.com/articles/news24/TopStories/rss",
+      "category": "News",
+      "country": "South Africa",
+      "language": "en"
+    },
+    {
+      "id": "newsru-com",
+      "title": "NEWSru.com :: Главные новости",
+      "url": "https://rss.newsru.com/top/big/",
+      "category": "News",
+      "country": "Russia",
+      "language": "en"
+    },
+    {
+      "id": "newsweek-polska",
+      "title": "Newsweek Polska",
+      "url": "https://www.newsweek.pl/rss.xml",
+      "category": "News",
+      "country": "Poland",
+      "language": "en"
+    },
+    {
+      "id": "nigeria-news-links-today-s-updates-nigerian-bulletin",
+      "title": "Nigeria News Links | Today's Updates - Nigerian Bulletin",
+      "url": "https://www.nigerianbulletin.com/forums/-/index.rss",
+      "category": "News",
+      "country": "Nigeria",
+      "language": "en"
+    },
+    {
+      "id": "nigerian-news-latest-nigeria-news-your-online-nigerian-newspaper",
+      "title": "Nigerian News. Latest Nigeria News. Your online Nigerian Newspaper.",
+      "url": "http://feeds.feedburner.com/Nigerianeye",
+      "category": "News",
+      "country": "Nigeria",
+      "language": "en"
+    },
+    {
+      "id": "opindia",
+      "title": "OpIndia",
+      "url": "https://feeds.feedburner.com/opindia",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "ottawa-citizen",
+      "title": "Ottawa Citizen",
+      "url": "https://ottawacitizen.com/feed/",
+      "category": "News",
+      "country": "Canada",
+      "language": "en"
+    },
+    {
+      "id": "ouest-france-actualit",
+      "title": "Ouest-France - Actualité",
+      "url": "https://www.ouest-france.fr/rss-en-continu.xml",
+      "category": "News",
+      "country": "France",
+      "language": "en"
+    },
+    {
+      "id": "outlook-india",
+      "title": "Outlook India",
+      "url": "https://www.outlookindia.com/rss/main/magazine",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "panorama",
+      "title": "Panorama",
+      "url": "https://www.panorama.it/feeds/feed.rss",
+      "category": "News",
+      "country": "Italy",
+      "language": "en"
+    },
+    {
+      "id": "paris-star",
+      "title": "Paris Star",
+      "url": "https://www.parisstaronline.com/feed",
+      "category": "News",
+      "country": "France",
+      "language": "en"
+    },
+    {
+      "id": "patrika-india-s-leading-hindi-news-portal",
+      "title": "Patrika : India's Leading Hindi News Portal",
+      "url": "http://api.patrika.com/rss/india-news",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "perthnow",
+      "title": "PerthNow",
+      "url": "https://www.perthnow.com.au/news/feed",
+      "category": "News",
+      "country": "Australia",
+      "language": "en"
+    },
+    {
+      "id": "philnews-xyz",
+      "title": "PhilNews.XYZ",
+      "url": "https://www.philnews.xyz/feeds/posts/default?alt=rss",
+      "category": "News",
+      "country": "Philippines",
+      "language": "en"
+    },
+    {
+      "id": "philstar-com-rss-headlines",
+      "title": "philstar.com - RSS Headlines",
+      "url": "https://www.philstar.com/rss/headlines",
+      "category": "News",
+      "country": "Philippines",
+      "language": "en"
+    },
+    {
+      "id": "playbook",
+      "title": "Playbook",
+      "url": "https://rss.politico.com/playbook.xml",
+      "category": "News",
+      "country": "United States",
+      "language": "en"
+    },
+    {
+      "id": "polska-agencja-prasowa-sa",
+      "title": "Polska Agencja Prasowa SA",
+      "url": "https://www.pap.pl/rss.xml",
+      "category": "News",
+      "country": "Poland",
+      "language": "en"
+    },
+    {
+      "id": "portada-expansion",
+      "title": "Portada // expansion",
+      "url": "https://e00-expansion.uecdn.es/rss/portada.xml",
+      "category": "News",
+      "country": "Spain",
+      "language": "en"
+    },
+    {
+      "id": "portada-el-siglo-de-torre-n",
+      "title": "Portada, El Siglo de Torreón",
+      "url": "https://www.elsiglodetorreon.com.mx/index.xml",
+      "category": "News",
+      "country": "Mexico",
+      "language": "en"
+    },
+    {
+      "id": "portal-ebc-rss",
+      "title": "Portal EBC - RSS",
+      "url": "http://www.ebc.com.br/rss/feed.xml",
+      "category": "News",
+      "country": "Brazil",
+      "language": "en"
+    },
+    {
+      "id": "pravdareport",
+      "title": "PravdaReport",
+      "url": "https://www.pravdareport.com/export.xml",
+      "category": "News",
+      "country": "Russia",
+      "language": "en"
+    },
+    {
+      "id": "premium-times-nigeria",
+      "title": "Premium Times Nigeria",
+      "url": "https://www.premiumtimesng.com/feed",
+      "category": "News",
+      "country": "Nigeria",
+      "language": "en"
+    },
+    {
+      "id": "r7-not-cias",
+      "title": "R7 - Notícias",
+      "url": "https://noticias.r7.com/feed.xml",
+      "category": "News",
+      "country": "Brazil",
+      "language": "en"
+    },
+    {
+      "id": "reforma",
+      "title": "Reforma",
+      "url": "https://www.reforma.com/rss/portada.xml",
+      "category": "News",
+      "country": "Mexico",
+      "language": "en"
+    },
+    {
+      "id": "republika-online-rss-feed",
+      "title": "Republika Online RSS Feed",
+      "url": "https://www.republika.co.id/rss/",
+      "category": "News",
+      "country": "Indonesia",
+      "language": "en"
+    },
+    {
+      "id": "rmf24-pl",
+      "title": "RMF24.pl",
+      "url": "https://www.rmf24.pl/feed",
+      "category": "News",
+      "country": "Poland",
+      "language": "en"
+    },
+    {
+      "id": "rss-di-ansa-it",
+      "title": "RSS di   - ANSA.it",
+      "url": "https://www.ansa.it/sito/ansait_rss.xml",
+      "category": "News",
+      "country": "Italy",
+      "language": "en"
+    },
+    {
+      "id": "rss-diariodelweb-it",
+      "title": "RSS DiariodelWeb.it",
+      "url": "https://www.diariodelweb.it/rss/home/",
+      "category": "News",
+      "country": "Italy",
+      "language": "en"
+    },
+    {
+      "id": "rt-daily-news",
+      "title": "RT - Daily news",
+      "url": "https://www.rt.com/rss/",
+      "category": "News",
+      "country": "Russia",
+      "language": "en"
+    },
+    {
+      "id": "russia-insider-daily-headlines",
+      "title": "Russia Insider Daily Headlines",
+      "url": "https://russia-insider.com/en/all-content/rss",
+      "category": "News",
+      "country": "Russia",
+      "language": "en"
+    },
+    {
+      "id": "scroll-in",
+      "title": "Scroll.in",
+      "url": "http://feeds.feedburner.com/ScrollinArticles.rss",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "sebi-rss-feed",
+      "title": "SEBI RSS Feed",
+      "url": "https://www.sebi.gov.in/sebirss.xml",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "sowetanlive",
+      "title": "SowetanLIVE",
+      "url": "https://www.sowetanlive.co.za/rss/?publication=sowetan-live",
+      "category": "News",
+      "country": "South Africa",
+      "language": "en"
+    },
+    {
+      "id": "suara-com",
+      "title": "Suara.com",
+      "url": "https://www.suara.com/rss",
+      "category": "News",
+      "country": "Indonesia",
+      "language": "en"
+    },
+    {
+      "id": "swarajya",
+      "title": "Swarajya",
+      "url": "https://prod-qt-images.s3.amazonaws.com/production/swarajya/feed.xml",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "sydney-morning-herald-latest-news",
+      "title": "Sydney Morning Herald - Latest News",
+      "url": "https://www.smh.com.au/rss/feed.xml",
+      "category": "News",
+      "country": "Australia",
+      "language": "en"
+    },
+    {
+      "id": "tagesschau-de-die-nachrichten-der-ard",
+      "title": "tagesschau.de - Die Nachrichten der ARD",
+      "url": "http://www.tagesschau.de/xml/rss2",
+      "category": "News",
+      "country": "Germany",
+      "language": "en"
+    },
+    {
+      "id": "tass",
+      "title": "TASS",
+      "url": "http://tass.com/rss/v2.xml",
+      "category": "News",
+      "country": "Russia",
+      "language": "en"
+    },
+    {
+      "id": "techcentral",
+      "title": "TechCentral",
+      "url": "https://techcentral.co.za/feed",
+      "category": "News",
+      "country": "South Africa",
+      "language": "en"
+    },
+    {
+      "id": "techgenyz",
+      "title": "TechGenyz",
+      "url": "http://feeds.feedburner.com/techgenyz",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "techpinas-philippines-technology-news-tips-and-reviews-blog",
+      "title": "TechPinas : Philippines' Technology News, Tips and Reviews Blog",
+      "url": "http://feeds.feedburner.com/Techpinas",
+      "category": "News",
+      "country": "Philippines",
+      "language": "en"
+    },
+    {
+      "id": "tempo-the-nation-s-fastest-growing-newspaper",
+      "title": "Tempo – The Nation's Fastest Growing Newspaper",
+      "url": "http://tempo.com.ph/feed/",
+      "category": "News",
+      "country": "Philippines",
+      "language": "en"
+    },
+    {
+      "id": "the-age-latest-news",
+      "title": "The Age - Latest News",
+      "url": "https://www.theage.com.au/rss/feed.xml",
+      "category": "News",
+      "country": "Australia",
+      "language": "en"
+    },
+    {
+      "id": "the-canberra-times-local-news",
+      "title": "The Canberra Times - Local News",
+      "url": "https://www.canberratimes.com.au/rss.xml",
+      "category": "News",
+      "country": "Australia",
+      "language": "en"
+    },
+    {
+      "id": "the-citizen",
+      "title": "The Citizen",
+      "url": "https://citizen.co.za/feed/",
+      "category": "News",
+      "country": "South Africa",
+      "language": "en"
+    },
+    {
+      "id": "the-courier-mail",
+      "title": "The Courier Mail",
+      "url": "https://www.couriermail.com.au/rss",
+      "category": "News",
+      "country": "Australia",
+      "language": "en"
+    },
+    {
+      "id": "the-daily-star",
+      "title": "The Daily Star",
+      "url": "https://www.thedailystar.net/frontpage/rss.xml",
+      "category": "News",
+      "country": "Bangladesh",
+      "language": "en"
+    },
+    {
+      "id": "the-express-tribune",
+      "title": "The Express Tribune",
+      "url": "https://tribune.com.pk/feed/home",
+      "category": "News",
+      "country": "Pakistan",
+      "language": "en"
+    },
+    {
+      "id": "the-financial-express",
+      "title": "The Financial Express",
+      "url": "https://www.financialexpress.com/feed/",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "the-guardian-nigeria-news-nigeria-and-world-news",
+      "title": "The Guardian Nigeria News – Nigeria and World News",
+      "url": "https://guardian.ng/feed/",
+      "category": "News",
+      "country": "Nigeria",
+      "language": "en"
+    },
+    {
+      "id": "the-hindu-home",
+      "title": "The Hindu - Home",
+      "url": "https://www.thehindu.com/feeder/default.rss",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "the-independent",
+      "title": "The Independent",
+      "url": "http://www.independent.co.uk/news/uk/rss",
+      "category": "News",
+      "country": "United Kingdom",
+      "language": "en"
+    },
+    {
+      "id": "the-local",
+      "title": "The Local",
+      "url": "https://feeds.thelocal.com/rss/it",
+      "category": "News",
+      "country": "Italy",
+      "language": "en"
+    },
+    {
+      "id": "the-local-1eqk",
+      "title": "The Local",
+      "url": "https://feeds.thelocal.com/rss/es",
+      "category": "News",
+      "country": "Spain",
+      "language": "en"
+    },
+    {
+      "id": "the-mercury",
+      "title": "The Mercury",
+      "url": "https://www.themercury.com.au/rss",
+      "category": "News",
+      "country": "Australia",
+      "language": "en"
+    },
+    {
+      "id": "the-moscow-times-independent-news-from-russia",
+      "title": "The Moscow Times - Independent News From Russia",
+      "url": "https://www.themoscowtimes.com/rss/news",
+      "category": "News",
+      "country": "Russia",
+      "language": "en"
+    },
+    {
+      "id": "the-nation-top-stories",
+      "title": "The Nation - Top Stories",
+      "url": "https://nation.com.pk/rss/top-stories",
+      "category": "News",
+      "country": "Pakistan",
+      "language": "en"
+    },
+    {
+      "id": "the-news-international-pakistan",
+      "title": "The News International - Pakistan",
+      "url": "https://www.thenews.com.pk/rss/1/1",
+      "category": "News",
+      "country": "Pakistan",
+      "language": "en"
+    },
+    {
+      "id": "the-province",
+      "title": "The Province",
+      "url": "https://theprovince.com/feed/",
+      "category": "News",
+      "country": "Canada",
+      "language": "en"
+    },
+    {
+      "id": "the-rio-times",
+      "title": "The Rio Times",
+      "url": "https://riotimesonline.com/feed/",
+      "category": "News",
+      "country": "Brazil",
+      "language": "en"
+    },
+    {
+      "id": "the-south-african",
+      "title": "The South African",
+      "url": "https://www.thesouthafrican.com/feed/",
+      "category": "News",
+      "country": "South Africa",
+      "language": "en"
+    },
+    {
+      "id": "the-standard-latest-news",
+      "title": "The Standard - Latest News",
+      "url": "https://www.thestandard.com.hk/newsfeed/latest/news.xml",
+      "category": "News",
+      "country": "Hong Kong SAR China",
+      "language": "en"
+    },
+    {
+      "id": "the42",
+      "title": "The42",
+      "url": "https://www.the42.ie/feed/",
+      "category": "News",
+      "country": "Ireland",
+      "language": "en"
+    },
+    {
+      "id": "thejournal-ie",
+      "title": "TheJournal.ie",
+      "url": "https://www.thejournal.ie/feed/",
+      "category": "News",
+      "country": "Ireland",
+      "language": "en"
+    },
+    {
+      "id": "theprint",
+      "title": "ThePrint",
+      "url": "https://theprint.in/feed/",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "thit-htoo-lwin-daily-news",
+      "title": "THIT HTOO LWIN (Daily News)",
+      "url": "http://www.thithtoolwin.com/feeds/posts/default",
+      "category": "News",
+      "country": "Myanmar (Burma)",
+      "language": "en"
+    },
+    {
+      "id": "times-of-india",
+      "title": "Times of India",
+      "url": "https://timesofindia.indiatimes.com/rssfeedstopstories.cms",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "timeslive",
+      "title": "TimesLIVE",
+      "url": "https://www.timeslive.co.za/rss/",
+      "category": "News",
+      "country": "South Africa",
+      "language": "en"
+    },
+    {
+      "id": "top-gear-the-philippine-authority-on-cars-and-the-automotive-industry",
+      "title": "Top Gear: The Philippine authority on cars and the automotive industry",
+      "url": "https://www.topgear.com.ph/feed/rss1",
+      "category": "News",
+      "country": "Philippines",
+      "language": "en"
+    },
+    {
+      "id": "top-stories-google-news",
+      "title": "Top stories - Google News",
+      "url": "https://news.google.com/rss",
+      "category": "News"
+    },
+    {
+      "id": "top-stories-news-gujarat-samachar-world-s-leading-gujarati-newspaper",
+      "title": "Top Stories News - Gujarat Samachar : World's Leading Gujarati Newspaper",
+      "url": "https://www.gujaratsamachar.com/rss/top-stories",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "top-world-news-news18-com",
+      "title": "Top World News- News18.com",
+      "url": "https://www.news18.com/rss/world.xml",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "toronto-star",
+      "title": "Toronto Star",
+      "url": "https://www.thestar.com/content/thestar/feed.RSSManagerServlet.articles.topstories.rss",
+      "category": "News",
+      "country": "Canada",
+      "language": "en"
+    },
+    {
+      "id": "toronto-sun-rss-feed",
+      "title": "Toronto Sun - RSS Feed",
+      "url": "https://torontosun.com/category/news/feed",
+      "category": "News",
+      "country": "Canada",
+      "language": "en"
+    },
+    {
+      "id": "tribune-online",
+      "title": "Tribune Online",
+      "url": "http://tribuneonlineng.com/feed/",
+      "category": "News",
+      "country": "Nigeria",
+      "language": "en"
+    },
+    {
+      "id": "tribunnews-com",
+      "title": "Tribunnews.com",
+      "url": "https://www.tribunnews.com/rss",
+      "category": "News",
+      "country": "Indonesia",
+      "language": "en"
+    },
+    {
+      "id": "tu-peri-dico-quequi",
+      "title": "Tu Periódico Quequi",
+      "url": "https://quequi.com.mx/feed/",
+      "category": "News",
+      "country": "Mexico",
+      "language": "en"
+    },
+    {
+      "id": "unbox-ph",
+      "title": "UNBOX PH",
+      "url": "https://www.unbox.ph/feed/",
+      "category": "News",
+      "country": "Philippines",
+      "language": "en"
+    },
+    {
+      "id": "uol",
+      "title": "UOL",
+      "url": "http://rss.home.uol.com.br/index.xml",
+      "category": "News",
+      "country": "Brazil",
+      "language": "en"
+    },
+    {
+      "id": "urdupoint-com-all-urdu-news",
+      "title": "UrduPoint.com All Urdu News",
+      "url": "https://www.urdupoint.com/rss/urdupoint.rss",
+      "category": "News",
+      "country": "Pakistan",
+      "language": "en"
+    },
+    {
+      "id": "us-top-news-and-analysis",
+      "title": "US Top News and Analysis",
+      "url": "https://www.cnbc.com/id/100003114/device/rss/rss.html",
+      "category": "News",
+      "country": "United States",
+      "language": "en"
+    },
+    {
+      "id": "world",
+      "title": "World",
+      "url": "http://feeds.washingtonpost.com/rss/world",
+      "category": "News",
+      "country": "United States",
+      "language": "en"
+    },
+    {
+      "id": "world-nation",
+      "title": "World & Nation",
+      "url": "https://www.latimes.com/world-nation/rss2.0.xml",
+      "category": "News",
+      "country": "United States",
+      "language": "en"
+    },
+    {
+      "id": "world-news",
+      "title": "World News",
+      "url": "https://www.reddit.com/r/worldnews/.rss",
+      "category": "News"
+    },
+    {
+      "id": "world-news-breaking-news-top-stories",
+      "title": "World News - Breaking News, Top Stories",
+      "url": "https://www.huffpost.com/section/world-news/feed",
+      "category": "News",
+      "country": "United States",
+      "language": "en"
+    },
+    {
+      "id": "world-news-the-guardian",
+      "title": "World news | The Guardian",
+      "url": "https://www.theguardian.com/world/rss",
+      "category": "News",
+      "country": "United Kingdom",
+      "language": "en"
+    },
+    {
+      "id": "world-news-headlines-latest-international-news-world-breaking-news-times-of-india",
+      "title": "World News Headlines, Latest International News, World Breaking News - Times of India",
+      "url": "https://timesofindia.indiatimes.com/rssfeeds/296589292.cms",
+      "category": "News"
+    },
+    {
+      "id": "wsj-com-world-news",
+      "title": "WSJ.com: World News",
+      "url": "https://feeds.a.dj.com/rss/RSSWorldNews.xml",
+      "category": "News",
+      "country": "United States",
+      "language": "en"
+    },
+    {
+      "id": "www-wirtualnemedia-pl",
+      "title": "www.wirtualnemedia.pl",
+      "url": "https://www.wirtualnemedia.pl/rss/wirtualnemedia_rss.xml",
+      "category": "News",
+      "country": "Poland",
+      "language": "en"
+    },
+    {
+      "id": "yahoo-news-latest-news-headlines",
+      "title": "Yahoo News - Latest News & Headlines",
+      "url": "https://news.yahoo.com/rss/mostviewed",
+      "category": "News",
+      "country": "United States",
+      "language": "en"
+    },
+    {
+      "id": "yahoo-news-latest-news-headlines-bzl1",
+      "title": "Yahoo News - Latest News & Headlines",
+      "url": "https://www.yahoo.com/news/rss",
+      "category": "News"
+    },
+    {
+      "id": "zeit-online-nachrichten-hintergr-nde-und-debatten",
+      "title": "ZEIT ONLINE | Nachrichten, Hintergründe und Debatten",
+      "url": "http://newsfeed.zeit.de/index",
+      "category": "News",
+      "country": "Germany",
+      "language": "en"
+    },
+    {
+      "id": "ru",
+      "title": "Вести.Ru",
+      "url": "https://www.vesti.ru/vesti.rss",
+      "category": "News",
+      "country": "Russia",
+      "language": "en"
+    },
+    {
+      "id": "ua",
+      "title": "Вести.ua",
+      "url": "https://vesti.ua/feeds/partners",
+      "category": "News",
+      "country": "Ukraine",
+      "language": "en"
+    },
+    {
+      "id": "-zgx3",
+      "title": "Все материалы - Московский Комсомолец",
+      "url": "https://www.mk.ru/rss/index.xml",
+      "category": "News",
+      "country": "Russia",
+      "language": "en"
+    },
+    {
+      "id": "-4ku1",
+      "title": "Газета ",
+      "url": "https://www.kommersant.ru/RSS/main.xml",
+      "category": "News",
+      "country": "Russia",
+      "language": "en"
+    },
+    {
+      "id": "ru-m9so",
+      "title": "Газета.Ru - Первая полоса",
+      "url": "https://www.gazeta.ru/export/rss/first.xml",
+      "category": "News",
+      "country": "Russia",
+      "language": "en"
+    },
+    {
+      "id": "-wsar",
+      "title": "Гордон - Самые популярные материалы",
+      "url": "https://gordonua.com/xml/rss_category/top.html",
+      "category": "News",
+      "country": "Ukraine",
+      "language": "en"
+    },
+    {
+      "id": "-2plb",
+      "title": "Еспресо - український погляд на світ!",
+      "url": "https://espreso.tv/rss",
+      "category": "News",
+      "country": "Ukraine",
+      "language": "en"
+    },
+    {
+      "id": "-v9m1",
+      "title": "Информационное агентство УНИАН",
+      "url": "https://rss.unian.net/site/news_rus.rss",
+      "category": "News",
+      "country": "Ukraine",
+      "language": "en"
+    },
+    {
+      "id": "-otwn",
+      "title": "НВ",
+      "url": "https://nv.ua/rss/all.xml",
+      "category": "News",
+      "country": "Ukraine",
+      "language": "en"
+    },
+    {
+      "id": "tsn-ua",
+      "title": "Новини на tsn.ua",
+      "url": "https://tsn.ua/rss/full.rss",
+      "category": "News",
+      "country": "Ukraine",
+      "language": "en"
+    },
+    {
+      "id": "korrespondent-net",
+      "title": "Последние новости на сайте korrespondent.net",
+      "url": "http://k.img.com.ua/rss/ru/all_news2.0.xml",
+      "category": "News",
+      "country": "Ukraine",
+      "language": "en"
+    },
+    {
+      "id": "-qkqc",
+      "title": "Российская Газета",
+      "url": "https://rg.ru/xml/index.xml",
+      "category": "News",
+      "country": "Russia",
+      "language": "en"
+    },
+    {
+      "id": "-2o2l",
+      "title": "ТЕЛЕГРАФ - последние новости Украины и мира",
+      "url": "https://telegraf.com.ua/yandex-feed/",
+      "category": "News",
+      "country": "Ukraine",
+      "language": "en"
+    },
+    {
+      "id": "-eeca",
+      "title": "Українська правда",
+      "url": "https://www.pravda.com.ua/rss/",
+      "category": "News",
+      "country": "Ukraine",
+      "language": "en"
+    },
+    {
+      "id": "-4xwe",
+      "title": "Цензор.НЕТ - Новости",
+      "url": "https://censor.net.ua/includes/news_ru.xml",
+      "category": "News",
+      "country": "Ukraine",
+      "language": "en"
+    },
+    {
+      "id": "-424q",
+      "title": "اخبار ایران و جهان",
+      "url": "https://www.tasnimnews.com/fa/rss/feed/0/8/0/%D9%85%D9%87%D9%85%D8%AA%D8%B1%DB%8C%D9%86-%D8%A7%D8%AE%D8%A8%D8%A7%D8%B1-%D8%AA%D8%B3%D9%86%DB%8C%D9%85",
+      "category": "News",
+      "country": "Iran",
+      "language": "en"
+    },
+    {
+      "id": "-1bn3",
+      "title": "ایکسپریس اردو",
+      "url": "https://www.express.pk/feed/",
+      "category": "News",
+      "country": "Pakistan",
+      "language": "en"
+    },
+    {
+      "id": "tabnak",
+      "title": "تابناک | TABNAK",
+      "url": "https://www.tabnak.ir/fa/rss/allnews",
+      "category": "News",
+      "country": "Iran",
+      "language": "en"
+    },
+    {
+      "id": "isna-news-agency",
+      "title": "خبرگزاری ایسنا | صفحه اصلی |  ISNA News Agency",
+      "url": "https://www.isna.ir/rss",
+      "category": "News",
+      "country": "Iran",
+      "language": "en"
+    },
+    {
+      "id": "yjc",
+      "title": "خبرگزاری باشگاه خبرنگاران | آخرین اخبار ایران و جهان | YJC",
+      "url": "https://www.yjc.ir/fa/rss/allnews",
+      "category": "News",
+      "country": "Iran",
+      "language": "en"
+    },
+    {
+      "id": "khabaronline",
+      "title": "خبرگزاری خبرآنلاین - آخرین اخبار ایران و جهان | Khabaronline",
+      "url": "https://www.khabaronline.ir/rss",
+      "category": "News",
+      "country": "Iran",
+      "language": "en"
+    },
+    {
+      "id": "mehr-news-agency",
+      "title": "خبرگزاری مهر | اخبار ایران و جهان | Mehr News Agency",
+      "url": "https://www.mehrnews.com/rss",
+      "category": "News",
+      "country": "Iran",
+      "language": "en"
+    },
+    {
+      "id": "-sep0",
+      "title": "عصر ايران",
+      "url": "https://www.asriran.com/fa/rss/allnews",
+      "category": "News",
+      "country": "Iran",
+      "language": "en"
+    },
+    {
+      "id": "-czyc",
+      "title": "قومی خبریں",
+      "url": "https://jang.com.pk/rss/1/1",
+      "category": "News",
+      "country": "Pakistan",
+      "language": "en"
+    },
+    {
+      "id": "-la89",
+      "title": "देश | दैनिक भास्कर",
+      "url": "https://www.bhaskar.com/rss-feed/1061/",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "",
+      "title": "প্রথম আলো",
+      "url": "https://www.prothomalo.com/feed/",
+      "category": "News",
+      "country": "Bangladesh",
+      "language": "en"
+    },
+    {
+      "id": "-uijb",
+      "title": "ઈન્ડિયા | દિવ્ય ભાસ્કર",
+      "url": "https://www.divyabhaskar.co.in/rss-feed/1037/",
+      "category": "News",
+      "country": "India",
+      "language": "en"
+    },
+    {
+      "id": "-45xn",
+      "title": "ライブドアニュース - 主要トピックス",
+      "url": "https://news.livedoor.com/topics/rss/top.xml",
+      "category": "News",
+      "country": "Japan",
+      "language": "en"
+    },
+    {
+      "id": "-rw7x",
+      "title": "朝日新聞デジタル",
+      "url": "http://rss.asahi.com/rss/asahi/newsheadlines.rdf",
+      "category": "News",
+      "country": "Japan",
+      "language": "en"
+    },
+    {
+      "id": "headline-daily",
+      "title": "頭條日報 Headline Daily - 頭條網",
+      "url": "https://hd.stheadline.com/rss/news/daily/",
+      "category": "News",
+      "country": "Hong Kong SAR China",
+      "language": "en"
+    },
+    {
+      "id": "rss-hket-com",
+      "title": "香港新聞RSS - 香港經濟日報 hket.com",
+      "url": "https://www.hket.com/rss/hongkong",
+      "category": "News",
+      "country": "Hong Kong SAR China",
+      "language": "en"
+    },
+    {
+      "id": "afford-anything",
+      "title": "Afford Anything",
+      "url": "https://affordanything.com/feed/",
+      "category": "Personal finance"
+    },
+    {
+      "id": "blog-student-loan-hero",
+      "title": "Blog – Student Loan Hero",
+      "url": "https://studentloanhero.com/blog/feed",
+      "category": "Personal finance"
+    },
+    {
+      "id": "budgets-are-sexy",
+      "title": "Budgets Are Sexy",
+      "url": "https://feeds2.feedburner.com/budgetsaresexy",
+      "category": "Personal finance"
+    },
+    {
+      "id": "financial-samurai",
+      "title": "Financial Samurai",
+      "url": "https://www.financialsamurai.com/feed/",
+      "category": "Personal finance"
+    },
+    {
+      "id": "frugalwoods",
+      "title": "Frugalwoods",
+      "url": "https://feeds.feedburner.com/Frugalwoods",
+      "category": "Personal finance"
+    },
+    {
+      "id": "get-rich-slowly",
+      "title": "Get Rich Slowly",
+      "url": "https://www.getrichslowly.org/feed/",
+      "category": "Personal finance"
+    },
+    {
+      "id": "good-financial-cents",
+      "title": "Good Financial Cents®",
+      "url": "https://www.goodfinancialcents.com/feed/",
+      "category": "Personal finance"
+    },
+    {
+      "id": "i-will-teach-you-to-be-rich",
+      "title": "I Will Teach You To Be Rich",
+      "url": "https://www.iwillteachyoutoberich.com/feed/",
+      "category": "Personal finance"
+    },
+    {
+      "id": "learn-to-trade-the-market",
+      "title": "Learn To Trade The Market",
+      "url": "https://www.learntotradethemarket.com/feed",
+      "category": "Personal finance"
+    },
+    {
+      "id": "making-sense-of-cents",
+      "title": "Making Sense Of Cents",
+      "url": "https://www.makingsenseofcents.com/feed",
+      "category": "Personal finance"
+    },
+    {
+      "id": "millennial-money",
+      "title": "Millennial Money",
+      "url": "https://millennialmoney.com/feed/",
+      "category": "Personal finance"
+    },
+    {
+      "id": "mintlife-blog",
+      "title": "MintLife Blog",
+      "url": "https://blog.mint.com/feed/",
+      "category": "Personal finance"
+    },
+    {
+      "id": "money-crashers",
+      "title": "Money Crashers",
+      "url": "https://www.moneycrashers.com/feed/",
+      "category": "Personal finance"
+    },
+    {
+      "id": "money-saving-mom",
+      "title": "Money Saving Mom®",
+      "url": "https://moneysavingmom.com/feed/",
+      "category": "Personal finance"
+    },
+    {
+      "id": "money-under-30",
+      "title": "Money Under 30",
+      "url": "https://www.moneyunder30.com/feed",
+      "category": "Personal finance"
+    },
+    {
+      "id": "moneyning",
+      "title": "MoneyNing",
+      "url": "http://feeds.feedburner.com/MoneyNing",
+      "category": "Personal finance"
+    },
+    {
+      "id": "mywifequitherjob-com",
+      "title": "MyWifeQuitHerJob.com",
+      "url": "https://mywifequitherjob.com/feed/",
+      "category": "Personal finance"
+    },
+    {
+      "id": "nerd-s-eye-view-kitces-com",
+      "title": "Nerd's Eye View | Kitces.com",
+      "url": "http://feeds.feedblitz.com/kitcesnerdseyeview&x=1",
+      "category": "Personal finance"
+    },
+    {
+      "id": "nerdwallet",
+      "title": "NerdWallet",
+      "url": "https://www.nerdwallet.com/blog/feed/",
+      "category": "Personal finance"
+    },
+    {
+      "id": "oblivious-investor",
+      "title": "Oblivious Investor",
+      "url": "https://obliviousinvestor.com/feed/",
+      "category": "Personal finance"
+    },
+    {
+      "id": "personal-finance",
+      "title": "Personal Finance",
+      "url": "https://reddit.com/r/personalfinance/.rss",
+      "category": "Personal finance"
+    },
+    {
+      "id": "savingadvice-com-blog",
+      "title": "SavingAdvice.com Blog",
+      "url": "https://www.savingadvice.com/feed/",
+      "category": "Personal finance"
+    },
+    {
+      "id": "side-hustle-nation",
+      "title": "Side Hustle Nation",
+      "url": "https://www.sidehustlenation.com/feed",
+      "category": "Personal finance"
+    },
+    {
+      "id": "the-college-investor",
+      "title": "The College Investor",
+      "url": "https://thecollegeinvestor.com/feed/",
+      "category": "Personal finance"
+    },
+    {
+      "id": "the-dough-roller",
+      "title": "The Dough Roller",
+      "url": "https://www.doughroller.net/feed/",
+      "category": "Personal finance"
+    },
+    {
+      "id": "the-penny-hoarder",
+      "title": "The Penny Hoarder",
+      "url": "https://www.thepennyhoarder.com/feed/",
+      "category": "Personal finance"
+    },
+    {
+      "id": "well-kept-wallet",
+      "title": "Well Kept Wallet",
+      "url": "https://wellkeptwallet.com/feed/",
+      "category": "Personal finance"
+    },
+    {
+      "id": "wise-bread",
+      "title": "Wise Bread",
+      "url": "http://feeds.killeraces.com/wisebread",
+      "category": "Personal finance"
+    },
+    {
+      "id": "500px",
+      "title": "500px",
+      "url": "https://iso.500px.com/feed/",
+      "category": "Photography"
+    },
+    {
+      "id": "500px-ay9r",
+      "title": "500px:",
+      "url": "https://500px.com/editors.rss",
+      "category": "Photography"
+    },
+    {
+      "id": "big-picture",
+      "title": "Big Picture",
+      "url": "https://www.bostonglobe.com/rss/bigpicture",
+      "category": "Photography"
+    },
+    {
+      "id": "canon-rumors-your-best-source-for-canon-rumors-leaks-and-gossip",
+      "title": "Canon Rumors – Your best source for Canon rumors, leaks and gossip",
+      "url": "https://www.canonrumors.com/feed/",
+      "category": "Photography"
+    },
+    {
+      "id": "digital-photography-school",
+      "title": "Digital Photography School",
+      "url": "https://feeds.feedburner.com/DigitalPhotographySchool",
+      "category": "Photography"
+    },
+    {
+      "id": "light-stalking",
+      "title": "Light Stalking",
+      "url": "https://www.lightstalking.com/feed/",
+      "category": "Photography"
+    },
+    {
+      "id": "lightroom-killer-tips",
+      "title": "Lightroom Killer Tips",
+      "url": "https://lightroomkillertips.com/feed/",
+      "category": "Photography"
+    },
+    {
+      "id": "one-big-photo",
+      "title": "One Big Photo",
+      "url": "http://feeds.feedburner.com/OneBigPhoto",
+      "category": "Photography"
+    },
+    {
+      "id": "petapixel",
+      "title": "PetaPixel",
+      "url": "https://petapixel.com/feed/",
+      "category": "Photography"
+    },
+    {
+      "id": "strobist",
+      "title": "Strobist",
+      "url": "http://feeds.feedburner.com/blogspot/WOBq",
+      "category": "Photography"
+    },
+    {
+      "id": "stuck-in-customs",
+      "title": "Stuck in Customs",
+      "url": "https://stuckincustoms.com/feed/",
+      "category": "Photography"
+    },
+    {
+      "id": "the-sartorialist",
+      "title": "The Sartorialist",
+      "url": "https://feeds.feedburner.com/TheSartorialist",
+      "category": "Photography"
+    },
+    {
+      "id": "better-programming-medium",
+      "title": "Better Programming - Medium",
+      "url": "https://medium.com/feed/better-programming",
+      "category": "Programming"
+    },
+    {
+      "id": "code-as-craft",
+      "title": "Code as Craft",
+      "url": "https://codeascraft.com/feed/atom/",
+      "category": "Programming"
+    },
+    {
+      "id": "codenewbie",
+      "title": "CodeNewbie",
+      "url": "http://feeds.codenewbie.org/cnpodcast.xml",
+      "category": "Programming"
+    },
+    {
+      "id": "coding-horror",
+      "title": "Coding Horror",
+      "url": "https://feeds.feedburner.com/codinghorror",
+      "category": "Programming"
+    },
+    {
+      "id": "complete-developer-podcast",
+      "title": "Complete Developer Podcast",
+      "url": "https://completedeveloperpodcast.com/feed/podcast/",
+      "category": "Programming"
+    },
+    {
+      "id": "dan-abramov-s-overreacted-blog-rss-feed",
+      "title": "Dan Abramov's Overreacted Blog RSS Feed",
+      "url": "https://overreacted.io/rss.xml",
+      "category": "Programming"
+    },
+    {
+      "id": "developer-tea",
+      "title": "Developer Tea",
+      "url": "https://feeds.simplecast.com/dLRotFGk",
+      "category": "Programming"
+    },
+    {
+      "id": "english-us",
+      "title": "English (US)",
+      "url": "https://blog.twitter.com/engineering/en_us/blog.rss",
+      "category": "Programming"
+    },
+    {
+      "id": "facebook-engineering",
+      "title": "Facebook Engineering",
+      "url": "https://engineering.fb.com/feed/",
+      "category": "Programming"
+    },
+    {
+      "id": "floss-weekly-audio",
+      "title": "FLOSS Weekly (Audio)",
+      "url": "https://feeds.twit.tv/floss.xml",
+      "category": "Programming"
+    },
+    {
+      "id": "gitlab",
+      "title": "GitLab",
+      "url": "https://about.gitlab.com/atom.xml",
+      "category": "Programming"
+    },
+    {
+      "id": "google-developers-blog",
+      "title": "Google Developers Blog",
+      "url": "http://feeds.feedburner.com/GDBcode",
+      "category": "Programming"
+    },
+    {
+      "id": "google-techtalks",
+      "title": "Google TechTalks",
+      "url": "https://www.youtube.com/feeds/videos.xml?user=GoogleTechTalks",
+      "category": "Programming"
+    },
+    {
+      "id": "hackernoon-com-medium",
+      "title": "HackerNoon.com - Medium",
+      "url": "https://medium.com/feed/hackernoon",
+      "category": "Programming"
+    },
+    {
+      "id": "hanselminutes-with-scott-hanselman",
+      "title": "Hanselminutes with Scott Hanselman",
+      "url": "https://feeds.simplecast.com/gvtxUiIf",
+      "category": "Programming"
+    },
+    {
+      "id": "infoq",
+      "title": "InfoQ",
+      "url": "https://feed.infoq.com",
+      "category": "Programming"
+    },
+    {
+      "id": "instagram-engineering-medium",
+      "title": "Instagram Engineering - Medium",
+      "url": "https://instagram-engineering.com/feed/",
+      "category": "Programming"
+    },
+    {
+      "id": "java-sql-and-jooq",
+      "title": "Java, SQL and jOOQ.",
+      "url": "https://blog.jooq.org/feed",
+      "category": "Programming"
+    },
+    {
+      "id": "jetbrains-blog",
+      "title": "JetBrains Blog",
+      "url": "https://blog.jetbrains.com/feed",
+      "category": "Programming"
+    },
+    {
+      "id": "joel-on-software",
+      "title": "Joel on Software",
+      "url": "https://www.joelonsoftware.com/feed/",
+      "category": "Programming"
+    },
+    {
+      "id": "linkedin-engineering",
+      "title": "LinkedIn Engineering",
+      "url": "https://engineering.linkedin.com/blog.rss.html",
+      "category": "Programming"
+    },
+    {
+      "id": "martin-fowler",
+      "title": "Martin Fowler",
+      "url": "https://martinfowler.com/feed.atom",
+      "category": "Programming"
+    },
+    {
+      "id": "netflix-techblog-medium",
+      "title": "Netflix TechBlog - Medium",
+      "url": "https://netflixtechblog.com/feed",
+      "category": "Programming"
+    },
+    {
+      "id": "overflow-buffer-resources",
+      "title": "Overflow - Buffer Resources",
+      "url": "https://buffer.com/resources/overflow/rss/",
+      "category": "Programming"
+    },
+    {
+      "id": "podcast-software-engineering-daily",
+      "title": "Podcast – Software Engineering Daily",
+      "url": "https://softwareengineeringdaily.com/category/podcast/feed",
+      "category": "Programming"
+    },
+    {
+      "id": "prezi-engineering-medium",
+      "title": "Prezi Engineering - Medium",
+      "url": "https://engineering.prezi.com/feed",
+      "category": "Programming"
+    },
+    {
+      "id": "programming",
+      "title": "programming",
+      "url": "https://www.reddit.com/r/programming/.rss",
+      "category": "Programming"
+    },
+    {
+      "id": "programming-the-crazy-programmer",
+      "title": "Programming – The Crazy Programmer",
+      "url": "https://www.thecrazyprogrammer.com/category/programming/feed",
+      "category": "Programming"
+    },
+    {
+      "id": "programming-throwdown",
+      "title": "Programming Throwdown",
+      "url": "http://feeds.feedburner.com/ProgrammingThrowdown",
+      "category": "Programming"
+    },
+    {
+      "id": "robert-heaton-blog",
+      "title": "Robert Heaton | Blog",
+      "url": "https://robertheaton.com/feed.xml",
+      "category": "Programming"
+    },
+    {
+      "id": "scott-hanselman-s-blog",
+      "title": "Scott Hanselman's Blog",
+      "url": "http://feeds.hanselman.com/ScottHanselman",
+      "category": "Programming"
+    },
+    {
+      "id": "scripting-news",
+      "title": "Scripting News",
+      "url": "http://scripting.com/rss.xml",
+      "category": "Programming"
+    },
+    {
+      "id": "slack-engineering",
+      "title": "Slack Engineering",
+      "url": "https://slack.engineering/feed",
+      "category": "Programming"
+    },
+    {
+      "id": "software-defined-talk",
+      "title": "Software Defined Talk",
+      "url": "https://feeds.fireside.fm/sdt/rss",
+      "category": "Programming"
+    },
+    {
+      "id": "software-engineering-radio-the-podcast-for-professional-software-developers",
+      "title": "Software Engineering Radio - The Podcast for Professional Software Developers",
+      "url": "http://feeds.feedburner.com/se-radio",
+      "category": "Programming"
+    },
+    {
+      "id": "soundcloud-backstage-blog",
+      "title": "SoundCloud Backstage Blog",
+      "url": "https://developers.soundcloud.com/blog/blog.rss",
+      "category": "Programming"
+    },
+    {
+      "id": "spotify-engineering",
+      "title": "Spotify Engineering",
+      "url": "https://labs.spotify.com/feed/",
+      "category": "Programming"
+    },
+    {
+      "id": "stack-abuse",
+      "title": "Stack Abuse",
+      "url": "https://stackabuse.com/rss/",
+      "category": "Programming"
+    },
+    {
+      "id": "stack-overflow-blog",
+      "title": "Stack Overflow Blog",
+      "url": "https://stackoverflow.blog/feed/",
+      "category": "Programming"
+    },
+    {
+      "id": "the-6-figure-developer",
+      "title": "The 6 Figure Developer",
+      "url": "http://6figuredev.com/feed/rss/",
+      "category": "Programming"
+    },
+    {
+      "id": "the-airbnb-tech-blog-medium",
+      "title": "The Airbnb Tech Blog - Medium",
+      "url": "https://medium.com/feed/airbnb-engineering",
+      "category": "Programming"
+    },
+    {
+      "id": "the-cynical-developer",
+      "title": "The Cynical Developer",
+      "url": "https://cynicaldeveloper.com/feed/podcast",
+      "category": "Programming"
+    },
+    {
+      "id": "the-github-blog",
+      "title": "The GitHub Blog",
+      "url": "https://github.blog/feed/",
+      "category": "Programming"
+    },
+    {
+      "id": "the-pit-show-reflections-and-interviews-in-the-tech-world",
+      "title": "The PIT Show: Reflections and Interviews in the Tech World",
+      "url": "https://feeds.transistor.fm/productivity-in-tech-podcast",
+      "category": "Programming"
+    },
+    {
+      "id": "the-rabbit-hole-the-definitive-developer-s-podcast",
+      "title": "The Rabbit Hole: The Definitive Developer's Podcast",
+      "url": "http://therabbithole.libsyn.com/rss",
+      "category": "Programming"
+    },
+    {
+      "id": "the-stack-overflow-podcast",
+      "title": "The Stack Overflow Podcast",
+      "url": "https://feeds.simplecast.com/XA_851k3",
+      "category": "Programming"
+    },
+    {
+      "id": "the-standup",
+      "title": "The Standup",
+      "url": "https://feeds.fireside.fm/standup/rss",
+      "category": "Programming"
+    },
+    {
+      "id": "the-women-in-tech-show-a-technical-podcast",
+      "title": "The Women in Tech Show: A Technical Podcast",
+      "url": "https://thewomenintechshow.com/category/podcast/feed/",
+      "category": "Programming"
+    },
+    {
+      "id": "60-second-science",
+      "title": "60-Second Science",
+      "url": "http://rss.sciam.com/sciam/60secsciencepodcast",
+      "category": "Science"
+    },
+    {
+      "id": "bbc-news-science-environment",
+      "title": "BBC News - Science & Environment",
+      "url": "http://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
+      "category": "Science"
+    },
+    {
+      "id": "discovery",
+      "title": "Discovery",
+      "url": "https://podcasts.files.bbci.co.uk/p002w557.rss",
+      "category": "Science"
+    },
+    {
+      "id": "flowingdata",
+      "title": "FlowingData",
+      "url": "https://flowingdata.com/feed",
+      "category": "Science"
+    },
+    {
+      "id": "gizmodo",
+      "title": "Gizmodo",
+      "url": "https://gizmodo.com/tag/science/rss",
+      "category": "Science"
+    },
+    {
+      "id": "hidden-brain",
+      "title": "Hidden Brain",
+      "url": "https://feeds.npr.org/510308/podcast.xml",
+      "category": "Science"
+    },
+    {
+      "id": "invisibilia",
+      "title": "Invisibilia",
+      "url": "https://feeds.npr.org/510307/podcast.xml",
+      "category": "Science"
+    },
+    {
+      "id": "latest-science-news-sciencedaily",
+      "title": "Latest Science News -- ScienceDaily",
+      "url": "https://www.sciencedaily.com/rss/all.xml",
+      "category": "Science"
+    },
+    {
+      "id": "nature",
+      "title": "Nature",
+      "url": "https://www.nature.com/nature.rss",
+      "category": "Science"
+    },
+    {
+      "id": "phys-org-latest-science-and-technology-news-stories",
+      "title": "Phys.org - latest science and technology news stories",
+      "url": "https://phys.org/rss-feed/",
+      "category": "Science"
+    },
+    {
+      "id": "probably-science",
+      "title": "Probably Science",
+      "url": "https://probablyscience.libsyn.com/rss",
+      "category": "Science"
+    },
+    {
+      "id": "radiolab",
+      "title": "Radiolab",
+      "url": "http://feeds.wnyc.org/radiolab",
+      "category": "Science"
+    },
+    {
+      "id": "reddit-science",
+      "title": "Reddit Science",
+      "url": "https://reddit.com/r/science/.rss",
+      "category": "Science"
+    },
+    {
+      "id": "sawbones-a-marital-tour-of-misguided-medicine",
+      "title": "Sawbones: A Marital Tour of Misguided Medicine",
+      "url": "https://feeds.simplecast.com/y1LF_sn2",
+      "category": "Science"
+    },
+    {
+      "id": "science-latest",
+      "title": "Science Latest",
+      "url": "https://www.wired.com/feed/category/science/latest/rss",
+      "category": "Science"
+    },
+    {
+      "id": "science-vs",
+      "title": "Science Vs",
+      "url": "http://feeds.gimletmedia.com/ScienceVs",
+      "category": "Science"
+    },
+    {
+      "id": "science-based-medicine",
+      "title": "Science-Based Medicine",
+      "url": "https://sciencebasedmedicine.org/feed/",
+      "category": "Science"
+    },
+    {
+      "id": "scientific-american-content-global",
+      "title": "Scientific American Content: Global",
+      "url": "http://rss.sciam.com/ScientificAmerican-Global",
+      "category": "Science"
+    },
+    {
+      "id": "shirtloads-of-science",
+      "title": "Shirtloads of Science",
+      "url": "https://shirtloadsofscience.libsyn.com/rss",
+      "category": "Science"
+    },
+    {
+      "id": "ted-talks-daily-sd-video",
+      "title": "TED Talks Daily (SD video)",
+      "url": "https://pa.tedcdn.com/feeds/talks.rss",
+      "category": "Science"
+    },
+    {
+      "id": "the-infinite-monkey-cage",
+      "title": "The Infinite Monkey Cage",
+      "url": "https://podcasts.files.bbci.co.uk/b00snr0w.rss",
+      "category": "Science"
+    },
+    {
+      "id": "this-week-in-science-the-kickass-science-podcast",
+      "title": "This Week in Science – The Kickass Science Podcast",
+      "url": "http://www.twis.org/feed/",
+      "category": "Science"
+    },
+    {
+      "id": "r-space-news-articles-and-discussion",
+      "title": "/r/space: news, articles and discussion",
+      "url": "https://www.reddit.com/r/space/.rss?format=xml",
+      "category": "Space"
+    },
+    {
+      "id": "nasa-breaking-news",
+      "title": "NASA Breaking News",
+      "url": "https://www.nasa.gov/rss/dyn/breaking_news.rss",
+      "category": "Space"
+    },
+    {
+      "id": "new-scientist-space",
+      "title": "New Scientist - Space",
+      "url": "https://www.newscientist.com/subject/space/feed/",
+      "category": "Space"
+    },
+    {
+      "id": "sky-telescope",
+      "title": "Sky & Telescope",
+      "url": "https://www.skyandtelescope.com/feed/",
+      "category": "Space"
+    },
+    {
+      "id": "space-the-guardian",
+      "title": "Space | The Guardian",
+      "url": "https://www.theguardian.com/science/space/rss",
+      "category": "Space"
+    },
+    {
+      "id": "space-com",
+      "title": "Space.com",
+      "url": "https://www.space.com/feeds/all",
+      "category": "Space"
+    },
+    {
+      "id": "spacex",
+      "title": "SpaceX",
+      "url": "https://www.youtube.com/feeds/videos.xml?user=spacexchannel",
+      "category": "Space"
+    },
+    {
+      "id": "bbc-sport-sport",
+      "title": "BBC Sport - Sport",
+      "url": "http://feeds.bbci.co.uk/sport/rss.xml",
+      "category": "Sports"
+    },
+    {
+      "id": "reddit-sports",
+      "title": "Reddit Sports",
+      "url": "https://www.reddit.com/r/sports.rss",
+      "category": "Sports"
+    },
+    {
+      "id": "sports-news-latest-sports-and-football-news-sky-news",
+      "title": "Sports News - Latest Sports and Football News | Sky News",
+      "url": "http://feeds.skynews.com/feeds/rss/sports.xml",
+      "category": "Sports"
+    },
+    {
+      "id": "sportskeeda",
+      "title": "Sportskeeda",
+      "url": "https://www.sportskeeda.com/feed",
+      "category": "Sports"
+    },
+    {
+      "id": "www-espn-com-top",
+      "title": "www.espn.com - TOP",
+      "url": "https://www.espn.com/espn/rss/news",
+      "category": "Sports"
+    },
+    {
+      "id": "yahoo-sports-news-scores-standings-rumors-fantasy-games",
+      "title": "Yahoo! Sports - News, Scores, Standings, Rumors, Fantasy Games",
+      "url": "https://sports.yahoo.com/rss/",
+      "category": "Sports"
+    },
+    {
+      "id": "avc",
+      "title": "AVC",
+      "url": "https://avc.com/feed/",
+      "category": "Startups"
+    },
+    {
+      "id": "blog-feld-thoughts",
+      "title": "blog – Feld Thoughts",
+      "url": "https://feld.com/archives/tag/blog/feed",
+      "category": "Startups"
+    },
+    {
+      "id": "both-sides-of-the-table-medium",
+      "title": "Both Sides of the Table - Medium",
+      "url": "https://bothsidesofthetable.com/feed",
+      "category": "Startups"
+    },
+    {
+      "id": "entrepreneur",
+      "title": "Entrepreneur",
+      "url": "http://feeds.feedburner.com/entrepreneur/latest",
+      "category": "Startups"
+    },
+    {
+      "id": "feld-thoughts",
+      "title": "Feld Thoughts",
+      "url": "https://feld.com/feed",
+      "category": "Startups"
+    },
+    {
+      "id": "forbes-entrepreneurs",
+      "title": "Forbes - Entrepreneurs",
+      "url": "https://www.forbes.com/entrepreneurs/feed/",
+      "category": "Startups"
+    },
+    {
+      "id": "garyvee",
+      "title": "GaryVee",
+      "url": "https://www.youtube.com/feeds/videos.xml?user=GaryVaynerchuk",
+      "category": "Startups"
+    },
+    {
+      "id": "hacker-news-front-page",
+      "title": "Hacker News: Front Page",
+      "url": "https://hnrss.org/frontpage",
+      "category": "Startups"
+    },
+    {
+      "id": "inc-com",
+      "title": "Inc.com",
+      "url": "https://www.inc.com/rss/",
+      "category": "Startups"
+    },
+    {
+      "id": "inside-intercom",
+      "title": "Inside Intercom",
+      "url": "https://www.intercom.com/blog/feed",
+      "category": "Startups"
+    },
+    {
+      "id": "marie-forleo",
+      "title": "Marie Forleo",
+      "url": "https://www.youtube.com/feeds/videos.xml?user=marieforleo",
+      "category": "Startups"
+    },
+    {
+      "id": "paul-graham-essays",
+      "title": "Paul Graham: Essays",
+      "url": "http://www.aaronsw.com/2002/feeds/pgessays.rss",
+      "category": "Startups"
+    },
+    {
+      "id": "product-hunt-the-best-new-products-every-day",
+      "title": "Product Hunt — The best new products, every day",
+      "url": "https://www.producthunt.com/feed",
+      "category": "Startups"
+    },
+    {
+      "id": "quick-sprout",
+      "title": "Quick Sprout",
+      "url": "https://www.quicksprout.com/rss",
+      "category": "Startups"
+    },
+    {
+      "id": "small-business-trends",
+      "title": "Small Business Trends",
+      "url": "https://feeds2.feedburner.com/SmallBusinessTrends",
+      "category": "Startups"
+    },
+    {
+      "id": "smart-passive-income",
+      "title": "Smart Passive Income",
+      "url": "http://feeds.feedburner.com/smartpassiveincome",
+      "category": "Startups"
+    },
+    {
+      "id": "springwise",
+      "title": "Springwise",
+      "url": "https://www.springwise.com/feed",
+      "category": "Startups"
+    },
+    {
+      "id": "steve-blank",
+      "title": "Steve Blank",
+      "url": "https://steveblank.com/feed/",
+      "category": "Startups"
+    },
+    {
+      "id": "the-startup-junkies-podcast",
+      "title": "The Startup Junkies Podcast",
+      "url": "https://startupjunkie.libsyn.com/rss",
+      "category": "Startups"
+    },
+    {
+      "id": "the-tim-ferriss-show",
+      "title": "The Tim Ferriss Show",
+      "url": "https://rss.art19.com/tim-ferriss-show",
+      "category": "Startups"
+    },
+    {
+      "id": "this-week-in-startups-video",
+      "title": "This Week in Startups - Video",
+      "url": "http://feeds.feedburner.com/twistvid",
+      "category": "Startups"
+    },
+    {
+      "id": "venturebeat",
+      "title": "VentureBeat",
+      "url": "https://feeds.feedburner.com/venturebeat/SZYF",
+      "category": "Startups"
+    },
+    {
+      "id": "accidental-tech-podcast",
+      "title": "Accidental Tech Podcast",
+      "url": "https://atp.fm/rss",
+      "category": "Tech"
+    },
+    {
+      "id": "analog-ue",
+      "title": "Analog(ue)",
+      "url": "https://www.relay.fm/analogue/feed",
+      "category": "Tech"
+    },
+    {
+      "id": "ars-technica",
+      "title": "Ars Technica",
+      "url": "http://feeds.arstechnica.com/arstechnica/index",
+      "category": "Tech"
+    },
+    {
+      "id": "clockwise",
+      "title": "Clockwise",
+      "url": "https://www.relay.fm/clockwise/feed",
+      "category": "Tech"
+    },
+    {
+      "id": "cnet",
+      "title": "CNET",
+      "url": "https://www.youtube.com/feeds/videos.xml?user=CNETTV",
+      "category": "Tech"
+    },
+    {
+      "id": "cnet-news",
+      "title": "CNET News",
+      "url": "https://www.cnet.com/rss/news/",
+      "category": "Tech"
+    },
+    {
+      "id": "gizmodo-d44t",
+      "title": "Gizmodo",
+      "url": "https://gizmodo.com/rss",
+      "category": "Tech"
+    },
+    {
+      "id": "hacker-news",
+      "title": "Hacker News",
+      "url": "https://news.ycombinator.com/rss",
+      "category": "Tech"
+    },
+    {
+      "id": "https-www-engadget-com",
+      "title": "https://www.engadget.com/",
+      "url": "https://www.engadget.com/rss.xml",
+      "category": "Tech"
+    },
+    {
+      "id": "lifehacker",
+      "title": "Lifehacker",
+      "url": "https://lifehacker.com/rss",
+      "category": "Tech"
+    },
+    {
+      "id": "linus-tech-tips",
+      "title": "Linus Tech Tips",
+      "url": "https://www.youtube.com/feeds/videos.xml?user=LinusTechTips",
+      "category": "Tech"
+    },
+    {
+      "id": "marques-brownlee",
+      "title": "Marques Brownlee",
+      "url": "https://www.youtube.com/feeds/videos.xml?user=marquesbrownlee",
+      "category": "Tech"
+    },
+    {
+      "id": "mashable",
+      "title": "Mashable",
+      "url": "http://feeds.mashable.com/Mashable",
+      "category": "Tech"
+    },
+    {
+      "id": "readwrite",
+      "title": "ReadWrite",
+      "url": "https://readwrite.com/feed/",
+      "category": "Tech"
+    },
+    {
+      "id": "reply-all",
+      "title": "Reply All",
+      "url": "https://feeds.megaphone.fm/replyall",
+      "category": "Tech"
+    },
+    {
+      "id": "rocket",
+      "title": "Rocket",
+      "url": "https://www.relay.fm/rocket/feed",
+      "category": "Tech"
+    },
+    {
+      "id": "slashdot",
+      "title": "Slashdot",
+      "url": "http://rss.slashdot.org/Slashdot/slashdotMain",
+      "category": "Tech"
+    },
+    {
+      "id": "stratechery-by-ben-thompson",
+      "title": "Stratechery by Ben Thompson",
+      "url": "http://stratechery.com/feed/",
+      "category": "Tech"
+    },
+    {
+      "id": "techcrunch",
+      "title": "TechCrunch",
+      "url": "http://feeds.feedburner.com/TechCrunch",
+      "category": "Tech"
+    },
+    {
+      "id": "the-keyword",
+      "title": "The Keyword",
+      "url": "https://www.blog.google/rss/",
+      "category": "Tech"
+    },
+    {
+      "id": "the-next-web",
+      "title": "The Next Web",
+      "url": "https://thenextweb.com/feed/",
+      "category": "Tech"
+    },
+    {
+      "id": "the-verge",
+      "title": "The Verge",
+      "url": "https://www.youtube.com/feeds/videos.xml?user=TheVerge",
+      "category": "Tech"
+    },
+    {
+      "id": "the-verge-all-posts",
+      "title": "The Verge -  All Posts",
+      "url": "https://www.theverge.com/rss/index.xml",
+      "category": "Tech"
+    },
+    {
+      "id": "the-vergecast",
+      "title": "The Vergecast",
+      "url": "https://feeds.megaphone.fm/vergecast",
+      "category": "Tech"
+    },
+    {
+      "id": "this-week-in-tech-audio",
+      "title": "This Week in Tech (Audio)",
+      "url": "https://feeds.twit.tv/twit.xml",
+      "category": "Tech"
+    },
+    {
+      "id": "unbox-therapy",
+      "title": "Unbox Therapy",
+      "url": "https://www.youtube.com/feeds/videos.xml?user=unboxtherapy",
+      "category": "Tech"
+    },
+    {
+      "id": "television-news-and-discussion",
+      "title": "Television News and Discussion",
+      "url": "https://reddit.com/r/television/.rss",
+      "category": "Television"
+    },
+    {
+      "id": "the-a-v-club-qpbm",
+      "title": "The A.V. Club",
+      "url": "https://tv.avclub.com/rss",
+      "category": "Television"
+    },
+    {
+      "id": "the-tv-addict",
+      "title": "the TV addict",
+      "url": "http://feeds.feedburner.com/thetvaddict/AXob",
+      "category": "Television"
+    },
+    {
+      "id": "tv",
+      "title": "TV",
+      "url": "https://www.bleedingcool.com/tv/feed/",
+      "category": "Television"
+    },
+    {
+      "id": "tv-fanatic",
+      "title": "TV Fanatic",
+      "url": "https://www.tvfanatic.com/rss.xml",
+      "category": "Television"
+    },
+    {
+      "id": "tvline",
+      "title": "TVLine",
+      "url": "https://tvline.com/feed/",
+      "category": "Television"
+    },
+    {
+      "id": "bbc-sport-tennis",
+      "title": "BBC Sport - Tennis",
+      "url": "http://feeds.bbci.co.uk/sport/tennis/rss.xml",
+      "category": "Tennis"
+    },
+    {
+      "id": "essential-tennis-podcast-instruction-lessons-tips",
+      "title": "Essential Tennis Podcast - Instruction, Lessons, Tips",
+      "url": "https://feed.podbean.com/essentialtennis/feed.xml",
+      "category": "Tennis"
+    },
+    {
+      "id": "grand-slam-fantasy-tennis",
+      "title": "Grand Slam Fantasy Tennis",
+      "url": "http://www.grandslamfantasytennis.com/feed/?x=1",
+      "category": "Tennis"
+    },
+    {
+      "id": "perfect-tennis",
+      "title": "peRFect Tennis",
+      "url": "https://www.perfect-tennis.com/feed/",
+      "category": "Tennis"
+    },
+    {
+      "id": "tennis-atp-world-tour",
+      "title": "Tennis - ATP World Tour",
+      "url": "https://www.atptour.com/en/media/rss-feed/xml-feed",
+      "category": "Tennis"
+    },
+    {
+      "id": "tennis-news-discussion",
+      "title": "Tennis News & Discussion",
+      "url": "https://www.reddit.com/r/tennis/.rss",
+      "category": "Tennis"
+    },
+    {
+      "id": "www-espn-com-tennis",
+      "title": "www.espn.com - TENNIS",
+      "url": "https://www.espn.com/espn/rss/tennis/news",
+      "category": "Tennis"
+    },
+    {
+      "id": "atlas-obscura-latest-articles-and-places",
+      "title": "Atlas Obscura - Latest Articles and Places",
+      "url": "https://www.atlasobscura.com/feeds/latest",
+      "category": "Travel"
+    },
+    {
+      "id": "live-life-travel",
+      "title": "Live Life Travel",
+      "url": "https://www.livelifetravel.world/feed/",
+      "category": "Travel"
+    },
+    {
+      "id": "lonely-planet-travel-news",
+      "title": "Lonely Planet Travel News",
+      "url": "https://www.lonelyplanet.com/news/feed/atom/",
+      "category": "Travel"
+    },
+    {
+      "id": "nomadic-matt-s-travel-site",
+      "title": "Nomadic Matt's Travel Site",
+      "url": "https://www.nomadicmatt.com/travel-blog/feed/",
+      "category": "Travel"
+    },
+    {
+      "id": "travel-the-guardian",
+      "title": "Travel | The Guardian",
+      "url": "https://www.theguardian.com/uk/travel/rss",
+      "category": "Travel"
+    },
+    {
+      "id": "articles-on-smashing-magazine-for-web-designers-and-developers",
+      "title": "Articles on Smashing Magazine — For Web Designers And Developers",
+      "url": "https://www.smashingmagazine.com/feed",
+      "category": "UI - UX"
+    },
+    {
+      "id": "boxes-and-arrows",
+      "title": "Boxes and Arrows",
+      "url": "http://boxesandarrows.com/rss/",
+      "category": "UI - UX"
+    },
+    {
+      "id": "designer-news-feed",
+      "title": "Designer News Feed",
+      "url": "https://www.designernews.co/?format=rss",
+      "category": "UI - UX"
+    },
+    {
+      "id": "inside-design",
+      "title": "Inside Design",
+      "url": "https://www.invisionapp.com/inside-design/feed",
+      "category": "UI - UX"
+    },
+    {
+      "id": "just-creative",
+      "title": "JUST™ Creative",
+      "url": "https://feeds.feedburner.com/JustCreativeDesignBlog",
+      "category": "UI - UX"
+    },
+    {
+      "id": "nn-g-latest-articles-and-announcements",
+      "title": "NN/g latest articles and announcements",
+      "url": "https://www.nngroup.com/feed/rss/",
+      "category": "UI - UX"
+    },
+    {
+      "id": "usability-geek",
+      "title": "Usability Geek",
+      "url": "https://usabilitygeek.com/feed/",
+      "category": "UI - UX"
+    },
+    {
+      "id": "user-experience",
+      "title": "User Experience",
+      "url": "https://www.reddit.com/r/userexperience/.rss",
+      "category": "UI - UX"
+    },
+    {
+      "id": "ux-blog-ux-studio",
+      "title": "UX Blog – UX Studio",
+      "url": "https://uxstudioteam.com/ux-blog/feed/",
+      "category": "UI - UX"
+    },
+    {
+      "id": "ux-collective-medium",
+      "title": "UX Collective - Medium",
+      "url": "https://uxdesign.cc/feed",
+      "category": "UI - UX"
+    },
+    {
+      "id": "ux-movement",
+      "title": "UX Movement",
+      "url": "https://uxmovement.com/feed/",
+      "category": "UI - UX"
+    },
+    {
+      "id": "a-list-apart-the-full-feed",
+      "title": "A List Apart: The Full Feed",
+      "url": "https://alistapart.com/main/feed/",
+      "category": "Web Development"
+    },
+    {
+      "id": "code-wall",
+      "title": "Code Wall",
+      "url": "https://www.codewall.co.uk/feed/",
+      "category": "Web Development"
+    },
+    {
+      "id": "css-tricks",
+      "title": "CSS-Tricks",
+      "url": "https://css-tricks.com/feed/",
+      "category": "Web Development"
+    },
+    {
+      "id": "david-walsh-blog",
+      "title": "David Walsh Blog",
+      "url": "https://davidwalsh.name/feed",
+      "category": "Web Development"
+    },
+    {
+      "id": "mozilla-hacks-the-web-developer-blog",
+      "title": "Mozilla Hacks – the Web developer blog",
+      "url": "https://hacks.mozilla.org/feed/",
+      "category": "Web Development"
+    },
+    {
+      "id": "sink-in-tech-and-travel",
+      "title": "Sink In - Tech and Travel",
+      "url": "https://gosink.in/rss/",
+      "category": "Web Development"
+    },
+    {
+      "id": "updates",
+      "title": "Updates",
+      "url": "https://developers.google.com/web/updates/rss.xml",
+      "category": "Web Development"
+    }
+  ]
+}

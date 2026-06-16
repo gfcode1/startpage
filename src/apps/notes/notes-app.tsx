@@ -1,8 +1,10 @@
+import 'prismjs'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import {
   Box, Text, Group, ActionIcon, TextInput, Paper, Stack, Tooltip, Kbd, ScrollArea, Center, Button, Divider,
 } from '@mantine/core'
 import { Icon } from '@iconify/react'
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { useHotkeys } from '@mantine/hooks'
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, useDroppable, type DragEndEvent } from '@dnd-kit/core'
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
@@ -84,6 +86,7 @@ function FolderSection({ folderId, folderName, notes, activeNote, onSelect, onDe
   const { setNodeRef, isOver } = useDroppable({ id: folderId ?? '__root__' })
   const [editing, setEditing] = useState(false)
   const [draftName, setDraftName] = useState(folderName)
+  const [parent] = useAutoAnimate()
 
   const handleStartEdit = useCallback(() => {
     if (folderId !== null) {
@@ -136,7 +139,7 @@ function FolderSection({ folderId, folderName, notes, activeNote, onSelect, onDe
         </Text>
       )}
       <SortableContext items={notes.map((n) => n.id)} strategy={verticalListSortingStrategy}>
-        <Stack gap={2} px="xs" pb="xs">
+        <Stack gap={2} px="xs" pb="xs" ref={parent}>
           {notes.map((note) => (
             <NoteItem
               key={note.id}

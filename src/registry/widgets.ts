@@ -77,9 +77,9 @@ export const widgets: WidgetDefinition[] = [
     size: 'small', align: 'center', component: lazy(() => import('@/widgets/now-playing-widget/now-playing-widget')),
   },
   {
-    id: 'password', name: 'Password', description: 'Password generator',
-    icon: 'lucide:lock', category: 'standard', defaultActive: false,
-    size: 'small', component: lazy(() => import('@/widgets/password-widget/password-widget')),
+    id: 'password-vault', name: 'Passwords', description: 'Recent passwords',
+    icon: 'lucide:key-round', category: 'app', defaultActive: false,
+    size: 'medium', component: lazy(() => import('@/apps/password-vault/widgets/password-vault-widget')),
   },
   {
     id: 'calculator', name: 'Calculator', description: 'Quick calculator',
@@ -95,5 +95,20 @@ export const widgets: WidgetDefinition[] = [
     id: 'kanban', name: 'Kanban', description: 'Board summary',
     icon: 'lucide:columns-3', category: 'app', defaultActive: false,
     size: 'medium', component: lazy(() => import('@/apps/kanban/widgets/kanban-widget')),
+  },
+  {
+    id: 'news', name: 'News', description: 'Latest headlines',
+    icon: 'lucide:rss', category: 'app', defaultActive: false,
+    size: 'medium', component: lazy(() => import('@/apps/news/widgets/news-widget')),
+  },
+  {
+    id: 'wikipedia', name: 'Wikipedia', description: 'Article browser widget',
+    icon: 'lucide:book-open', category: 'app', defaultActive: false,
+    size: 'small', align: 'center', component: lazy(() => import('@/apps/wikipedia/widgets/wikipedia-widget')),
+  },
+  {
+    id: 'bookmarks', name: 'Bookmarks', description: 'Recent bookmarks',
+    icon: 'lucide:bookmark', category: 'app', defaultActive: false,
+    size: 'medium', component: lazy(() => import('@/apps/bookmarks/widgets/bookmarks-widget')),
   },
 ]

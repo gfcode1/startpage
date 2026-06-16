@@ -1,16 +1,34 @@
+import { useState, useEffect } from 'react'
 import { Tooltip, ActionIcon, Text, Avatar, Menu } from '@mantine/core'
 import { Icon } from '@iconify/react'
-import { useActiveProfile, useProfileStore, useProfiles, useIsUnlocked } from '@/stores/profile-store'
+import { useActiveProfile, useProfileStore, useProfiles, useIsUnlocked, useCloudLinked, useLastSyncAt, useIsSyncing } from '@/stores/profile-store'
 
 export function ProfileHeader() {
   const activeProfile = useActiveProfile()
   const isUnlocked = useIsUnlocked()
   const { lockProfile } = useProfileStore()
   const profiles = useProfiles()
+  const cloudLinked = useCloudLinked()
+  const lastSyncAt = useLastSyncAt()
+  const isSyncing = useIsSyncing()
+  const [now, setNow] = useState(0)
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 30000)
+    return () => clearInterval(id)
+  }, [])
 
   if (!isUnlocked || !activeProfile) return null
 
   const initial = activeProfile.name.charAt(0).toUpperCase()
+
+  function formatLastSync(timestamp: number | null): string {
+    if (!timestamp) return 'Never'
+    const diff = now - timestamp
+    if (diff < 60000) return 'Just now'
+    if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`
+    return `${Math.floor(diff / 3600000)}h ago`
+  }
 
   return (
     <Menu shadow="md" width={200}>
@@ -33,6 +51,22 @@ export function ProfileHeader() {
         <Menu.Item leftSection={<Icon icon="lucide:user" width={16} />}>
           <Text size="sm">{activeProfile.name}</Text>
         </Menu.Item>
+
+        {cloudLinked && (
+          <>
+            <Menu.Item
+              leftSection={
+                <Icon
+                  icon={isSyncing ? 'lucide:loader' : 'lucide:cloud'}
+                  width={16}
+                  className={isSyncing ? 'animate-spin' : ''}
+                />
+              }
+            >
+              <Text size="xs" c="dimmed">Sync: {formatLastSync(lastSyncAt)}</Text>
+            </Menu.Item>
+          </>
+        )}
 
         {profiles.length > 1 && (
           <>

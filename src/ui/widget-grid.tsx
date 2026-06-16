@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { SimpleGrid, Paper, Text, Group, ActionIcon, Box } from '@mantine/core'
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 
 import { Icon } from '@iconify/react'
 import {
@@ -88,6 +89,7 @@ export function WidgetGrid() {
   const activeWidgets = useWidgetActiveWidgets()
   const reorderWidgets = useWidgetReorderWidgets()
   const [pickerOpen, setPickerOpen] = useState(false)
+  const [parent] = useAutoAnimate()
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -115,7 +117,7 @@ export function WidgetGrid() {
   const standardWidgets = activeWidgetDefs.filter((w) => w.category !== 'system')
 
   return (
-    <div>
+    <div ref={parent}>
       {systemWidgets.map((w) => {
         const W = w.component
         return (

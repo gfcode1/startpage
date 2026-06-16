@@ -1,4 +1,5 @@
 import { Stack, Group, Text, Paper } from '@mantine/core'
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { Icon } from '@iconify/react'
 import { useCalendarStore, getFilteredEvents, getEventsForDate } from '../store'
 import { getDaysInMonth, formatDate, getCategoryColor } from '../utils'
@@ -20,6 +21,8 @@ export function AgendaView({ onEventClick }: AgendaViewProps) {
   const filtered = getFilteredEvents(events, searchQuery, categoryFilter)
   const todayStr = new Date().toISOString().slice(0, 10)
 
+  const [parent] = useAutoAnimate()
+
   const days = Array.from({ length: daysInMonth }, (_, i) => {
     const dateStr = formatDate(year, month, i + 1)
     return { dateStr, day: i + 1, events: getEventsForDate(filtered, dateStr) }
@@ -35,7 +38,7 @@ export function AgendaView({ onEventClick }: AgendaViewProps) {
   }
 
   return (
-    <Stack gap="md">
+    <Stack gap="md" ref={parent}>
       {days.map(({ dateStr, day, events: dayEvents }) => {
         const isToday = dateStr === todayStr
         return (
