@@ -51,6 +51,7 @@ export function ProfileGate() {
   const [cloudPasswordInput, setCloudPasswordInput] = useState('')
   const [cloudError, setCloudError] = useState<string | null>(null)
   const [selectedCloudId, setSelectedCloudId] = useState<string | null>(null)
+  const [cloudLoginDone, setCloudLoginDone] = useState(false)
 
   if (isUnlocked) return null
 
@@ -96,14 +97,10 @@ export function ProfileGate() {
       return
     }
     setLoading(true)
-    try {
-      await cloudLogin(cloudEmailInput, cloudPasswordInput)
-      setCloudPasswordInput('')
-    } catch {
-      setCloudError('Failed to connect. Check your credentials.')
-    } finally {
-      setLoading(false)
-    }
+    await cloudLogin(cloudEmailInput, cloudPasswordInput)
+    setCloudPasswordInput('')
+    setCloudLoginDone(true)
+    setLoading(false)
   }
 
   async function handleCloudAdopt() {
@@ -275,12 +272,19 @@ export function ProfileGate() {
                 size="sm"
                 onClick={() => {
                   setMode('select')
+                  setCloudLoginDone(false)
                   clearError()
                 }}
               >
                 Back
               </Button>
             </Stack>
+          )}
+
+          {mode === 'cloud-login' && cloudLoginDone && cloudProfiles.length === 0 && (
+            <Text c="dimmed" size="sm" ta="center" mt="sm">
+              No cloud profiles found. Create a local profile first and connect it via Settings → Cloud Sync.
+            </Text>
           )}
 
           {mode === 'cloud-login' && cloudProfiles.length > 0 && (

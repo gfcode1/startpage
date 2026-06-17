@@ -4,7 +4,7 @@ import { Icon } from '@iconify/react'
 import { APP_CONFIG } from '@/config/app'
 import { useWidgetResetDefaults } from '@/stores/widget-store'
 import { downloadBackup, uploadBackup } from '@/lib/persistence'
-import { useProfileStore, useCloudLinked, useCloudEmail, useLastSyncAt, useIsSyncing, useSyncError } from '@/stores/profile-store'
+import { useProfileStore, useCloudLinked, useCloudEmail, useLastSyncAt, useIsSyncing, useSyncError, useProfileError } from '@/stores/profile-store'
 import { SyncService } from '@/lib/sync/sync-service'
 
 interface SettingsModalProps {
@@ -22,7 +22,8 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
   const lastSyncAt = useLastSyncAt()
   const isSyncing = useIsSyncing()
   const syncError = useSyncError()
-  const { linkToCloud, unlinkFromCloud, updateSyncStatus } = useProfileStore()
+  const error = useProfileError()
+  const { linkToCloud, unlinkFromCloud, updateSyncStatus, clearError } = useProfileStore()
 
   const [cloudEmailInput, setCloudEmailInput] = useState(cloudEmail ?? '')
   const [cloudPassword, setCloudPassword] = useState('')
@@ -36,6 +37,10 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
     const id = setInterval(() => setNow(Date.now()), 30000)
     return () => clearInterval(id)
   }, [])
+
+  useEffect(() => {
+    if (opened) clearError()
+  }, [opened, clearError])
 
   async function handleCloudLogin() {
     setCloudError(null)
@@ -208,15 +213,15 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
               />
 
               <PasswordInput
-                label="Profile password"
-                placeholder="Your profile password"
+                label="Cloud account password"
+                placeholder="Your Supabase password"
                 value={cloudPassword}
                 onChange={(e) => setCloudPassword(e.currentTarget.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleCloudLogin()}
               />
 
-              {cloudError && (
-                <Alert color="red" variant="light" py="xs">{cloudError}</Alert>
+              {(cloudError || error) && (
+                <Alert color="red" variant="light" py="xs">{cloudError || error}</Alert>
               )}
 
               {cloudSuccess && (

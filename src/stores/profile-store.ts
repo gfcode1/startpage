@@ -13,6 +13,7 @@ import { usePlayerStore } from './player-store'
 import { useWidgetStore } from './widget-store'
 import type { WidgetState } from './widget-store'
 import { SyncService } from '@/lib/sync/sync-service'
+import { rehydrateAllStores } from '@/lib/sync/rehydrate'
 
 export interface CloudProfile {
   id: string
@@ -406,7 +407,7 @@ export const useProfileStore = create<ProfileStore>()((set, get) => ({
           salt: p.salt,
           verification: p.verification,
         }))
-        await svc.pushProfileMeta(metaProfiles).catch(() => {})
+        await svc.pushProfileMeta(metaProfiles)
 
         set({ cloudLinked: true, cloudEmail: email, error: null })
       }
@@ -528,6 +529,15 @@ export const useProfileStore = create<ProfileStore>()((set, get) => ({
         cloudProfiles: [],
         cloudAuthEmail: null,
       })
+
+      // Immediately sync to download cloud data
+      try {
+        const svc = SyncService.getInstance()
+        await svc.pull()
+        rehydrateAllStores()
+      } catch {
+        // sync failure is non-blocking; retry happens via interval
+      }
     } catch {
       set({ error: 'Wrong password' })
     }
