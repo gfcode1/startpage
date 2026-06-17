@@ -177,3 +177,21 @@ export const useVaultSetSelectedEntryId = () => useVaultStore((s) => s.setSelect
 export const useVaultAddCategory = () => useVaultStore((s) => s.addCategory)
 export const useVaultRenameCategory = () => useVaultStore((s) => s.renameCategory)
 export const useVaultDeleteCategory = () => useVaultStore((s) => s.deleteCategory)
+
+// Rehydration
+import { registerRehydrator } from '@/lib/sync/rehydrate'
+registerRehydrator((storage) => {
+  const data = storage.get<{ entries: unknown[]; categories: unknown[] }>('vault:data')
+  if (data) {
+    useVaultStore.setState({
+      entries: data.entries as never,
+      categories: data.categories as never,
+      searchQuery: '',
+      filterCategoryId: null,
+      sortField: 'updatedAt' as never,
+      sortOrder: 'desc' as never,
+      viewMode: 'list' as never,
+      selectedEntryId: null,
+    })
+  }
+})

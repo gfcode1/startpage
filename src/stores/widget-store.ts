@@ -80,3 +80,10 @@ export const useWidgetRemoveWidget = () => useWidgetStore((s) => s.removeWidget)
 export const useWidgetReorderWidgets = () => useWidgetStore((s) => s.reorderWidgets)
 export const useWidgetSetWidgetSize = () => useWidgetStore((s) => s.setWidgetSize)
 export const useWidgetResetDefaults = () => useWidgetStore((s) => s.resetDefaults)
+
+// Rehydration
+import { registerRehydrator } from '@/lib/sync/rehydrate'
+registerRehydrator((storage) => {
+  const config = storage.get<WidgetState>('widget:config')
+  if (config) useWidgetStore.setState(config)
+})

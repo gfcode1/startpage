@@ -7,6 +7,7 @@ import { PlayerBar } from '@/ui/player-bar'
 import { InstallPrompt } from '@/ui/install-prompt'
 import { SettingsModal } from '@/ui/settings-modal'
 import { ProfileHeader } from '@/ui/profile-header'
+import { SyncStatusBadge } from '@/ui/sync-status-badge'
 import { usePlayerIsPlaying } from '@/stores/player-store'
 
 interface AppShellWrapperProps {
@@ -48,6 +49,7 @@ export function AppShellWrapper({ children }: AppShellWrapperProps) {
           </Group>
 
           <Group gap="xs">
+            <SyncStatusBadge />
             <ProfileHeader />
             <Tooltip label={colorScheme === 'dark' ? 'Light mode' : 'Dark mode'}>
               <ActionIcon variant="subtle" onClick={toggleColorScheme} aria-label="Toggle theme">

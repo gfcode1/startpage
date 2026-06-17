@@ -212,3 +212,21 @@ export const useSetSelectedCollectionId = () => useBookmarkStoreSelector((s) => 
 export const useSetSort = () => useBookmarkStoreSelector((s) => s.setSort)
 export const useSetViewMode = () => useBookmarkStoreSelector((s) => s.setViewMode)
 export const useSetFilter = () => useBookmarkStoreSelector((s) => s.setFilter)
+
+// Rehydration
+import { registerRehydrator } from '@/lib/sync/rehydrate'
+registerRehydrator((storage) => {
+  const data = storage.get<{ collections: unknown[]; bookmarks: unknown[] }>('bookmarks:data')
+  if (data) {
+    useBookmarkStore.setState({
+      collections: data.collections as never,
+      bookmarks: data.bookmarks as never,
+      searchQuery: '',
+      selectedCollectionId: null,
+      sortField: 'updatedAt' as never,
+      sortOrder: 'desc' as never,
+      viewMode: 'grid' as never,
+      filter: 'all' as never,
+    })
+  }
+})

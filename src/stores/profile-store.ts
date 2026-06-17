@@ -45,6 +45,7 @@ interface ProfileState {
   cloudProfiles: CloudProfile[]
   cloudAuthEmail: string | null
   cloudAuthLoading: boolean
+  showCloudOnboarding: boolean
 }
 
 interface ProfileActions {
@@ -60,6 +61,7 @@ interface ProfileActions {
   cloudLogin: (email: string, password: string) => Promise<void>
   cloudLogout: () => void
   adoptCloudProfile: (cloudProfile: CloudProfile, password: string) => Promise<void>
+  dismissCloudOnboarding: () => void
 }
 
 type ProfileStore = ProfileState & ProfileActions
@@ -132,6 +134,7 @@ export const useProfileStore = create<ProfileStore>()((set, get) => ({
   cloudProfiles: [],
   cloudAuthEmail: null,
   cloudAuthLoading: false,
+  showCloudOnboarding: false,
 
   loadProfiles: () => {
     const profiles = loadProfilesFromStorage()
@@ -178,6 +181,7 @@ export const useProfileStore = create<ProfileStore>()((set, get) => ({
         lastSyncAt: null,
         isSyncing: false,
         syncError: null,
+        showCloudOnboarding: true,
       })
     } catch {
       set({ error: 'Failed to create profile' })
@@ -533,6 +537,8 @@ export const useProfileStore = create<ProfileStore>()((set, get) => ({
       // Immediately sync to download cloud data
       try {
         const svc = SyncService.getInstance()
+        const { createAutoBackup } = await import('@/lib/persistence')
+        createAutoBackup()
         await svc.pull()
         rehydrateAllStores()
       } catch {
@@ -544,6 +550,8 @@ export const useProfileStore = create<ProfileStore>()((set, get) => ({
   },
 
   clearError: () => set({ error: null }),
+
+  dismissCloudOnboarding: () => set({ showCloudOnboarding: false }),
 }))
 
 // Selectors

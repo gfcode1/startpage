@@ -153,3 +153,16 @@ export const useKanbanDeleteCard = () => useKanbanStore((s) => s.deleteCard)
 export const useKanbanMoveCard = () => useKanbanStore((s) => s.moveCard)
 export const useKanbanSetSearchQuery = () => useKanbanStore((s) => s.setSearchQuery)
 export const useKanbanSetFilter = () => useKanbanStore((s) => s.setFilter)
+
+// Rehydration
+import { registerRehydrator } from '@/lib/sync/rehydrate'
+registerRehydrator((storage) => {
+  const data = storage.get<{ columns: unknown[] }>('kanban:data')
+  if (data) {
+    useKanbanStore.setState({
+      columns: data.columns as never,
+      searchQuery: '',
+      filter: 'all' as never,
+    })
+  }
+})

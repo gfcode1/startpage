@@ -53,3 +53,28 @@ export function uploadBackup(file: File): Promise<boolean> {
     reader.readAsText(file)
   })
 }
+
+// ── Auto-backup (snapshot before destructive operations) ──────────
+
+const AUTO_BACKUP_KEY = '_auto_backup'
+
+export function createAutoBackup(): void {
+  const backup = exportBackup()
+  getStorage().set(AUTO_BACKUP_KEY, backup)
+}
+
+export function restoreAutoBackup(): boolean {
+  const backup = getStorage().get<BackupData>(AUTO_BACKUP_KEY)
+  if (!backup?.data) return false
+  getStorage().import(backup.data)
+  rehydrateAllStores()
+  return true
+}
+
+export function hasAutoBackup(): boolean {
+  return getStorage().get<BackupData>(AUTO_BACKUP_KEY) !== null
+}
+
+export function clearAutoBackup(): void {
+  getStorage().remove(AUTO_BACKUP_KEY)
+}

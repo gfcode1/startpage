@@ -9,9 +9,12 @@ import { AppShellWrapper } from './layout/app-shell'
 import { Launcher } from './pages/launcher'
 import { NotFound } from './pages/not-found'
 import { ProfileGate } from './ui/profile-gate'
+import { CloudOnboardingDialog } from './ui/cloud-onboarding-dialog'
 import { apps } from './registry/apps'
 import { useProfileStore, useIsReady, useIsUnlocked, useCloudLinked } from './stores/profile-store'
 import { SyncService } from './lib/sync/sync-service'
+import { SyncQueue } from './lib/sync/sync-queue'
+import { showSyncNotification } from './lib/sync/notify'
 import { CLOUD_CONFIG } from './config/cloud'
 
 function AppInner() {
@@ -31,10 +34,21 @@ function AppInner() {
     const svc = SyncService.getInstance()
     const doSync = async () => {
       try {
+        const hadQueue = SyncQueue.hasPending()
         await svc.syncNow()
         updateSyncStatus(svc.lastSyncAt, svc.isSyncing, svc.lastError)
+
+        if (svc.lastSyncAt && !svc.lastError) {
+          if (hadQueue) {
+            showSyncNotification('success', 'Sync complete', 'Offline changes synced')
+          }
+        }
       } catch {
-        updateSyncStatus(null, false, svc.lastError)
+        const err = svc.lastError
+        updateSyncStatus(null, false, err)
+        if (err) {
+          showSyncNotification('error', 'Sync failed', err)
+        }
       }
     }
     doSync()
@@ -76,6 +90,7 @@ function AppInner() {
         searchProps={{ placeholder: 'Search apps...' }}
         nothingFound="No results"
       />
+      <CloudOnboardingDialog />
       <AppShellWrapper>
         <Suspense fallback={<Center h="60vh"><Loader /></Center>}>
           <Routes>

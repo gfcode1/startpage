@@ -255,3 +255,19 @@ export const useTodoCreateList = () => useTodoStore((s) => s.createList)
 export const useTodoRenameList = () => useTodoStore((s) => s.renameList)
 export const useTodoDeleteList = () => useTodoStore((s) => s.deleteList)
 export const useTodoSetActiveList = () => useTodoStore((s) => s.setActiveList)
+
+// Rehydration
+import { registerRehydrator } from '@/lib/sync/rehydrate'
+registerRehydrator((storage) => {
+  const data = storage.get<{ lists: unknown[]; tasks: unknown[]; activeListId: string }>('todo:data')
+  if (data) {
+    useTodoStore.setState({
+      lists: data.lists as never,
+      tasks: data.tasks as never,
+      activeListId: data.activeListId,
+      selectedIds: [],
+      searchQuery: '',
+      filter: 'all' as never,
+    })
+  }
+})

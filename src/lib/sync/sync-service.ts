@@ -1,8 +1,10 @@
-import { createClient, type SupabaseClient } from '@supabase/supabase-js'
+import { createClient, type SupabaseClient, type RealtimeChannel } from '@supabase/supabase-js'
 import { getStorage, getEncryptedProfileId } from '@/lib/storage/engine'
 import { CLOUD_CONFIG } from '@/config/cloud'
 import { deriveKey, encrypt, decrypt } from '@/lib/storage/adapters/encrypted'
 import { rehydrateAllStores } from './rehydrate'
+import { SyncQueue, hashValue, type DataChange } from './sync-queue'
+import { createAutoBackup } from '@/lib/persistence'
 
 const CLOUD_SALT = new Uint8Array(32).fill(0xCF)
 
@@ -14,6 +16,14 @@ export interface SyncStatus {
   lastError: string | null
 }
 
+const VERSIONS_KEY = '_sync:versions'
+
+interface SyncEntryVersion {
+  checksum: string
+  timestamp: number
+  deviceId: string
+}
+
 export class SyncService {
   private static instance: SyncService | null = null
 
@@ -23,6 +33,7 @@ export class SyncService {
   private _email: string | null = null
   private _lastSyncAt: number | null = null
   private _isSyncing = false
+  private _channel: RealtimeChannel | null = null
 
   static getInstance(): SyncService {
     if (!SyncService.instance) {
@@ -82,6 +93,7 @@ export class SyncService {
 
   async logout(): Promise<void> {
     this.stop()
+    this.unsubscribeRealtime()
     await this.client?.auth.signOut()
     this.client = null
     this.cloudKey = null
@@ -214,6 +226,211 @@ export class SyncService {
     }))
   }
 
+  // ── Version tracking ─────────────────────────────────────────────
+
+  private getVersions(): Record<string, SyncEntryVersion> {
+    return getStorage().get<Record<string, SyncEntryVersion>>(VERSIONS_KEY) ?? {}
+  }
+
+  private setVersions(v: Record<string, SyncEntryVersion>): void {
+    getStorage().set(VERSIONS_KEY, v)
+  }
+
+  private getLocalChanges(): DataChange[] {
+    const storage = getStorage()
+    const allData = storage.getAll()
+    const versions = this.getVersions()
+    const changes: DataChange[] = []
+    const deviceId = SyncQueue.getDeviceId()
+    const now = Date.now()
+
+    for (const [ns, entries] of Object.entries(allData)) {
+      if (ns.startsWith('_')) continue
+      for (const [entryKey, value] of Object.entries(entries)) {
+        const key = `${ns}:${entryKey}`
+        const ch = hashValue(value)
+        const prev = versions[key]
+        if (prev && prev.checksum === ch) continue
+
+        changes.push({
+          namespace: ns,
+          entryKey,
+          value: value as Record<string, unknown>,
+          checksum: ch,
+          timestamp: prev ? Math.max(prev.timestamp + 1, now) : now,
+          deviceId,
+        })
+      }
+    }
+
+    // Detect deletions: keys in versions but not in allData
+    for (const key of Object.keys(versions)) {
+      const colon = key.indexOf(':')
+      if (colon === -1) continue
+      const ns = key.slice(0, colon)
+      const ek = key.slice(colon + 1)
+      if (!allData[ns]?.[ek]) {
+        changes.push({
+          namespace: ns,
+          entryKey: ek,
+          value: null,
+          checksum: hashValue(null),
+          timestamp: now,
+          deviceId,
+        })
+      }
+    }
+
+    return changes
+  }
+
+  // ── Incremental push ─────────────────────────────────────────────
+
+  async pushChanges(changes: DataChange[]): Promise<void> {
+    if (!this.client || !this.cloudKey || changes.length === 0) return
+
+    try {
+      await this.withRetry(async () => {
+        const { data: { user } } = await this.client!.auth.getUser()
+        if (!user) throw new Error('No authenticated user')
+
+        const profileId = getEncryptedProfileId()
+        if (!profileId) throw new Error('No active profile')
+
+        const rows = await Promise.all(changes.map(async (c) => {
+          const encrypted = await encrypt(c.value, this.cloudKey!)
+          return {
+            profile_id: profileId,
+            namespace: c.namespace,
+            entry_key: c.entryKey,
+            value: encrypted,
+            checksum: c.checksum,
+            timestamp: c.timestamp,
+            device_id: c.deviceId,
+          }
+        }))
+
+        const { error } = await this.client!.from('sync_log').insert(rows)
+        if (error) throw error
+
+        // Update versions
+        const versions = this.getVersions()
+        for (const c of changes) {
+          versions[`${c.namespace}:${c.entryKey}`] = {
+            checksum: c.checksum,
+            timestamp: c.timestamp,
+            deviceId: c.deviceId,
+          }
+        }
+        this.setVersions(versions)
+      })
+    } catch (err) {
+      // Queue failed changes for retry
+      for (const c of changes) {
+        SyncQueue.enqueue(c)
+      }
+      this._lastError = err instanceof Error ? err.message : String(err)
+      throw err
+    }
+  }
+
+  // ── Apply remote change (with conflict resolution) ───────────────
+
+  private async applyRemoteChange(change: {
+    namespace: string
+    entry_key: string
+    value: string
+    checksum: string
+    timestamp: number
+    device_id: string
+  }): Promise<void> {
+    if (!this.cloudKey) return
+
+    const storage = getStorage()
+    const versions = this.getVersions()
+    const key = `${change.namespace}:${change.entry_key}`
+    const localVersion = versions[key]
+
+    // Conflict resolution: latest timestamp wins
+    if (localVersion && localVersion.timestamp > change.timestamp) {
+      // Local is newer — push local change back
+      const localValue = storage.get(key)
+      if (localValue !== null) {
+        const ch = hashValue(localValue)
+        if (ch !== change.checksum) {
+          await this.pushChanges([{
+            namespace: change.namespace,
+            entryKey: change.entry_key,
+            value: localValue as Record<string, unknown>,
+            checksum: ch,
+            timestamp: localVersion.timestamp,
+            deviceId: SyncQueue.getDeviceId(),
+          }])
+        }
+      }
+      return
+    }
+
+    // Remote is newer or same — apply remote
+    try {
+      const decrypted = await decrypt<unknown>(change.value, this.cloudKey)
+      storage.set(key, decrypted)
+      versions[key] = {
+        checksum: change.checksum,
+        timestamp: change.timestamp,
+        deviceId: change.device_id,
+      }
+      this.setVersions(versions)
+    } catch {
+      // skip entries that fail to decrypt
+    }
+  }
+
+  // ── Realtime subscription ────────────────────────────────────────
+
+  subscribeRealtime(profileId: string): void {
+    this.unsubscribeRealtime()
+
+    this._channel = this.ensureClient().channel(`sync_log:${profileId}`)
+      .on(
+        'postgres_changes' as never,
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'sync_log',
+          filter: `profile_id=eq.${profileId}`,
+        },
+        async (payload: { new: Record<string, unknown> }) => {
+          const newData = payload.new as {
+            namespace: string
+            entry_key: string
+            value: string
+            checksum: string
+            timestamp: number
+            device_id: string
+          }
+          // Skip own device changes
+          if (newData.device_id === SyncQueue.getDeviceId()) return
+
+          await this.applyRemoteChange(newData)
+          rehydrateAllStores()
+
+          this._lastSyncAt = Date.now()
+          this.persistSyncMeta()
+        },
+      )
+      .subscribe()
+  }
+
+  private unsubscribeRealtime(): void {
+    if (this._channel) {
+      this.client?.removeChannel(this._channel)
+      this._channel = null
+    }
+  }
+
+  // ── Error handling ───────────────────────────────────────────────
+
   private _syncPromise: Promise<void> | null = null
   private _lastError: string | null = null
 
@@ -248,6 +465,8 @@ export class SyncService {
       lastError: this._lastError,
     })
   }
+
+  // ── Full push / pull (legacy, for initial sync) ──────────────────
 
   async push(): Promise<void> {
     if (!this.client || !this.cloudKey) return
@@ -313,8 +532,24 @@ export class SyncService {
 
         if (remoteVersion <= localVersion) return { applied: false }
 
+        createAutoBackup()
         const decrypted = await decrypt<Record<string, Record<string, unknown>>>(data.data, this.cloudKey!)
         getStorage().import(decrypted)
+
+        // Initialize version tracking
+        const versions: Record<string, SyncEntryVersion> = {}
+        const deviceId = SyncQueue.getDeviceId()
+        const now = Date.now()
+        for (const [ns, entries] of Object.entries(decrypted)) {
+          for (const [entryKey, value] of Object.entries(entries)) {
+            versions[`${ns}:${entryKey}`] = {
+              checksum: hashValue(value),
+              timestamp: now,
+              deviceId,
+            }
+          }
+        }
+        this.setVersions(versions)
         this.setLocalVersion(remoteVersion)
         rehydrateAllStores()
 
@@ -329,15 +564,38 @@ export class SyncService {
     }
   }
 
+  // ── Sync orchestration ──────────────────────────────────────────
+
   async syncNow(): Promise<void> {
     if (this._syncPromise) return this._syncPromise
     this._syncPromise = (async () => {
       this._isSyncing = true
       try {
+        // 1. Full pull (initial data)
         await this.pull()
-        await this.push()
+
+        // 2. Push incremental changes
+        const changes = this.getLocalChanges()
+        if (changes.length > 0) {
+          await this.pushChanges(changes)
+        }
+
+        // 3. Process queued changes
+        const queue = SyncQueue.getAll()
+        if (queue.length > 0) {
+          const queuedChanges: DataChange[] = queue.map((q) => ({
+            namespace: q.namespace,
+            entryKey: q.entryKey,
+            value: q.value,
+            checksum: q.checksum,
+            timestamp: q.timestamp,
+            deviceId: q.deviceId,
+          }))
+          await this.pushChanges(queuedChanges)
+          SyncQueue.clear()
+        }
       } catch {
-        // _lastError already set by withRetry
+        // _lastError already set
       } finally {
         this._isSyncing = false
         this._syncPromise = null
@@ -348,6 +606,10 @@ export class SyncService {
 
   start(intervalMs = CLOUD_CONFIG.syncInterval): void {
     this.stop()
+    const profileId = getEncryptedProfileId()
+    if (profileId) {
+      this.subscribeRealtime(profileId)
+    }
     this.timerId = setInterval(() => { this.syncNow().catch(() => {}) }, intervalMs)
   }
 

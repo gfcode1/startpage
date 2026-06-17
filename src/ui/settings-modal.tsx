@@ -3,9 +3,10 @@ import { Modal, Tabs, Stack, Group, Text, Button, Alert, Code, FileInput, TextIn
 import { Icon } from '@iconify/react'
 import { APP_CONFIG } from '@/config/app'
 import { useWidgetResetDefaults } from '@/stores/widget-store'
-import { downloadBackup, uploadBackup } from '@/lib/persistence'
+import { downloadBackup, uploadBackup, createAutoBackup, restoreAutoBackup, hasAutoBackup } from '@/lib/persistence'
 import { useProfileStore, useCloudLinked, useCloudEmail, useLastSyncAt, useIsSyncing, useSyncError, useProfileError } from '@/stores/profile-store'
 import { SyncService } from '@/lib/sync/sync-service'
+import { showSyncNotification } from '@/lib/sync/notify'
 
 interface SettingsModalProps {
   opened: boolean
@@ -17,6 +18,7 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
   const resetDefaults = useWidgetResetDefaults()
   const [importSuccess, setImportSuccess] = useState<boolean | null>(null)
   const [resetConfirm, setResetConfirm] = useState(false)
+  const [restoreSuccess, setRestoreSuccess] = useState<boolean | null>(null)
   const cloudLinked = useCloudLinked()
   const cloudEmail = useCloudEmail()
   const lastSyncAt = useLastSyncAt()
@@ -29,7 +31,6 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
   const [cloudPassword, setCloudPassword] = useState('')
   const [cloudLoading, setCloudLoading] = useState(false)
   const [cloudError, setCloudError] = useState<string | null>(null)
-  const [cloudSuccess, setCloudSuccess] = useState<string | null>(null)
   const [unlinkConfirm, setUnlinkConfirm] = useState(false)
   const [now, setNow] = useState(0)
 
@@ -47,9 +48,8 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
     setCloudLoading(true)
     try {
       await linkToCloud(cloudEmailInput, cloudPassword)
-      setCloudSuccess('Cloud sync connected')
       setCloudPassword('')
-      setTimeout(() => setCloudSuccess(null), 2000)
+      showSyncNotification('success', 'Cloud sync connected')
     } catch {
       setCloudError('Failed to connect. Check your credentials.')
     } finally {
@@ -64,9 +64,8 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
       const svc = SyncService.getInstance()
       await svc.signup(cloudEmailInput, cloudPassword)
       await linkToCloud(cloudEmailInput, cloudPassword)
-      setCloudSuccess('Account created and connected')
       setCloudPassword('')
-      setTimeout(() => setCloudSuccess(null), 2000)
+      showSyncNotification('success', 'Account created and connected')
     } catch {
       setCloudError('Failed to create account. The email may already be in use.')
     } finally {
@@ -80,17 +79,22 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
       const svc = SyncService.getInstance()
       await svc.syncNow()
       updateSyncStatus(Date.now(), false, svc.lastError)
+      if (!svc.lastError) {
+        showSyncNotification('success', 'Sync complete')
+      } else {
+        showSyncNotification('error', 'Sync failed', svc.lastError)
+      }
     } catch {
       const svc = SyncService.getInstance()
       updateSyncStatus(null, false, svc.lastError)
+      showSyncNotification('error', 'Sync failed', svc.lastError ?? 'Unknown error')
     }
   }
 
   async function handleUnlink() {
     setUnlinkConfirm(false)
     await unlinkFromCloud()
-    setCloudSuccess('Disconnected from cloud')
-    setTimeout(() => setCloudSuccess(null), 2000)
+    showSyncNotification('info', 'Disconnected from cloud')
   }
 
   function formatLastSync(timestamp: number | null): string {
@@ -224,10 +228,6 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
                 <Alert color="red" variant="light" py="xs">{cloudError || error}</Alert>
               )}
 
-              {cloudSuccess && (
-                <Alert color="green" variant="light" py="xs">{cloudSuccess}</Alert>
-              )}
-
               <Group grow>
                 <Button onClick={handleCloudLogin} loading={cloudLoading}>
                   Sign in
@@ -263,6 +263,7 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
                 placeholder="Select backup file..."
                 onChange={(file) => {
                   if (!file) return
+                  createAutoBackup()
                   uploadBackup(file).then((ok) => {
                     setImportSuccess(ok)
                     if (ok) setTimeout(() => { setImportSuccess(null); onClose() }, 1500)
@@ -277,6 +278,32 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
                 <Alert color="red" mt="sm" py="xs">Invalid backup file.</Alert>
               )}
             </div>
+
+            {hasAutoBackup() && (
+              <div>
+                <Text size="sm" fw={500} mb="xs">Restore auto-backup</Text>
+                <Text size="xs" c="dimmed" mb="sm">Revert to snapshot taken before last sync or import</Text>
+                <Button
+                  variant="light"
+                  color="yellow"
+                  leftSection={<Icon icon="lucide:undo-2" width={16} />}
+                  onClick={() => {
+                    const ok = restoreAutoBackup()
+                    setRestoreSuccess(ok)
+                    if (ok) setTimeout(() => { setRestoreSuccess(null) }, 2000)
+                  }}
+                  fullWidth
+                >
+                  Restore snapshot
+                </Button>
+                {restoreSuccess === true && (
+                  <Alert color="green" mt="sm" py="xs">Auto-backup restored!</Alert>
+                )}
+                {restoreSuccess === false && (
+                  <Alert color="red" mt="sm" py="xs">No snapshot available.</Alert>
+                )}
+              </div>
+            )}
           </Stack>
         </Tabs.Panel>
 

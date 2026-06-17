@@ -135,3 +135,10 @@ export const usePlayerPlayNextFromQueue = () => usePlayerStore((s) => s.playNext
 export const usePlayerClearQueue = () => usePlayerStore((s) => s.clearQueue)
 export const usePlayerSetSleepTimer = () => usePlayerStore((s) => s.setSleepTimer)
 export const usePlayerClearSleepTimer = () => usePlayerStore((s) => s.clearSleepTimer)
+
+// Rehydration
+import { registerRehydrator } from '@/lib/sync/rehydrate'
+registerRehydrator((storage) => {
+  const volume = storage.get<number>('player:volume')
+  if (volume !== null) usePlayerStore.setState({ volume })
+})

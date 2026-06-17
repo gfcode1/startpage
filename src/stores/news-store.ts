@@ -290,3 +290,24 @@ export const useNewsStore = create<NewsState>((set, get) => ({
     return filtered
   },
 }))
+
+// Rehydration
+import { registerRehydrator } from '@/lib/sync/rehydrate'
+registerRehydrator((storage) => {
+  const newsState: Record<string, unknown> = {}
+  const feeds = storage.get<string[]>('news:feeds')
+  if (feeds) newsState.enabledFeedIds = feeds
+  const custom = storage.get<unknown[]>('news:custom')
+  if (custom) newsState.customFeeds = custom
+  const articles = storage.get<Record<string, unknown>>('news:articles')
+  if (articles) newsState.articles = articles
+  const bookmarks = storage.get<string[]>('news:bookmarks')
+  if (bookmarks) newsState.bookmarks = bookmarks
+  const reader = storage.get<unknown>('news:reader')
+  if (reader) newsState.readerSettings = reader
+  const view = storage.get<string>('news:view')
+  if (view) newsState.viewMode = view
+  if (Object.keys(newsState).length > 0) {
+    useNewsStore.setState({ ...newsState, searchQuery: '' } as never)
+  }
+})

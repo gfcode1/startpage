@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react'
 import { Tooltip, ActionIcon, Text, Avatar, Menu } from '@mantine/core'
 import { Icon } from '@iconify/react'
-import { useActiveProfile, useProfileStore, useProfiles, useIsUnlocked, useCloudLinked, useLastSyncAt, useIsSyncing, useSyncError } from '@/stores/profile-store'
+import { useActiveProfile, useProfileStore, useProfiles, useIsUnlocked, useCloudLinked } from '@/stores/profile-store'
 
 export function ProfileHeader() {
   const activeProfile = useActiveProfile()
@@ -9,27 +8,10 @@ export function ProfileHeader() {
   const { lockProfile } = useProfileStore()
   const profiles = useProfiles()
   const cloudLinked = useCloudLinked()
-  const lastSyncAt = useLastSyncAt()
-  const isSyncing = useIsSyncing()
-  const syncError = useSyncError()
-  const [now, setNow] = useState(0)
-
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 30000)
-    return () => clearInterval(id)
-  }, [])
 
   if (!isUnlocked || !activeProfile) return null
 
   const initial = activeProfile.name.charAt(0).toUpperCase()
-
-  function formatLastSync(timestamp: number | null): string {
-    if (!timestamp) return 'Never'
-    const diff = now - timestamp
-    if (diff < 60000) return 'Just now'
-    if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`
-    return `${Math.floor(diff / 3600000)}h ago`
-  }
 
   return (
     <Menu shadow="md" width={200}>
@@ -54,27 +36,9 @@ export function ProfileHeader() {
         </Menu.Item>
 
         {cloudLinked && (
-          <>
-            <Menu.Item
-              leftSection={
-                <Icon
-                  icon={isSyncing ? 'lucide:loader' : syncError ? 'lucide:alert-triangle' : 'lucide:cloud'}
-                  width={16}
-                  className={isSyncing ? 'animate-spin' : ''}
-                  color={syncError ? 'red' : undefined}
-                />
-              }
-            >
-              <Text size="xs" c={syncError ? 'red' : 'dimmed'}>
-                {syncError ? 'Sync error' : `Sync: ${formatLastSync(lastSyncAt)}`}
-              </Text>
-            </Menu.Item>
-            {syncError && (
-              <Menu.Item>
-                <Text size="xs" c="red">{syncError}</Text>
-              </Menu.Item>
-            )}
-          </>
+          <Menu.Item leftSection={<Icon icon="lucide:cloud" width={16} />}>
+            <Text size="xs" c="dimmed">Cloud sync enabled</Text>
+          </Menu.Item>
         )}
 
         {profiles.length > 1 && (
