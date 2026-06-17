@@ -1,4 +1,8 @@
-import 'prismjs'
+import Prism from 'prismjs'
+import 'prismjs/themes/prism-okaidia.css'
+if (typeof window !== 'undefined') {
+  (window as unknown as { Prism: typeof Prism }).Prism = Prism
+}
 import { useState, useEffect, useCallback, useRef } from 'react'
 import {
   Box, Text, Group, ActionIcon, TextInput, Paper, Stack, Tooltip, Kbd, ScrollArea, Center, Button, Divider,
