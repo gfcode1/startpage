@@ -49,7 +49,7 @@ export class SyncService {
   private constructor() {}
 
   get isLinked(): boolean {
-    return this.client !== null
+    return this.client !== null && this._email !== null
   }
 
   get email(): string | null {
@@ -73,20 +73,14 @@ export class SyncService {
 
   async login(email: string, password: string): Promise<void> {
     const { error } = await this.ensureClient().auth.signInWithPassword({ email, password })
-    if (error) {
-      this.client = null
-      throw error
-    }
+    if (error) throw error
     this._email = email
     await this.deriveCloudKey(password)
   }
 
   async signup(email: string, password: string): Promise<void> {
     const { error } = await this.ensureClient().auth.signUp({ email, password })
-    if (error) {
-      this.client = null
-      throw error
-    }
+    if (error) throw error
     this._email = email
     await this.deriveCloudKey(password)
   }
@@ -94,8 +88,11 @@ export class SyncService {
   async logout(): Promise<void> {
     this.stop()
     this.unsubscribeRealtime()
-    await this.client?.auth.signOut()
-    this.client = null
+    try {
+      await this.client?.auth.signOut()
+    } catch {
+      // ignore signOut errors
+    }
     this.cloudKey = null
     this._email = null
     this._lastSyncAt = null
@@ -111,7 +108,6 @@ export class SyncService {
     await this.deriveCloudKey(password)
     const session = await this.getSessionSafe()
     if (!session) {
-      this.client = null
       this.cloudKey = null
       this._email = null
       return false
