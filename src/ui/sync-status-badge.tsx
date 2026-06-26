@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react'
 import { Tooltip, Text, HoverCard, Group, Button } from '@mantine/core'
 import { Icon } from '@iconify/react'
-import { useCloudLinked, useLastSyncAt, useIsSyncing, useSyncError, useCloudEmail, useProfileStore } from '@/stores/profile-store'
+import { useCloudEmail, useLastSyncAt, useIsSyncing, useSyncError, useProfileStore } from '@/stores/profile-store'
 import { SyncService } from '@/lib/sync/sync-service'
 
 export function SyncStatusBadge() {
-  const cloudLinked = useCloudLinked()
   const lastSyncAt = useLastSyncAt()
   const isSyncing = useIsSyncing()
   const syncError = useSyncError()
@@ -18,7 +17,7 @@ export function SyncStatusBadge() {
     return () => clearInterval(id)
   }, [])
 
-  if (!cloudLinked) return null
+  if (!cloudEmail) return null
 
   const formatLastSync = (timestamp: number | null): string => {
     if (!timestamp) return 'Never'
@@ -59,7 +58,7 @@ export function SyncStatusBadge() {
       </HoverCard.Target>
       <HoverCard.Dropdown>
         <Text size="xs" mb="xs">
-          Connected as <b>{cloudEmail}</b>
+          Synced as <b>{cloudEmail}</b>
         </Text>
         <Group justify="space-between" mb="xs">
           <Text size="xs" c="dimmed">Last sync: {formatLastSync(lastSyncAt)}</Text>

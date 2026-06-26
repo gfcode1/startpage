@@ -1,13 +1,13 @@
 import { Tooltip, ActionIcon, Text, Avatar, Menu } from '@mantine/core'
 import { Icon } from '@iconify/react'
-import { useActiveProfile, useProfileStore, useProfiles, useIsUnlocked, useCloudLinked } from '@/stores/profile-store'
+import { useActiveProfile, useProfileStore, useProfiles, useIsUnlocked, useCloudEmail } from '@/stores/profile-store'
 
 export function ProfileHeader() {
   const activeProfile = useActiveProfile()
   const isUnlocked = useIsUnlocked()
   const { lockProfile } = useProfileStore()
   const profiles = useProfiles()
-  const cloudLinked = useCloudLinked()
+  const cloudEmail = useCloudEmail()
 
   if (!isUnlocked || !activeProfile) return null
 
@@ -35,9 +35,9 @@ export function ProfileHeader() {
           <Text size="sm">{activeProfile.name}</Text>
         </Menu.Item>
 
-        {cloudLinked && (
+        {cloudEmail && (
           <Menu.Item leftSection={<Icon icon="lucide:cloud" width={16} />}>
-            <Text size="xs" c="dimmed">Cloud sync enabled</Text>
+            <Text size="xs" c="dimmed">Synced as {cloudEmail}</Text>
           </Menu.Item>
         )}
 

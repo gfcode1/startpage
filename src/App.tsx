@@ -9,9 +9,8 @@ import { AppShellWrapper } from './layout/app-shell'
 import { Launcher } from './pages/launcher'
 import { NotFound } from './pages/not-found'
 import { ProfileGate } from './ui/profile-gate'
-import { CloudOnboardingDialog } from './ui/cloud-onboarding-dialog'
 import { apps } from './registry/apps'
-import { useProfileStore, useIsReady, useIsUnlocked, useCloudLinked } from './stores/profile-store'
+import { useProfileStore, useIsReady, useIsUnlocked, useCloudEmail } from './stores/profile-store'
 import { SyncService } from './lib/sync/sync-service'
 import { SyncQueue } from './lib/sync/sync-queue'
 import { showSyncNotification } from './lib/sync/notify'
@@ -22,14 +21,14 @@ function AppInner() {
   const { loadProfiles, updateSyncStatus } = useProfileStore()
   const isReady = useIsReady()
   const isUnlocked = useIsUnlocked()
-  const cloudLinked = useCloudLinked()
+  const cloudEmail = useCloudEmail()
 
   useEffect(() => {
     loadProfiles()
   }, [loadProfiles])
 
   useEffect(() => {
-    if (!isUnlocked || !cloudLinked) return
+    if (!isUnlocked || !cloudEmail) return
 
     const svc = SyncService.getInstance()
     const doSync = async () => {
@@ -55,7 +54,7 @@ function AppInner() {
     svc.start(CLOUD_CONFIG.syncInterval)
 
     return () => svc.stop()
-  }, [isUnlocked, cloudLinked, updateSyncStatus])
+  }, [isUnlocked, cloudEmail, updateSyncStatus])
 
   useHotkeys([['mod + K', spotlight.open]])
 
@@ -90,7 +89,6 @@ function AppInner() {
         searchProps={{ placeholder: 'Search apps...' }}
         nothingFound="No results"
       />
-      <CloudOnboardingDialog />
       <AppShellWrapper>
         <Suspense fallback={<Center h="60vh"><Loader /></Center>}>
           <Routes>

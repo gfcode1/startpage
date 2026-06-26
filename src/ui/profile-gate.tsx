@@ -43,6 +43,7 @@ export function ProfileGate() {
   )
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -61,6 +62,10 @@ export function ProfileGate() {
       setCreateError('Profile name is required')
       return
     }
+    if (!email.trim() || !email.includes('@')) {
+      setCreateError('Valid email is required')
+      return
+    }
     if (password.length < 4) {
       setCreateError('Password must be at least 4 characters')
       return
@@ -70,7 +75,7 @@ export function ProfileGate() {
       return
     }
     setLoading(true)
-    await createProfile(name, password)
+    await createProfile(name, email, password)
     setLoading(false)
   }
 
@@ -134,9 +139,9 @@ export function ProfileGate() {
   function renderDescription(): string {
     switch (mode) {
       case 'create':
-        return 'Your data will be encrypted with your password.'
+        return 'Your data will be encrypted and synced across devices.'
       case 'select':
-        return 'Select a profile to continue, or sign in to the cloud.'
+        return 'Select a profile to continue, or sign in from another device.'
       case 'unlock':
         return `Unlock "${profiles.find((p) => p.id === selectedId)?.name ?? ''}"`
       case 'cloud-login':
@@ -191,7 +196,7 @@ export function ProfileGate() {
                 leftSection={<Icon icon="lucide:cloud" width={20} />}
                 onClick={() => setMode('cloud-login')}
               >
-                Sign in to cloud
+                Sign in from another device
               </Button>
 
               <Button
@@ -200,6 +205,7 @@ export function ProfileGate() {
                 leftSection={<Icon icon="lucide:plus" width={20} />}
                 onClick={() => {
                   setName('')
+                  setEmail('')
                   setPassword('')
                   setConfirmPassword('')
                   setCreateError(null)
@@ -254,7 +260,7 @@ export function ProfileGate() {
               />
               <PasswordInput
                 label="Password"
-                placeholder="Your Supabase password"
+                placeholder="Your profile password"
                 value={cloudPasswordInput}
                 onChange={(e) => setCloudPasswordInput(e.currentTarget.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleCloudLogin()}
@@ -283,7 +289,7 @@ export function ProfileGate() {
 
           {mode === 'cloud-login' && cloudLoginDone && cloudProfiles.length === 0 && (
             <Text c="dimmed" size="sm" ta="center" mt="sm">
-              No cloud profiles found. Create a local profile first and connect it via Settings → Cloud Sync.
+              No cloud profiles found for this account.
             </Text>
           )}
 
@@ -352,6 +358,12 @@ export function ProfileGate() {
                 onChange={(e) => setName(e.currentTarget.value)}
                 autoFocus
               />
+              <TextInput
+                label="Email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.currentTarget.value)}
+              />
               <PasswordInput
                 label="Password"
                 placeholder="Choose a strong password"
@@ -371,7 +383,8 @@ export function ProfileGate() {
                 </Alert>
               )}
               <Text size="xs" c="dimmed" ta="center" mt={-4}>
-                Your data is encrypted with AES-256-GCM. If you lose your password, your data cannot be recovered.
+                Your data is encrypted with AES-256-GCM and synced to the cloud.
+                Use the same email and password to access from any device.
               </Text>
               <Button fullWidth onClick={handleCreate} loading={loading}>
                 Create profile

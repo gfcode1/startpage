@@ -106,10 +106,6 @@ export class SyncService {
     this.cloudKey = await deriveKey(password, CLOUD_SALT)
   }
 
-  deriveCloudKeyFromPassword(password: string): Promise<void> {
-    return this.deriveCloudKey(password)
-  }
-
   async restore(password: string, email: string): Promise<boolean> {
     this._email = email
     await this.deriveCloudKey(password)

@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
-import { Modal, Tabs, Stack, Group, Text, Button, Alert, Code, FileInput, TextInput, PasswordInput, useMantineColorScheme, Switch } from '@mantine/core'
+import { Modal, Tabs, Stack, Group, Text, Button, Alert, Code, FileInput, useMantineColorScheme, Switch } from '@mantine/core'
 import { Icon } from '@iconify/react'
 import { APP_CONFIG } from '@/config/app'
 import { useWidgetResetDefaults } from '@/stores/widget-store'
 import { downloadBackup, uploadBackup, createAutoBackup, restoreAutoBackup, hasAutoBackup } from '@/lib/persistence'
-import { useProfileStore, useCloudLinked, useCloudEmail, useLastSyncAt, useIsSyncing, useSyncError, useProfileError } from '@/stores/profile-store'
+import { useProfileStore, useCloudEmail, useLastSyncAt, useIsSyncing, useSyncError } from '@/stores/profile-store'
 import { SyncService } from '@/lib/sync/sync-service'
 import { showSyncNotification } from '@/lib/sync/notify'
 
@@ -19,18 +19,12 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
   const [importSuccess, setImportSuccess] = useState<boolean | null>(null)
   const [resetConfirm, setResetConfirm] = useState(false)
   const [restoreSuccess, setRestoreSuccess] = useState<boolean | null>(null)
-  const cloudLinked = useCloudLinked()
   const cloudEmail = useCloudEmail()
   const lastSyncAt = useLastSyncAt()
   const isSyncing = useIsSyncing()
   const syncError = useSyncError()
-  const error = useProfileError()
-  const { linkToCloud, unlinkFromCloud, updateSyncStatus, clearError } = useProfileStore()
+  const { unlinkFromCloud, updateSyncStatus, clearError } = useProfileStore()
 
-  const [cloudEmailInput, setCloudEmailInput] = useState(cloudEmail ?? '')
-  const [cloudPassword, setCloudPassword] = useState('')
-  const [cloudLoading, setCloudLoading] = useState(false)
-  const [cloudError, setCloudError] = useState<string | null>(null)
   const [unlinkConfirm, setUnlinkConfirm] = useState(false)
   const [now, setNow] = useState(0)
 
@@ -42,36 +36,6 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
   useEffect(() => {
     if (opened) clearError()
   }, [opened, clearError])
-
-  async function handleCloudLogin() {
-    setCloudError(null)
-    setCloudLoading(true)
-    try {
-      await linkToCloud(cloudEmailInput, cloudPassword)
-      setCloudPassword('')
-      showSyncNotification('success', 'Cloud sync connected')
-    } catch {
-      setCloudError('Failed to connect. Check your credentials.')
-    } finally {
-      setCloudLoading(false)
-    }
-  }
-
-  async function handleCloudSignup() {
-    setCloudError(null)
-    setCloudLoading(true)
-    try {
-      const svc = SyncService.getInstance()
-      await svc.signup(cloudEmailInput, cloudPassword)
-      await linkToCloud(cloudEmailInput, cloudPassword)
-      setCloudPassword('')
-      showSyncNotification('success', 'Account created and connected')
-    } catch {
-      setCloudError('Failed to create account. The email may already be in use.')
-    } finally {
-      setCloudLoading(false)
-    }
-  }
 
   async function handleSyncNow() {
     updateSyncStatus(null, true, null)
@@ -150,94 +114,57 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
         </Tabs.Panel>
 
         <Tabs.Panel value="cloud">
-          {cloudLinked ? (
-            <Stack gap="md">
-              <Alert color="green" variant="light" icon={<Icon icon="lucide:cloud" width={18} />}>
-                <Text size="sm">Connected as <b>{cloudEmail}</b></Text>
-              </Alert>
+          <Stack gap="md">
+            <Alert color="green" variant="light" icon={<Icon icon="lucide:cloud" width={18} />}>
+              <Text size="sm">Synced as <b>{cloudEmail}</b></Text>
+            </Alert>
 
-              <Group justify="space-between">
-                <div>
-                  <Text size="sm" fw={500}>Last sync</Text>
-                  <Text size="xs" c="dimmed">{formatLastSync(lastSyncAt)}</Text>
-                </div>
-                <Button
-                  size="compact-sm"
-                  variant="light"
-                  leftSection={<Icon icon="lucide:refresh-cw" width={14} />}
-                  onClick={handleSyncNow}
-                  loading={isSyncing}
-                >
-                  Sync now
-                </Button>
-              </Group>
-
-              {syncError && (
-                <Alert color="red" variant="light" icon={<Icon icon="lucide:alert-circle" width={18} />}>
-                  <Text size="sm">{syncError}</Text>
-                </Alert>
-              )}
-
-              <Text size="xs" c="dimmed">
-                Your data is end-to-end encrypted before reaching the server.
-                Automatic sync every 5 minutes.
-              </Text>
-
+            <Group justify="space-between">
+              <div>
+                <Text size="sm" fw={500}>Last sync</Text>
+                <Text size="xs" c="dimmed">{formatLastSync(lastSyncAt)}</Text>
+              </div>
               <Button
-                variant="outline"
-                color="red"
-                fullWidth
-                onClick={() => setUnlinkConfirm(true)}
+                size="compact-sm"
+                variant="light"
+                leftSection={<Icon icon="lucide:refresh-cw" width={14} />}
+                onClick={handleSyncNow}
+                loading={isSyncing}
               >
-                Disconnect
+                Sync now
               </Button>
+            </Group>
 
-              {unlinkConfirm && (
-                <Alert color="red" variant="light">
-                  <Text size="sm" mb="sm">Disconnect cloud sync? Your local data will be kept.</Text>
-                  <Group gap="xs">
-                    <Button size="compact-sm" color="red" onClick={handleUnlink}>Confirm</Button>
-                    <Button size="compact-sm" variant="subtle" onClick={() => setUnlinkConfirm(false)}>Cancel</Button>
-                  </Group>
-                </Alert>
-              )}
-            </Stack>
-          ) : (
-            <Stack gap="md">
-              <Text size="sm">
-                Connect to cloud to sync your data across devices. Your data is
-                encrypted end-to-end before leaving your device.
-              </Text>
+            {syncError && (
+              <Alert color="red" variant="light" icon={<Icon icon="lucide:alert-circle" width={18} />}>
+                <Text size="sm">{syncError}</Text>
+              </Alert>
+            )}
 
-              <TextInput
-                label="Email"
-                placeholder="your@email.com"
-                value={cloudEmailInput}
-                onChange={(e) => setCloudEmailInput(e.currentTarget.value)}
-              />
+            <Text size="xs" c="dimmed">
+              Your data is end-to-end encrypted before reaching the server.
+              Automatic sync every 5 minutes.
+            </Text>
 
-              <PasswordInput
-                label="Cloud account password"
-                placeholder="Your Supabase password"
-                value={cloudPassword}
-                onChange={(e) => setCloudPassword(e.currentTarget.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleCloudLogin()}
-              />
+            <Button
+              variant="outline"
+              color="red"
+              fullWidth
+              onClick={() => setUnlinkConfirm(true)}
+            >
+              Disconnect
+            </Button>
 
-              {(cloudError || error) && (
-                <Alert color="red" variant="light" py="xs">{cloudError || error}</Alert>
-              )}
-
-              <Group grow>
-                <Button onClick={handleCloudLogin} loading={cloudLoading}>
-                  Sign in
-                </Button>
-                <Button variant="light" onClick={handleCloudSignup} loading={cloudLoading}>
-                  Create account
-                </Button>
-              </Group>
-            </Stack>
-          )}
+            {unlinkConfirm && (
+              <Alert color="red" variant="light">
+                <Text size="sm" mb="sm">Disconnect cloud sync? Your local data will be kept.</Text>
+                <Group gap="xs">
+                  <Button size="compact-sm" color="red" onClick={handleUnlink}>Confirm</Button>
+                  <Button size="compact-sm" variant="subtle" onClick={() => setUnlinkConfirm(false)}>Cancel</Button>
+                </Group>
+              </Alert>
+            )}
+          </Stack>
         </Tabs.Panel>
 
         <Tabs.Panel value="backup">
