@@ -29,6 +29,7 @@ export function ProfileGate() {
     isUnlocked,
     cloudLogin,
     adoptCloudProfile,
+    linkToCloud,
   } = useProfileStore()
   const profiles = useProfiles()
   const error = useProfileError()
@@ -37,13 +38,12 @@ export function ProfileGate() {
 
   const noExistingProfiles = profiles.length === 0
 
-  type Mode = 'select' | 'create' | 'unlock' | 'cloud-login' | 'cloud-unlock'
+  type Mode = 'select' | 'create' | 'unlock' | 'cloud-login' | 'cloud-unlock' | 'link-cloud'
   const [mode, setMode] = useState<Mode>(
     noExistingProfiles ? 'create' : 'select',
   )
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -53,6 +53,8 @@ export function ProfileGate() {
   const [cloudError, setCloudError] = useState<string | null>(null)
   const [selectedCloudId, setSelectedCloudId] = useState<string | null>(null)
   const [cloudLoginDone, setCloudLoginDone] = useState(false)
+  const [linkCloudEmail, setLinkCloudEmail] = useState('')
+  const [linkCloudPassword, setLinkCloudPassword] = useState('')
 
   if (isUnlocked) return null
 
@@ -60,10 +62,6 @@ export function ProfileGate() {
     setCreateError(null)
     if (!name.trim()) {
       setCreateError('Profile name is required')
-      return
-    }
-    if (!email.trim() || !email.includes('@')) {
-      setCreateError('Valid email is required')
       return
     }
     if (password.length < 4) {
@@ -75,7 +73,7 @@ export function ProfileGate() {
       return
     }
     setLoading(true)
-    await createProfile(name, email, password)
+    await createProfile(name, password)
     setLoading(false)
   }
 
@@ -126,6 +124,22 @@ export function ProfileGate() {
     setMode('cloud-unlock')
   }
 
+  async function handleLinkCloud() {
+    setCloudError(null)
+    if (!linkCloudEmail || !linkCloudPassword) {
+      setCloudError('Email and password are required')
+      return
+    }
+    setLoading(true)
+    await linkToCloud(linkCloudEmail, linkCloudPassword)
+    setLoading(false)
+    if (!error) {
+      setMode('select')
+      setLinkCloudEmail('')
+      setLinkCloudPassword('')
+    }
+  }
+
   function renderTitle(): string {
     switch (mode) {
       case 'create': return 'Create Your Profile'
@@ -133,13 +147,14 @@ export function ProfileGate() {
       case 'unlock': return 'Enter Password'
       case 'cloud-login': return 'Sign in to Cloud'
       case 'cloud-unlock': return 'Unlock Cloud Profile'
+      case 'link-cloud': return 'Link to Cloud'
     }
   }
 
   function renderDescription(): string {
     switch (mode) {
       case 'create':
-        return 'Your data will be encrypted and synced across devices.'
+        return 'Your data will be encrypted locally. You can link to cloud later.'
       case 'select':
         return 'Select a profile to continue, or sign in from another device.'
       case 'unlock':
@@ -148,6 +163,8 @@ export function ProfileGate() {
         return 'Sign in to discover your cloud profiles.'
       case 'cloud-unlock':
         return `Unlock "${cloudProfiles.find((p) => p.id === selectedCloudId)?.name ?? ''}" from cloud`
+      case 'link-cloud':
+        return 'Connect this profile to cloud sync.'
     }
   }
 
@@ -205,7 +222,6 @@ export function ProfileGate() {
                 leftSection={<Icon icon="lucide:plus" width={20} />}
                 onClick={() => {
                   setName('')
-                  setEmail('')
                   setPassword('')
                   setConfirmPassword('')
                   setCreateError(null)
@@ -260,7 +276,7 @@ export function ProfileGate() {
               />
               <PasswordInput
                 label="Password"
-                placeholder="Your profile password"
+                placeholder="Your cloud password"
                 value={cloudPasswordInput}
                 onChange={(e) => setCloudPasswordInput(e.currentTarget.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleCloudLogin()}
@@ -320,8 +336,8 @@ export function ProfileGate() {
                 Cloud profile: <b>{cloudProfiles.find((p) => p.id === selectedCloudId)?.name}</b>
               </Text>
               <PasswordInput
-                label="Password"
-                placeholder="Enter your profile password"
+                label="Local password"
+                placeholder="Enter your local decryption password"
                 value={password}
                 onChange={(e) => setPassword(e.currentTarget.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleCloudAdopt()}
@@ -349,6 +365,47 @@ export function ProfileGate() {
             </Stack>
           )}
 
+          {mode === 'link-cloud' && (
+            <Stack gap="sm" w="100%" mt="sm">
+              <TextInput
+                label="Cloud email"
+                placeholder="your@email.com"
+                value={linkCloudEmail}
+                onChange={(e) => setLinkCloudEmail(e.currentTarget.value)}
+                autoFocus
+              />
+              <PasswordInput
+                label="Cloud password"
+                placeholder="Your Supabase password"
+                value={linkCloudPassword}
+                onChange={(e) => setLinkCloudPassword(e.currentTarget.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleLinkCloud()}
+              />
+              {(cloudError || error) && (
+                <Alert color="red" variant="light" py="xs">
+                  {cloudError || error}
+                </Alert>
+              )}
+              <Text size="xs" c="dimmed" ta="center" mt={-4}>
+                This is separate from your local decryption password.
+              </Text>
+              <Button fullWidth onClick={handleLinkCloud} loading={loading}>
+                Link to Cloud
+              </Button>
+              <Button
+                variant="subtle"
+                size="sm"
+                onClick={() => {
+                  setMode('select')
+                  setCloudError(null)
+                  clearError()
+                }}
+              >
+                Skip for now
+              </Button>
+            </Stack>
+          )}
+
           {mode === 'create' && (
             <Stack gap="sm" w="100%" mt="sm">
               <TextInput
@@ -357,12 +414,6 @@ export function ProfileGate() {
                 value={name}
                 onChange={(e) => setName(e.currentTarget.value)}
                 autoFocus
-              />
-              <TextInput
-                label="Email"
-                placeholder="your@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.currentTarget.value)}
               />
               <PasswordInput
                 label="Password"
@@ -383,8 +434,8 @@ export function ProfileGate() {
                 </Alert>
               )}
               <Text size="xs" c="dimmed" ta="center" mt={-4}>
-                Your data is encrypted with AES-256-GCM and synced to the cloud.
-                Use the same email and password to access from any device.
+                Your data is encrypted with AES-256-GCM.
+                You can link to cloud for sync later.
               </Text>
               <Button fullWidth onClick={handleCreate} loading={loading}>
                 Create profile
