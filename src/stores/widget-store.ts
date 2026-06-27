@@ -64,6 +64,7 @@ export const useWidgetStore = create<WidgetStore>()(
 
 // Persist on change
 useWidgetStore.subscribe((state) => {
+  if (getIsRehydrating()) return
   getStorage().set('widget:config', { activeWidgets: state.activeWidgets, layout: state.layout })
 })
 
@@ -79,7 +80,7 @@ export const useWidgetSetWidgetSize = () => useWidgetStore((s) => s.setWidgetSiz
 export const useWidgetResetDefaults = () => useWidgetStore((s) => s.resetDefaults)
 
 // Rehydration
-import { registerRehydrator } from '@/lib/sync/rehydrate'
+import { getIsRehydrating, registerRehydrator } from '@/lib/sync/rehydrate'
 registerRehydrator((storage) => {
   const config = storage.get<WidgetState>('widget:config')
   if (config) useWidgetStore.setState(config)

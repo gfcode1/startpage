@@ -1,5 +1,6 @@
 import type { StorageAdapter } from './types'
 import { createLocalAdapter } from './adapters/local'
+import { disposeEncryptedAdapter } from './adapters/encrypted'
 
 let instance: StorageAdapter | null = null
 let encryptedProfileId: string | null = null
@@ -16,6 +17,7 @@ export function setStorage(adapter: StorageAdapter): void {
 }
 
 export function resetStorage(): void {
+  disposeEncryptedAdapter()
   instance = null
   encryptedProfileId = null
 }

@@ -30,11 +30,12 @@ export const useWidgetOptionsStore = create<WidgetOptionsStore>()(
 )
 
 useWidgetOptionsStore.subscribe((state) => {
+  if (getIsRehydrating()) return
   getStorage().set('widget:options', state.options)
 })
 
 // Rehydration
-import { registerRehydrator } from '@/lib/sync/rehydrate'
+import { getIsRehydrating, registerRehydrator } from '@/lib/sync/rehydrate'
 registerRehydrator((storage) => {
   const options = storage.get<Record<string, Record<string, unknown>>>('widget:options')
   if (options) useWidgetOptionsStore.setState({ options })

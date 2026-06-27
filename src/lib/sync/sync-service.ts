@@ -355,16 +355,11 @@ export class SyncService {
           timestamp: number
           device_id: string
         }>) {
-          if (row.device_id === SyncQueue.getDeviceId()) {
-            maxTimestamp = Math.max(maxTimestamp, row.timestamp)
-            continue
-          }
-
           try {
             const key = `${row.namespace}:${row.entry_key}`
             const localVersion = versions[key]
 
-            if (localVersion && localVersion.timestamp >= row.timestamp) {
+            if (localVersion && localVersion.checksum === row.checksum) {
               maxTimestamp = Math.max(maxTimestamp, row.timestamp)
               continue
             }
@@ -431,14 +426,16 @@ export class SyncService {
           timestamp: number
           device_id: string
         }>) {
-          if (row.device_id === SyncQueue.getDeviceId()) {
-            maxTimestamp = Math.max(maxTimestamp, row.timestamp)
-            continue
-          }
-
           try {
-            const decrypted = await decrypt<unknown>(row.value, this.profileKey!)
             const key = `${row.namespace}:${row.entry_key}`
+            const localVersion = versions[key]
+
+            if (localVersion && localVersion.checksum === row.checksum) {
+              maxTimestamp = Math.max(maxTimestamp, row.timestamp)
+              continue
+            }
+
+            const decrypted = await decrypt<unknown>(row.value, this.profileKey!)
             if (decrypted === null) {
               storage.remove(key)
             } else {
@@ -488,23 +485,7 @@ export class SyncService {
     const key = `${change.namespace}:${change.entry_key}`
     const localVersion = versions[key]
 
-    if (localVersion && localVersion.timestamp > change.timestamp) {
-      const localValue = storage.get(key)
-      if (localValue !== null) {
-        const ch = hashValue(localValue)
-        if (ch !== change.checksum) {
-          await this.pushChanges([{
-            namespace: change.namespace,
-            entryKey: change.entry_key,
-            value: localValue as Record<string, unknown>,
-            checksum: ch,
-            timestamp: localVersion.timestamp,
-            deviceId: SyncQueue.getDeviceId(),
-          }])
-        }
-      }
-      return
-    }
+    if (localVersion && localVersion.checksum === change.checksum) return
 
     try {
       const decrypted = await decrypt<unknown>(change.value, this.profileKey)
@@ -543,7 +524,6 @@ export class SyncService {
             timestamp: number
             device_id: string
           }
-          if (newData.device_id === SyncQueue.getDeviceId()) return
 
           await this.applyRemoteChange(newData)
           rehydrateAllStores()

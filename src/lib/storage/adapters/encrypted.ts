@@ -1,4 +1,5 @@
 import type { StorageAdapter } from '../types'
+import { rehydrateAllStores } from '@/lib/sync/rehydrate'
 
 const IV_LENGTH = 12
 const ITERATIONS = 100_000
@@ -81,6 +82,13 @@ export interface EncryptedAdapterOptions {
   key: CryptoKey
 }
 
+let _encryptedDispose: (() => void) | null = null
+
+export function disposeEncryptedAdapter(): void {
+  _encryptedDispose?.()
+  _encryptedDispose = null
+}
+
 export function createEncryptedAdapter(
   inner: StorageAdapter,
   options: EncryptedAdapterOptions,
@@ -98,6 +106,44 @@ export function createEncryptedAdapter(
   function profileKey(k: string): string {
     return `${profileId}:${k}`
   }
+
+  // ── Cross-tab sync via storage event ───────────────────────────
+
+  const PREFIX = `sd:${profileId}:`
+  const handleStorage = async (e: StorageEvent) => {
+    if (!e.key?.startsWith(PREFIX)) return
+
+    const appKey = e.key.slice(PREFIX.length)
+
+    if (e.newValue === null) {
+      if (cache.has(appKey)) {
+        cache.delete(appKey)
+        notify(appKey, undefined)
+        setTimeout(() => rehydrateAllStores(), 0)
+      }
+      return
+    }
+
+    try {
+      const encrypted = JSON.parse(e.newValue) as string
+      if (!encrypted || typeof encrypted !== 'string') return
+      const decrypted = await decrypt(encrypted, key)
+      const current = JSON.stringify(cache.get(appKey))
+      const incoming = JSON.stringify(decrypted)
+      if (current !== incoming) {
+        cache.set(appKey, decrypted)
+        notify(appKey, decrypted)
+        setTimeout(() => rehydrateAllStores(), 0)
+      }
+    } catch {
+      // skip malformed or undecryptable entries
+    }
+  }
+
+  window.addEventListener('storage', handleStorage)
+  _encryptedDispose = () => window.removeEventListener('storage', handleStorage)
+
+  // ── Per-key write debounce ────────────────────────────────────
 
   function scheduleWrite(storageKey: string, value: unknown): Promise<void> {
     const existing = pendingWrites.get(storageKey)

@@ -203,6 +203,7 @@ export function getSortedTasks(
 
 // Persist on change
 useTodoStore.subscribe((state) => {
+  if (getIsRehydrating()) return
   saveData({ lists: state.lists, tasks: state.tasks, activeListId: state.activeListId })
 })
 
@@ -257,7 +258,7 @@ export const useTodoDeleteList = () => useTodoStore((s) => s.deleteList)
 export const useTodoSetActiveList = () => useTodoStore((s) => s.setActiveList)
 
 // Rehydration
-import { registerRehydrator } from '@/lib/sync/rehydrate'
+import { getIsRehydrating, registerRehydrator } from '@/lib/sync/rehydrate'
 registerRehydrator((storage) => {
   const data = storage.get<{ lists: unknown[]; tasks: unknown[]; activeListId: string }>('todo:data')
   if (data) {

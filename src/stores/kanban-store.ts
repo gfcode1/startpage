@@ -127,6 +127,7 @@ export const useKanbanStore = create<KanbanStore>()(
 )
 
 useKanbanStore.subscribe((state) => {
+  if (getIsRehydrating()) return
   saveBoard({ columns: state.columns })
 })
 
@@ -155,7 +156,7 @@ export const useKanbanSetSearchQuery = () => useKanbanStore((s) => s.setSearchQu
 export const useKanbanSetFilter = () => useKanbanStore((s) => s.setFilter)
 
 // Rehydration
-import { registerRehydrator } from '@/lib/sync/rehydrate'
+import { getIsRehydrating, registerRehydrator } from '@/lib/sync/rehydrate'
 registerRehydrator((storage) => {
   const data = storage.get<{ columns: unknown[] }>('kanban:data')
   if (data) {

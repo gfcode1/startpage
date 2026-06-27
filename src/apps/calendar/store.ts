@@ -135,6 +135,7 @@ export const useCalendarStore = create<CalendarStore>()(
 )
 
 useCalendarStore.subscribe((state) => {
+  if (getIsRehydrating()) return
   saveEvents(state.events)
   saveCategories(state.categories)
 })
@@ -175,7 +176,7 @@ export const useCalendarSearchQuery = () => useCalendarStore((s) => s.searchQuer
 export const useCalendarCategoryFilter = () => useCalendarStore((s) => s.categoryFilter)
 
 // Rehydration
-import { registerRehydrator } from '@/lib/sync/rehydrate'
+import { getIsRehydrating, registerRehydrator } from '@/lib/sync/rehydrate'
 registerRehydrator((storage) => {
   const events = storage.get<CalendarEvent[]>(EVENTS_KEY)
   if (events) useCalendarStore.setState({ events })

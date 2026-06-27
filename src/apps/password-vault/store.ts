@@ -83,6 +83,7 @@ export const useVaultStore = create<VaultStore>()(
 )
 
 useVaultStore.subscribe((state) => {
+  if (getIsRehydrating()) return
   saveData({ entries: state.entries, categories: state.categories })
 })
 
@@ -179,7 +180,7 @@ export const useVaultRenameCategory = () => useVaultStore((s) => s.renameCategor
 export const useVaultDeleteCategory = () => useVaultStore((s) => s.deleteCategory)
 
 // Rehydration
-import { registerRehydrator } from '@/lib/sync/rehydrate'
+import { getIsRehydrating, registerRehydrator } from '@/lib/sync/rehydrate'
 registerRehydrator((storage) => {
   const data = storage.get<{ entries: unknown[]; categories: unknown[] }>('vault:data')
   if (data) {

@@ -111,6 +111,7 @@ export const useBookmarkStore = create<BookmarkStore>()(
 )
 
 useBookmarkStore.subscribe((state) => {
+  if (getIsRehydrating()) return
   saveData({ collections: state.collections, bookmarks: state.bookmarks })
 })
 
@@ -214,7 +215,7 @@ export const useSetViewMode = () => useBookmarkStoreSelector((s) => s.setViewMod
 export const useSetFilter = () => useBookmarkStoreSelector((s) => s.setFilter)
 
 // Rehydration
-import { registerRehydrator } from '@/lib/sync/rehydrate'
+import { getIsRehydrating, registerRehydrator } from '@/lib/sync/rehydrate'
 registerRehydrator((storage) => {
   const data = storage.get<{ collections: unknown[]; bookmarks: unknown[] }>('bookmarks:data')
   if (data) {
