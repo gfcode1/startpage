@@ -181,8 +181,10 @@ export function createEncryptedAdapter(
         inner.remove(k)
         return
       }
+      const oldValue = cache.get(k)
       cache.delete(k)
       scheduleRemove(profileKey(k)).catch((err) => {
+        if (oldValue !== undefined) cache.set(k, oldValue)
         console.warn(`EncryptedAdapter.remove(${k}) write failed:`, err)
       })
       notify(k, undefined)
@@ -263,6 +265,8 @@ export async function decryptAllForProfile(
         } catch {
           // skip entries that fail to decrypt
         }
+      } else if (value !== null && value !== undefined) {
+        console.warn(`decryptAllForProfile: unexpected value format for ${appKey}:`, typeof value)
       }
     }
   }

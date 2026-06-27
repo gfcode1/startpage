@@ -32,26 +32,26 @@ const mockInnerStorage: StorageAdapter = (() => {
   }
 })()
 
-const mockMaybeSingle = vi.fn()
-const mockUpsert = vi.fn()
-
-const mockSupabase = {
-  auth: {
-    signInWithPassword: vi.fn(),
-    signUp: vi.fn(),
-    signOut: vi.fn(),
-    getUser: vi.fn(),
-    getSession: vi.fn(),
-  },
-  from: vi.fn(() => ({
-    select: vi.fn(() => ({
-      eq: vi.fn(() => ({
-        maybeSingle: mockMaybeSingle,
-      })),
+function makeMockSupabase(overrides?: Record<string, unknown>) {
+  return {
+    auth: {
+      signInWithPassword: vi.fn(),
+      signUp: vi.fn(),
+      signOut: vi.fn(),
+      getUser: vi.fn(),
+      getSession: vi.fn(),
+    },
+    from: vi.fn(),
+    channel: vi.fn(() => ({
+      on: vi.fn().mockReturnThis(),
+      subscribe: vi.fn(),
     })),
-    upsert: mockUpsert,
-  })),
+    removeChannel: vi.fn(),
+    ...overrides,
+  }
 }
+
+let mockSupabase: ReturnType<typeof makeMockSupabase>
 
 vi.mock('@supabase/supabase-js', () => ({
   createClient: vi.fn(() => mockSupabase),
@@ -63,9 +63,8 @@ describe('SyncService', () => {
     resetStorage()
     SyncService.resetInstance()
     setStorage(mockInnerStorage)
+    mockSupabase = makeMockSupabase()
   })
-
-
 
   it('getInstance returns a singleton', () => {
     const a = SyncService.getInstance()
@@ -80,9 +79,8 @@ describe('SyncService', () => {
     expect(a).not.toBe(b)
   })
 
-  it('login creates a client and derives key', async () => {
+  it('login authenticates and sets state', async () => {
     mockSupabase.auth.signInWithPassword.mockResolvedValue({ error: null })
-    mockSupabase.auth.getUser.mockResolvedValue({ data: { user: null } })
 
     const svc = SyncService.getInstance()
     await svc.login('test@test.com', 'password')
@@ -91,7 +89,7 @@ describe('SyncService', () => {
     expect(svc.email).toBe('test@test.com')
   })
 
-  it('login sets client null on error', async () => {
+  it('login throws on invalid credentials', async () => {
     mockSupabase.auth.signInWithPassword.mockResolvedValue({
       error: new Error('invalid credentials'),
     })
@@ -101,96 +99,39 @@ describe('SyncService', () => {
     expect(svc.isLinked).toBe(false)
   })
 
-  it('restore returns true when session exists', async () => {
+  it('checkSession returns true when session exists', async () => {
     mockSupabase.auth.getSession.mockResolvedValue({
-      data: { session: { user: { id: 'user-1' } } },
+      data: { session: { user: { id: 'user-1', email: 'test@test.com' } } },
     })
 
     const svc = SyncService.getInstance()
-    const result = await svc.restore('password', 'test@test.com')
+    const result = await svc.checkSession()
 
     expect(result).toBe(true)
     expect(svc.isLinked).toBe(true)
+    expect(svc.email).toBe('test@test.com')
   })
 
-  it('restore returns false when no session', async () => {
+  it('checkSession returns false when no session', async () => {
     mockSupabase.auth.getSession.mockResolvedValue({
       data: { session: null },
     })
 
     const svc = SyncService.getInstance()
-    const result = await svc.restore('password', 'test@test.com')
+    const result = await svc.checkSession()
 
     expect(result).toBe(false)
     expect(svc.isLinked).toBe(false)
-    expect(svc.email).toBeNull()
   })
 
-  it('push writes version and updates local version', async () => {
-    mockSupabase.auth.getUser.mockResolvedValue({
-      data: { user: { id: 'user-1' } },
-    })
-    mockMaybeSingle.mockResolvedValue({ data: null, error: null })
-    mockUpsert.mockResolvedValue({ error: null })
+  it('signup authenticates and sets state', async () => {
+    mockSupabase.auth.signUp.mockResolvedValue({ error: null })
 
     const svc = SyncService.getInstance()
-    svc['client'] = mockSupabase as never
-    svc['cloudKey'] = await createTestKey()
-    svc['_email'] = 'test@test.com'
+    await svc.signup('test@test.com', 'password')
 
-    setEncryptedProfileId('profile-1')
-
-    await svc.push()
-
-    expect(mockUpsert).toHaveBeenCalled()
-    const localVersion = mockInnerStorage.get<number>('_sync:version')
-    expect(localVersion).toBe(1)
-  })
-
-  it('pull reads remote data and imports locally', async () => {
-    const key = await createTestKey()
-    const { encrypt } = await import('@/lib/storage/adapters/encrypted')
-    const encrypted = await encrypt({ player: { volume: 0.8 } }, key)
-
-    mockMaybeSingle.mockResolvedValue({
-      data: { data: encrypted, version: 5 },
-      error: null,
-    })
-
-    const svc = SyncService.getInstance()
-    svc['client'] = mockSupabase as never
-    svc['cloudKey'] = key
-    svc['_email'] = 'test@test.com'
-
-    setEncryptedProfileId('profile-1')
-    mockInnerStorage.set('_sync:version', 3)
-
-    const result = await svc.pull()
-
-    expect(result).toBe(true)
-    expect(mockInnerStorage.get<number>('_sync:version')).toBe(5)
-    expect(mockInnerStorage.get<number>('player:volume')).toBe(0.8)
-  })
-
-  it('pull skips when remote version is not newer', async () => {
-    const key = await createTestKey()
-    const { encrypt } = await import('@/lib/storage/adapters/encrypted')
-    const encrypted = await encrypt({ player: { volume: 0.8 } }, key)
-
-    mockMaybeSingle.mockResolvedValue({
-      data: { data: encrypted, version: 2 },
-      error: null,
-    })
-
-    const svc = SyncService.getInstance()
-    svc['cloudKey'] = key
-    svc['_email'] = 'test@test.com'
-
-    setEncryptedProfileId('profile-1')
-    mockInnerStorage.set('_sync:version', 5)
-
-    const result = await svc.pull()
-    expect(result).toBe(false)
+    expect(svc.isLinked).toBe(true)
+    expect(svc.email).toBe('test@test.com')
   })
 
   it('logout clears all state', async () => {
@@ -198,10 +139,10 @@ describe('SyncService', () => {
 
     const svc = SyncService.getInstance()
     svc['client'] = mockSupabase as never
-    svc['cloudKey'] = await createTestKey()
     svc['_email'] = 'test@test.com'
     svc['_lastSyncAt'] = Date.now()
     svc['_lastError'] = 'some error'
+    svc.setProfileKey(await createTestKey())
 
     await svc.logout()
 
@@ -225,6 +166,99 @@ describe('SyncService', () => {
     expect(status.lastSyncAt).toBe(1000)
     expect(status.isSyncing).toBe(true)
     expect(status.lastError).toBeNull()
+  })
+
+  it('pushProfileMeta calls upsert', async () => {
+    mockSupabase.auth.getUser.mockResolvedValue({ data: { user: { id: 'user-1' } } })
+    const upsertMock = vi.fn().mockResolvedValue({ error: null })
+    mockSupabase.from.mockReturnValue({ upsert: upsertMock })
+
+    const svc = SyncService.getInstance()
+    svc['client'] = mockSupabase as never
+
+    await svc.pushProfileMeta([{
+      id: 'profile-1',
+      name: 'Test',
+      salt: 'abc',
+      verification: 'xyz',
+    }])
+
+    expect(upsertMock).toHaveBeenCalled()
+  })
+
+  it('fullPull downloads and imports data', async () => {
+    const key = await createTestKey()
+    const { encrypt } = await import('@/lib/storage/adapters/encrypted')
+    const encrypted = await encrypt(0.8, key)
+
+    mockSupabase.auth.getUser.mockResolvedValue({ data: { user: { id: 'user-1' } } })
+
+    const orderMock = vi.fn().mockResolvedValue({
+      data: [{
+        namespace: 'player',
+        entry_key: 'volume',
+        value: encrypted,
+        checksum: 'abc',
+        timestamp: 1000,
+        device_id: 'device-1',
+      }],
+      error: null,
+    })
+    const eqMock = vi.fn().mockReturnValue({ order: orderMock })
+    const selectMock = vi.fn().mockReturnValue({ eq: eqMock })
+    mockSupabase.from.mockReturnValue({ select: selectMock })
+
+    const svc = SyncService.getInstance()
+    svc['client'] = mockSupabase as never
+    svc.setProfileKey(key)
+
+    const result = await svc.fullPull('profile-1')
+
+    expect(result).toBe(true)
+    expect(mockInnerStorage.get<number>('player:volume')).toBe(0.8)
+  })
+
+  it('fullPull returns false when no data', async () => {
+    const key = await createTestKey()
+
+    mockSupabase.auth.getUser.mockResolvedValue({ data: { user: { id: 'user-1' } } })
+
+    const orderMock = vi.fn().mockResolvedValue({ data: [], error: null })
+    const eqMock = vi.fn().mockReturnValue({ order: orderMock })
+    const selectMock = vi.fn().mockReturnValue({ eq: eqMock })
+    mockSupabase.from.mockReturnValue({ select: selectMock })
+
+    const svc = SyncService.getInstance()
+    svc['client'] = mockSupabase as never
+    svc.setProfileKey(key)
+
+    const result = await svc.fullPull('profile-1')
+    expect(result).toBe(false)
+  })
+
+  it('pushChanges encrypts and inserts rows', async () => {
+    const key = await createTestKey()
+
+    mockSupabase.auth.getUser.mockResolvedValue({ data: { user: { id: 'user-1' } } })
+    const insertMock = vi.fn().mockResolvedValue({ error: null })
+    mockSupabase.from.mockReturnValue({ insert: insertMock })
+
+    const svc = SyncService.getInstance()
+    svc['client'] = mockSupabase as never
+    svc.setProfileKey(key)
+
+    setEncryptedProfileId('profile-1')
+
+    await svc.pushChanges([{
+      namespace: 'player',
+      entryKey: 'volume',
+      value: 0.8,
+      checksum: 'ch1',
+      timestamp: Date.now(),
+      deviceId: 'device-1',
+    }])
+
+    expect(insertMock).toHaveBeenCalled()
   })
 })
 

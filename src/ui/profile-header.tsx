@@ -1,12 +1,11 @@
 import { Tooltip, ActionIcon, Text, Avatar, Menu } from '@mantine/core'
 import { Icon } from '@iconify/react'
-import { useActiveProfile, useProfileStore, useProfiles, useIsUnlocked, useCloudEmail } from '@/stores/profile-store'
+import { useActiveProfile, useProfileStore, useIsUnlocked, useCloudEmail } from '@/stores/profile-store'
 
 export function ProfileHeader() {
   const activeProfile = useActiveProfile()
   const isUnlocked = useIsUnlocked()
   const { lockProfile } = useProfileStore()
-  const profiles = useProfiles()
   const cloudEmail = useCloudEmail()
 
   if (!isUnlocked || !activeProfile) return null
@@ -37,28 +36,8 @@ export function ProfileHeader() {
 
         {cloudEmail && (
           <Menu.Item leftSection={<Icon icon="lucide:cloud" width={16} />}>
-            <Text size="xs" c="dimmed">Synced as {cloudEmail}</Text>
+            <Text size="xs" c="dimmed">{cloudEmail}</Text>
           </Menu.Item>
-        )}
-
-        {profiles.length > 1 && (
-          <>
-            <Menu.Divider />
-            <Menu.Label>Switch profile</Menu.Label>
-            {profiles
-              .filter((p) => p.id !== activeProfile.id)
-              .map((p) => (
-                <Menu.Item
-                  key={p.id}
-                  leftSection={<Icon icon="lucide:user" width={16} />}
-                  onClick={async () => {
-                    await lockProfile()
-                  }}
-                >
-                  {p.name}
-                </Menu.Item>
-              ))}
-          </>
         )}
 
         <Menu.Divider />
@@ -66,9 +45,7 @@ export function ProfileHeader() {
         <Menu.Item
           color="red"
           leftSection={<Icon icon="lucide:lock" width={16} />}
-          onClick={async () => {
-            await lockProfile()
-          }}
+          onClick={() => lockProfile()}
         >
           Lock profile
         </Menu.Item>

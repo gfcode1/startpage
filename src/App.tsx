@@ -18,14 +18,14 @@ import { CLOUD_CONFIG } from './config/cloud'
 
 function AppInner() {
   const navigate = useNavigate()
-  const { loadProfiles, updateSyncStatus } = useProfileStore()
+  const { checkCloudSession, updateSyncStatus } = useProfileStore()
   const isReady = useIsReady()
   const isUnlocked = useIsUnlocked()
   const cloudEmail = useCloudEmail()
 
   useEffect(() => {
-    loadProfiles()
-  }, [loadProfiles])
+    checkCloudSession()
+  }, [checkCloudSession])
 
   useEffect(() => {
     if (!isUnlocked || !cloudEmail) return

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Modal, Tabs, Stack, Group, Text, TextInput, PasswordInput, Button, Alert, Code, FileInput, useMantineColorScheme, Switch } from '@mantine/core'
+import { Modal, Tabs, Stack, Group, Text, Button, Alert, Code, FileInput, useMantineColorScheme, Switch } from '@mantine/core'
 import { Icon } from '@iconify/react'
 import { APP_CONFIG } from '@/config/app'
 import { useWidgetResetDefaults } from '@/stores/widget-store'
@@ -23,13 +23,8 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
   const lastSyncAt = useLastSyncAt()
   const isSyncing = useIsSyncing()
   const syncError = useSyncError()
-  const { unlinkFromCloud, linkToCloud, updateSyncStatus, clearError } = useProfileStore()
+  const { updateSyncStatus, clearError } = useProfileStore()
 
-  const [unlinkConfirm, setUnlinkConfirm] = useState(false)
-  const [linkEmail, setLinkEmail] = useState('')
-  const [linkPassword, setLinkPassword] = useState('')
-  const [linkError, setLinkError] = useState<string | null>(null)
-  const [linkLoading, setLinkLoading] = useState(false)
   const [now, setNow] = useState(0)
 
   useEffect(() => {
@@ -42,9 +37,10 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
   }, [opened, clearError])
 
   async function handleSyncNow() {
-    updateSyncStatus(null, true, null)
+    const svc = SyncService.getInstance()
+    const prevSyncAt = svc.lastSyncAt
+    updateSyncStatus(prevSyncAt, true, null)
     try {
-      const svc = SyncService.getInstance()
       await svc.syncNow()
       updateSyncStatus(Date.now(), false, svc.lastError)
       if (!svc.lastError) {
@@ -54,30 +50,8 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
       }
     } catch {
       const svc = SyncService.getInstance()
-      updateSyncStatus(null, false, svc.lastError)
+      updateSyncStatus(prevSyncAt, false, svc.lastError)
       showSyncNotification('error', 'Sync failed', svc.lastError ?? 'Unknown error')
-    }
-  }
-
-  async function handleUnlink() {
-    setUnlinkConfirm(false)
-    await unlinkFromCloud()
-    showSyncNotification('info', 'Disconnected from cloud')
-  }
-
-  async function handleLinkCloud() {
-    setLinkError(null)
-    if (!linkEmail || !linkPassword) {
-      setLinkError('Email and password are required')
-      return
-    }
-    setLinkLoading(true)
-    await linkToCloud(linkEmail, linkPassword)
-    setLinkLoading(false)
-    if (!syncError) {
-      showSyncNotification('success', 'Linked to cloud')
-      setLinkEmail('')
-      setLinkPassword('')
     }
   }
 
@@ -164,67 +138,14 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
                 )}
 
                 <Text size="xs" c="dimmed">
-                  Your data is end-to-end encrypted before reaching the server.
+                  Your data is end-to-end encrypted with your profile password.
                   Automatic sync every 5 minutes.
                 </Text>
-
-                <Button
-                  variant="outline"
-                  color="red"
-                  fullWidth
-                  onClick={() => setUnlinkConfirm(true)}
-                >
-                  Disconnect
-                </Button>
-
-                {unlinkConfirm && (
-                  <Alert color="red" variant="light">
-                    <Text size="sm" mb="sm">Disconnect cloud sync? Your local data will be kept.</Text>
-                    <Group gap="xs">
-                      <Button size="compact-sm" color="red" onClick={handleUnlink}>Confirm</Button>
-                      <Button size="compact-sm" variant="subtle" onClick={() => setUnlinkConfirm(false)}>Cancel</Button>
-                    </Group>
-                  </Alert>
-                )}
               </>
             ) : (
-              <>
-                <Alert color="blue" variant="light" icon={<Icon icon="lucide:cloud" width={18} />}>
-                  <Text size="sm">This profile is not linked to cloud sync.</Text>
-                </Alert>
-
-                <TextInput
-                  label="Cloud email"
-                  placeholder="your@email.com"
-                  value={linkEmail}
-                  onChange={(e) => setLinkEmail(e.currentTarget.value)}
-                />
-                <PasswordInput
-                  label="Cloud password"
-                  placeholder="Your Supabase password"
-                  value={linkPassword}
-                  onChange={(e) => setLinkPassword(e.currentTarget.value)}
-                />
-
-                {linkError && (
-                  <Alert color="red" variant="light" py="xs">
-                    <Text size="sm">{linkError}</Text>
-                  </Alert>
-                )}
-
-                <Text size="xs" c="dimmed">
-                  This is separate from your local decryption password.
-                </Text>
-
-                <Button
-                  fullWidth
-                  onClick={handleLinkCloud}
-                  loading={linkLoading}
-                  leftSection={<Icon icon="lucide:cloud" width={16} />}
-                >
-                  Link to Cloud
-                </Button>
-              </>
+              <Alert color="blue" variant="light" icon={<Icon icon="lucide:cloud" width={18} />}>
+                <Text size="sm">No profile unlocked. Cloud sync status unavailable.</Text>
+              </Alert>
             )}
           </Stack>
         </Tabs.Panel>
