@@ -117,3 +117,12 @@ export const useWikipediaSetQuery = () => useWikipediaStore((s) => s.setQuery)
 export const useWikipediaSelectArticle = () => useWikipediaStore((s) => s.selectArticle)
 export const useWikipediaGoBack = () => useWikipediaStore((s) => s.goBack)
 export const useWikipediaSetViewMode = () => useWikipediaStore((s) => s.setViewMode)
+
+// Rehydration
+import { registerRehydrator } from '@/lib/sync/rehydrate'
+registerRehydrator((storage) => {
+  const bookmarks = storage.get<Bookmark[]>(STORAGE_KEYS.bookmarks)
+  if (bookmarks) useWikipediaStore.setState({ bookmarks })
+  const history = storage.get<ReadHistoryEntry[]>(STORAGE_KEYS.history)
+  if (history) useWikipediaStore.setState({ history })
+})

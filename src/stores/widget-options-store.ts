@@ -13,12 +13,9 @@ interface WidgetOptionsActions {
 
 type WidgetOptionsStore = WidgetOptionsState & WidgetOptionsActions
 
-const storage = getStorage()
-const persisted = storage.get<Record<string, Record<string, unknown>>>('widget:options')
-
 export const useWidgetOptionsStore = create<WidgetOptionsStore>()(
   subscribeWithSelector((set, get) => ({
-    options: persisted ?? {},
+    options: {},
 
     setOption: (widgetId, key, value) =>
       set((state) => ({
@@ -33,7 +30,7 @@ export const useWidgetOptionsStore = create<WidgetOptionsStore>()(
 )
 
 useWidgetOptionsStore.subscribe((state) => {
-  storage.set('widget:options', state.options)
+  getStorage().set('widget:options', state.options)
 })
 
 // Rehydration

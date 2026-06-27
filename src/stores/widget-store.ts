@@ -18,9 +18,6 @@ export interface WidgetActions {
 
 type WidgetStore = WidgetState & WidgetActions
 
-const storage = getStorage()
-const persisted = storage.get<WidgetState>('widget:config')
-
 function getDefaults(): WidgetState {
   const active = widgets
     .filter((w) => w.defaultActive)
@@ -37,7 +34,7 @@ function getDefaults(): WidgetState {
 
 export const useWidgetStore = create<WidgetStore>()(
   subscribeWithSelector((set) => ({
-    ...(persisted ?? getDefaults()),
+    ...(getDefaults()),
 
     addWidget: (id) =>
       set((state) => ({
@@ -67,7 +64,7 @@ export const useWidgetStore = create<WidgetStore>()(
 
 // Persist on change
 useWidgetStore.subscribe((state) => {
-  storage.set('widget:config', { activeWidgets: state.activeWidgets, layout: state.layout })
+  getStorage().set('widget:config', { activeWidgets: state.activeWidgets, layout: state.layout })
 })
 
 // Atomic selectors individuali

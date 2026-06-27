@@ -173,3 +173,12 @@ export const useCalendarMonth = () => useCalendarStore((s) => s.month)
 export const useCalendarView = () => useCalendarStore((s) => s.view)
 export const useCalendarSearchQuery = () => useCalendarStore((s) => s.searchQuery)
 export const useCalendarCategoryFilter = () => useCalendarStore((s) => s.categoryFilter)
+
+// Rehydration
+import { registerRehydrator } from '@/lib/sync/rehydrate'
+registerRehydrator((storage) => {
+  const events = storage.get<CalendarEvent[]>(EVENTS_KEY)
+  if (events) useCalendarStore.setState({ events })
+  const categories = storage.get<EventCategory[]>(CATEGORIES_KEY)
+  if (categories) useCalendarStore.setState({ categories })
+})

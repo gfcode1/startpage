@@ -38,13 +38,9 @@ export interface PlayerActions {
 
 type PlayerStore = PlayerState & PlayerActions
 
-const storage = getStorage()
-
-const persistedVolume = storage.get<number>('player:volume') ?? 0.5
-
 export const usePlayerStore = create<PlayerStore>()(
   subscribeWithSelector((set, get) => ({
-    volume: persistedVolume,
+    volume: 0.5,
     playingId: null,
     playingTitle: '',
     subtitle: '',
@@ -78,7 +74,7 @@ export const usePlayerStore = create<PlayerStore>()(
 
     setVolume: (volume) => {
       set({ volume })
-      storage.set('player:volume', volume)
+      getStorage().set('player:volume', volume)
     },
 
     setPlaying: (playing) => set({ isPlaying: playing }),
