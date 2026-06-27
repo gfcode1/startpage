@@ -308,6 +308,6 @@ registerRehydrator((storage) => {
   const view = storage.get<string>('news:view')
   if (view) newsState.viewMode = view
   if (Object.keys(newsState).length > 0) {
-    useNewsStore.setState({ ...newsState, searchQuery: '' } as never)
+    useNewsStore.setState(newsState as never)
   }
 })

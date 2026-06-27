@@ -72,9 +72,9 @@ export function getSessionKey(): CryptoKey | null {
 
 function loadProfilesFromStorage(): Profile[] {
   try {
-    const raw = localStorage.getItem('sd:_profiles')
+    const raw = getStorage().get<Profile[]>('_profiles')
     if (!raw) return []
-    const profiles = JSON.parse(raw) as Profile[]
+    const profiles = raw as Profile[]
     // Migration: add cloudEmail to profiles that don't have it
     return profiles.map((p) => ({
       ...p,
@@ -87,7 +87,7 @@ function loadProfilesFromStorage(): Profile[] {
 
 function saveProfilesToStorage(profiles: Profile[]) {
   try {
-    localStorage.setItem('sd:_profiles', JSON.stringify(profiles))
+    getStorage().set('_profiles', profiles)
   } catch (_e) {
     console.warn('Failed to save profiles:', _e)
   }
@@ -313,8 +313,10 @@ export const useProfileStore = create<ProfileStore>()((set, get) => ({
   },
 
   deleteProfile: async (id) => {
-    const profiles = loadProfilesFromStorage().filter((p) => p.id !== id)
-    saveProfilesToStorage(profiles)
+    const profiles = loadProfilesFromStorage()
+    const deletedProfile = profiles.find((p) => p.id === id)
+    const remaining = profiles.filter((p) => p.id !== id)
+    saveProfilesToStorage(remaining)
 
     const prefix = `sd:${id}:`
     const keysToRemove: string[] = []
@@ -330,7 +332,18 @@ export const useProfileStore = create<ProfileStore>()((set, get) => ({
       resetStorage()
     }
 
-    set({ profiles, activeProfileId: null, isUnlocked: false, error: null, cloudEmail: null, lastSyncAt: null, isSyncing: false, syncError: null })
+    if (deletedProfile?.cloudEmail) {
+      try {
+        const svc = SyncService.getInstance()
+        if (svc.isLinked) {
+          await svc.deleteProfileData(id)
+        }
+      } catch {
+        // best-effort
+      }
+    }
+
+    set({ profiles: remaining, activeProfileId: null, isUnlocked: false, error: null, cloudEmail: null, lastSyncAt: null, isSyncing: false, syncError: null })
   },
 
   unlinkFromCloud: async () => {
@@ -339,13 +352,12 @@ export const useProfileStore = create<ProfileStore>()((set, get) => ({
       await svc.logout()
 
       const localId = getEncryptedProfileId()
-      const raw = localStorage.getItem('sd:_profiles')
-      if (raw && localId) {
-        const profiles = JSON.parse(raw) as Profile[]
+      if (localId) {
+        const profiles = loadProfilesFromStorage()
         const updated = profiles.map((p) =>
           p.id === localId ? { ...p, cloudEmail: '' } : p,
         )
-        localStorage.setItem('sd:_profiles', JSON.stringify(updated))
+        saveProfilesToStorage(updated)
       }
     } catch {
       // ignore logout errors
@@ -412,6 +424,12 @@ export const useProfileStore = create<ProfileStore>()((set, get) => ({
       const profiles = loadProfilesFromStorage()
       const profile = profiles.find((p) => p.id === localId)
       if (!profile?.cloudEmail) return false
+
+      // Persist cloudEmail to localStorage profile
+      const updatedProfiles = profiles.map((p) =>
+        p.id === localId ? { ...p, cloudEmail: profile.cloudEmail } : p,
+      )
+      saveProfilesToStorage(updatedProfiles)
 
       const svc = SyncService.getInstance()
       await svc.restore(cloudPassword, profile.cloudEmail)

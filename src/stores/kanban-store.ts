@@ -161,8 +161,6 @@ registerRehydrator((storage) => {
   if (data) {
     useKanbanStore.setState({
       columns: data.columns as never,
-      searchQuery: '',
-      filter: 'all' as never,
     })
   }
 })

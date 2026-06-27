@@ -186,12 +186,6 @@ registerRehydrator((storage) => {
     useVaultStore.setState({
       entries: data.entries as never,
       categories: data.categories as never,
-      searchQuery: '',
-      filterCategoryId: null,
-      sortField: 'updatedAt' as never,
-      sortOrder: 'desc' as never,
-      viewMode: 'list' as never,
-      selectedEntryId: null,
     })
   }
 })

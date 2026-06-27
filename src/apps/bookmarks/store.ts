@@ -221,12 +221,6 @@ registerRehydrator((storage) => {
     useBookmarkStore.setState({
       collections: data.collections as never,
       bookmarks: data.bookmarks as never,
-      searchQuery: '',
-      selectedCollectionId: null,
-      sortField: 'updatedAt' as never,
-      sortOrder: 'desc' as never,
-      viewMode: 'grid' as never,
-      filter: 'all' as never,
     })
   }
 })

@@ -89,6 +89,7 @@ export function createEncryptedAdapter(
   const cache = new Map<string, unknown>()
   const pendingWrites = new Map<string, Promise<void>>()
   const listeners = new Map<string, Set<(value: unknown) => void>>()
+  const writeErrors = new Set<string>()
 
   function notify(key: string, value: unknown) {
     listeners.get(key)?.forEach((cb) => cb(value))
@@ -98,39 +99,61 @@ export function createEncryptedAdapter(
     return `${profileId}:${k}`
   }
 
-  async function scheduleWrite(storageKey: string, value: unknown) {
+  function scheduleWrite(storageKey: string, value: unknown): Promise<void> {
     const existing = pendingWrites.get(storageKey)
-    if (existing) try { await existing } catch { /* stale */ }
+    if (existing) {
+      existing.catch(() => {})
+    }
 
     const write = (async () => {
       const encrypted = await encrypt(value, key)
       inner.set(storageKey, encrypted)
     })()
+
     pendingWrites.set(storageKey, write)
-    try {
-      await write
-    } finally {
-      if (pendingWrites.get(storageKey) === write) {
-        pendingWrites.delete(storageKey)
-      }
-    }
+    write.then(
+      () => {
+        writeErrors.delete(storageKey)
+        if (pendingWrites.get(storageKey) === write) {
+          pendingWrites.delete(storageKey)
+        }
+      },
+      () => {
+        writeErrors.add(storageKey)
+        if (pendingWrites.get(storageKey) === write) {
+          pendingWrites.delete(storageKey)
+        }
+      },
+    )
+    return write
   }
 
-  async function scheduleRemove(storageKey: string) {
+  function scheduleRemove(storageKey: string): Promise<void> {
     const existing = pendingWrites.get(storageKey)
-    if (existing) try { await existing } catch { /* stale */ }
+    if (existing) {
+      existing.catch(() => {})
+    }
 
     const remove = (async () => {
       inner.remove(storageKey)
     })()
+
     pendingWrites.set(storageKey, remove)
-    try {
-      await remove
-    } finally {
-      if (pendingWrites.get(storageKey) === remove) {
-        pendingWrites.delete(storageKey)
-      }
-    }
+    remove.then(
+      () => {
+        writeErrors.delete(storageKey)
+        if (pendingWrites.get(storageKey) === remove) {
+          pendingWrites.delete(storageKey)
+        }
+      },
+      () => {
+        writeErrors.add(storageKey)
+        if (pendingWrites.get(storageKey) === remove) {
+          pendingWrites.delete(storageKey)
+        }
+      },
+    )
+    return remove
   }
 
   return {
@@ -145,8 +168,12 @@ export function createEncryptedAdapter(
         return
       }
       cache.set(k, value)
+      const sk = profileKey(k)
+      scheduleWrite(sk, value).catch((err) => {
+        cache.delete(k)
+        console.warn(`EncryptedAdapter.set(${k}) write failed, cache reverted:`, err)
+      })
       notify(k, value)
-      scheduleWrite(profileKey(k), value)
     },
 
     remove(k: string): void {
@@ -155,8 +182,10 @@ export function createEncryptedAdapter(
         return
       }
       cache.delete(k)
+      scheduleRemove(profileKey(k)).catch((err) => {
+        console.warn(`EncryptedAdapter.remove(${k}) write failed:`, err)
+      })
       notify(k, undefined)
-      scheduleRemove(profileKey(k))
     },
 
     subscribe(k: string, callback: (value: unknown) => void): () => void {
@@ -181,18 +210,30 @@ export function createEncryptedAdapter(
     },
 
     import(data: Record<string, Record<string, unknown>>): void {
-      for (const [ns, entries] of Object.entries(data)) {
-        for (const [entryKey, value] of Object.entries(entries)) {
+      const writes: Promise<void>[] = []
+      const entries: Array<{ fullKey: string; value: unknown }> = []
+
+      for (const [ns, ents] of Object.entries(data)) {
+        for (const [entryKey, value] of Object.entries(ents)) {
           const fullKey = `${ns}:${entryKey}`
           if (fullKey.startsWith(SYSTEM_PREFIX)) {
             inner.set(fullKey, value)
             continue
           }
-          cache.set(fullKey, value)
-          notify(fullKey, value)
-          scheduleWrite(profileKey(fullKey), value)
+          entries.push({ fullKey, value })
         }
       }
+
+      for (const { fullKey, value } of entries) {
+        cache.set(fullKey, value)
+        writes.push(scheduleWrite(profileKey(fullKey), value))
+      }
+
+      Promise.allSettled(writes).then(() => {
+        for (const { fullKey, value } of entries) {
+          notify(fullKey, value)
+        }
+      })
     },
   }
 }

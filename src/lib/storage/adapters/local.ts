@@ -13,6 +13,23 @@ export function createLocalAdapter(): StorageAdapter {
     listeners.get(key)?.forEach((cb) => cb(value))
   }
 
+  function keyFromFull(fullKey: string): string {
+    return fullKey.startsWith(`${PREFIX}:`) ? fullKey.slice(PREFIX.length + 1) : fullKey
+  }
+
+  window.addEventListener('storage', (e: StorageEvent) => {
+    if (!e.key?.startsWith(`${PREFIX}:`)) return
+    if (e.newValue === null) {
+      notify(keyFromFull(e.key), undefined)
+    } else {
+      try {
+        notify(keyFromFull(e.key), JSON.parse(e.newValue))
+      } catch {
+        // skip invalid JSON from other tabs
+      }
+    }
+  })
+
   return {
     get<T>(key: string): T | null {
       try {

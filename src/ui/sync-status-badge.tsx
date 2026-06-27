@@ -28,14 +28,14 @@ export function SyncStatusBadge() {
   }
 
   const handleSyncNow = async () => {
-    updateSyncStatus(null, true, null)
+    const svc = SyncService.getInstance()
+    const prevSyncAt = svc.lastSyncAt
+    updateSyncStatus(prevSyncAt, true, null)
     try {
-      const svc = SyncService.getInstance()
       await svc.syncNow()
       updateSyncStatus(Date.now(), false, svc.lastError)
     } catch {
-      const svc = SyncService.getInstance()
-      updateSyncStatus(null, false, svc.lastError)
+      updateSyncStatus(prevSyncAt, false, svc.lastError)
     }
   }
 

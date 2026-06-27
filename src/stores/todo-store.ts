@@ -265,9 +265,6 @@ registerRehydrator((storage) => {
       lists: data.lists as never,
       tasks: data.tasks as never,
       activeListId: data.activeListId,
-      selectedIds: [],
-      searchQuery: '',
-      filter: 'all' as never,
     })
   }
 })

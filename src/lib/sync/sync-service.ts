@@ -6,7 +6,8 @@ import { rehydrateAllStores } from './rehydrate'
 import { SyncQueue, hashValue, type DataChange } from './sync-queue'
 import { createAutoBackup } from '@/lib/persistence'
 
-const CLOUD_SALT = new Uint8Array(32).fill(0xCF)
+const LEGACY_CLOUD_SALT = new Uint8Array(32).fill(0xCF)
+let globalCloudSalt: Uint8Array | null = null
 
 export interface SyncStatus {
   isLinked: boolean
@@ -34,6 +35,7 @@ export class SyncService {
   private _lastSyncAt: number | null = null
   private _isSyncing = false
   private _channel: RealtimeChannel | null = null
+  private _cloudSalt: Uint8Array | null = null
 
   static getInstance(): SyncService {
     if (!SyncService.instance) {
@@ -71,18 +73,32 @@ export class SyncService {
     return this.client
   }
 
+  private generateCloudSalt(): Uint8Array {
+    return crypto.getRandomValues(new Uint8Array(32))
+  }
+
   async login(email: string, password: string): Promise<void> {
     const { error } = await this.ensureClient().auth.signInWithPassword({ email, password })
     if (error) throw error
     this._email = email
-    await this.deriveCloudKey(password)
+
+    const salt = await this.fetchCloudSalt()
+    if (salt) {
+      this._cloudSalt = salt
+      await this.deriveCloudKey(password, salt)
+    } else {
+      await this.deriveCloudKey(password, LEGACY_CLOUD_SALT)
+      this._cloudSalt = LEGACY_CLOUD_SALT
+    }
   }
 
   async signup(email: string, password: string): Promise<void> {
     const { error } = await this.ensureClient().auth.signUp({ email, password })
     if (error) throw error
     this._email = email
-    await this.deriveCloudKey(password)
+    this._cloudSalt = this.generateCloudSalt()
+    await this.deriveCloudKey(password, this._cloudSalt)
+    await this.upsertCloudSalt()
   }
 
   async logout(): Promise<void> {
@@ -97,22 +113,79 @@ export class SyncService {
     this._email = null
     this._lastSyncAt = null
     this._lastError = null
+    this._cloudSalt = null
   }
 
-  private async deriveCloudKey(password: string): Promise<void> {
-    this.cloudKey = await deriveKey(password, CLOUD_SALT)
+  private async deriveCloudKey(password: string, salt: Uint8Array): Promise<void> {
+    this.cloudKey = await deriveKey(password, salt)
   }
 
   async restore(password: string, email: string): Promise<boolean> {
     this._email = email
-    await this.deriveCloudKey(password)
+
+    const salt = await this.fetchCloudSalt()
+    if (salt) {
+      this._cloudSalt = salt
+      await this.deriveCloudKey(password, salt)
+    } else {
+      await this.deriveCloudKey(password, LEGACY_CLOUD_SALT)
+      this._cloudSalt = LEGACY_CLOUD_SALT
+    }
+
     const session = await this.getSessionSafe()
     if (!session) {
       this.cloudKey = null
       this._email = null
+      this._cloudSalt = null
       return false
     }
     return true
+  }
+
+  private async fetchCloudSalt(): Promise<Uint8Array | null> {
+    globalCloudSalt = null
+    try {
+      const { data: { user } } = await this.ensureClient().auth.getUser()
+      if (!user) return null
+
+      const { data, error } = await this.client!
+        .from('profile_meta')
+        .select('cloud_salt')
+        .eq('user_id', user.id)
+        .not('cloud_salt', 'is', null)
+        .limit(1)
+        .maybeSingle()
+
+      if (error || !data) return null
+      const record = data as { cloud_salt: string }
+      if (!record.cloud_salt) return null
+
+      globalCloudSalt = Uint8Array.from(atob(record.cloud_salt), (c) => c.charCodeAt(0))
+      return globalCloudSalt
+    } catch {
+      return null
+    }
+  }
+
+  private async upsertCloudSalt(): Promise<void> {
+    if (!this.client || !this._cloudSalt) return
+    try {
+      const { data: { user } } = await this.client.auth.getUser()
+      if (!user) return
+
+      const saltB64 = btoa(String.fromCharCode(...this._cloudSalt))
+      const { error } = await this.client.from('profile_meta').upsert({
+        user_id: user.id,
+        profile_id: '00000000-0000-0000-0000-000000000000',
+        name: '__salt_reserved__',
+        salt: '',
+        verification: '',
+        cloud_salt: saltB64,
+      }, { onConflict: 'user_id,profile_id' })
+      if (error) throw error
+    } catch {
+      // non-blocking
+    }
   }
 
   private async getSessionSafe(): Promise<boolean> {
@@ -132,12 +205,17 @@ export class SyncService {
     const { data: { user } } = await this.client.auth.getUser()
     if (!user) throw new Error('No authenticated user')
 
+    const saltB64 = this._cloudSalt
+      ? btoa(String.fromCharCode(...this._cloudSalt))
+      : null
+
     const rows = profiles.map((p) => ({
       user_id: user.id,
       profile_id: p.id,
       name: p.name,
       salt: p.salt,
       verification: p.verification,
+      cloud_salt: saltB64,
     }))
 
     const { error } = await this.client.from('profile_meta').upsert(rows, {
@@ -158,6 +236,7 @@ export class SyncService {
       .from('profile_meta')
       .select('profile_id, name, salt, verification')
       .eq('user_id', user.id)
+      .neq('profile_id', '00000000-0000-0000-0000-000000000000')
 
     if (error || !data) return []
     return (data as Array<{ profile_id: string; name: string; salt: string; verification: string }>).map((r) => ({
@@ -166,6 +245,23 @@ export class SyncService {
       salt: r.salt,
       verification: r.verification,
     }))
+  }
+
+  async deleteProfileData(profileId: string): Promise<void> {
+    if (!this.client) return
+    try {
+      const { data: { user } } = await this.client.auth.getUser()
+      if (!user) return
+
+      await Promise.all([
+        this.client.from('profile_meta').delete().eq('user_id', user.id).eq('profile_id', profileId),
+        this.client.from('profile_registry').delete().eq('user_id', user.id).eq('profile_id', profileId),
+        this.client.from('sync_entries').delete().eq('profile_id', profileId),
+        this.client.from('sync_log').delete().eq('profile_id', profileId),
+      ])
+    } catch {
+      // best-effort cleanup
+    }
   }
 
   async registerProfile(profileId: string, profileName: string): Promise<void> {
@@ -278,7 +374,7 @@ export class SyncService {
 
   // ── Incremental push ─────────────────────────────────────────────
 
-  async pushChanges(changes: DataChange[]): Promise<void> {
+  async pushChanges(changes: DataChange[], profileId?: string): Promise<void> {
     if (!this.client || !this.cloudKey || changes.length === 0) return
 
     try {
@@ -286,13 +382,13 @@ export class SyncService {
         const { data: { user } } = await this.client!.auth.getUser()
         if (!user) throw new Error('No authenticated user')
 
-        const profileId = getEncryptedProfileId()
-        if (!profileId) throw new Error('No active profile')
+        const pid = profileId ?? getEncryptedProfileId()
+        if (!pid) throw new Error('No active profile')
 
         const rows = await Promise.all(changes.map(async (c) => {
           const encrypted = await encrypt(c.value, this.cloudKey!)
           return {
-            profile_id: profileId,
+            profile_id: pid,
             namespace: c.namespace,
             entry_key: c.entryKey,
             value: encrypted,
@@ -558,39 +654,54 @@ export class SyncService {
 
   // ── Sync orchestration ──────────────────────────────────────────
 
+  private _syncQueue: Array<() => void> = []
+
   async syncNow(): Promise<void> {
-    if (this._syncPromise) return this._syncPromise
+    if (this._syncPromise) {
+      return new Promise<void>((resolve) => {
+        this._syncQueue.push(resolve)
+      })
+    }
+
+    const profileId = getEncryptedProfileId()
+
     this._syncPromise = (async () => {
       this._isSyncing = true
       try {
-        // 1. Full pull (initial data)
-        await this.pull()
+        if (profileId) {
+          // 1. Full pull (initial data)
+          await this.pull()
 
-        // 2. Push incremental changes
-        const changes = this.getLocalChanges()
-        if (changes.length > 0) {
-          await this.pushChanges(changes)
-        }
+          // 2. Push incremental changes
+          const changes = this.getLocalChanges()
+          if (changes.length > 0) {
+            await this.pushChanges(changes, profileId)
+          }
 
-        // 3. Process queued changes
-        const queue = SyncQueue.getAll()
-        if (queue.length > 0) {
-          const queuedChanges: DataChange[] = queue.map((q) => ({
-            namespace: q.namespace,
-            entryKey: q.entryKey,
-            value: q.value,
-            checksum: q.checksum,
-            timestamp: q.timestamp,
-            deviceId: q.deviceId,
-          }))
-          await this.pushChanges(queuedChanges)
-          SyncQueue.clear()
+          // 3. Process queued changes (only those due for retry)
+          const queue = SyncQueue.getDue()
+          if (queue.length > 0) {
+            const queuedChanges: DataChange[] = queue.map((q) => ({
+              namespace: q.namespace,
+              entryKey: q.entryKey,
+              value: q.value,
+              checksum: q.checksum,
+              timestamp: q.timestamp,
+              deviceId: q.deviceId,
+            }))
+            await this.pushChanges(queuedChanges, profileId)
+            SyncQueue.clear()
+          }
         }
       } catch {
         // _lastError already set
       } finally {
         this._isSyncing = false
         this._syncPromise = null
+
+        // Notify waiting callers
+        const pending = this._syncQueue.splice(0)
+        for (const resolve of pending) resolve()
       }
     })()
     return this._syncPromise
@@ -610,6 +721,7 @@ export class SyncService {
       clearInterval(this.timerId)
       this.timerId = null
     }
+    this.unsubscribeRealtime()
   }
 
   getStatus(): SyncStatus {

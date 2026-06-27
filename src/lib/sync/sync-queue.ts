@@ -15,6 +15,7 @@ export interface DataChange {
 interface QueuedChange extends DataChange {
   id: string
   retries: number
+  nextRetryAt: number
 }
 
 export function hashValue(value: unknown): string {
@@ -44,7 +45,14 @@ export class SyncQueue {
     const existing = queue.findIndex(
       (q) => q.namespace === change.namespace && q.entryKey === change.entryKey,
     )
-    const entry: QueuedChange = { ...change, id: generateId(), retries: 0 }
+    const oldRetries = existing >= 0 ? queue[existing]!.retries : 0
+    const backoff = Math.min(1000 * 2 ** oldRetries, 60000)
+    const entry: QueuedChange = {
+      ...change,
+      id: generateId(),
+      retries: oldRetries,
+      nextRetryAt: Date.now() + backoff,
+    }
 
     if (existing >= 0) {
       queue[existing] = entry
@@ -64,6 +72,11 @@ export class SyncQueue {
     return getStorage().get<QueuedChange[]>(QUEUE_KEY) ?? []
   }
 
+  static getDue(): QueuedChange[] {
+    const now = Date.now()
+    return SyncQueue.getAll().filter((q) => q.nextRetryAt <= now)
+  }
+
   static hasPending(): boolean {
     return SyncQueue.getAll().length > 0
   }
@@ -73,6 +86,7 @@ export class SyncQueue {
     const entry = queue.find((q) => q.id === id)
     if (entry) {
       entry.retries++
+      entry.nextRetryAt = Date.now() + Math.min(1000 * 2 ** entry.retries, 60000)
       getStorage().set(QUEUE_KEY, queue)
     }
   }
