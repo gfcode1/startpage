@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Group, Text, ActionIcon, Slider, Paper, Tooltip, Badge, Transition, Box } from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
 import { Icon } from '@iconify/react'
 import {
   usePlayerIsPlaying, usePlayerPlayingTitle, usePlayerSubtitle,
@@ -19,6 +20,7 @@ export function PlayerBar() {
   const setVolume = usePlayerSetVolume()
   const clearQueue = usePlayerClearQueue()
   const clearSleepTimer = usePlayerClearSleepTimer()
+  const isMobile = useMediaQuery('(max-width: 47.999em)')
   const [remaining, setRemaining] = useState(
     () => sleepTimer !== null ? Math.max(0, Math.floor((sleepTimer - Date.now()) / 1000)) : 0,
   )
@@ -60,8 +62,9 @@ export function PlayerBar() {
             borderBottom: 'none',
             borderLeft: 'none',
             borderRight: 'none',
+            paddingBottom: isMobile ? 'env(safe-area-inset-bottom, 0px)' : undefined,
           }}
-          p="sm"
+          p={isMobile ? 'xs' : 'sm'}
           bg="var(--mantine-color-body)"
         >
           <Group justify="space-between" wrap="nowrap">
@@ -91,7 +94,7 @@ export function PlayerBar() {
                 </Tooltip>
               )}
 
-              {queue.length > 0 && (
+              {!isMobile && queue.length > 0 && (
                 <Tooltip label={`${queue.length} in queue`}>
                   <ActionIcon variant="subtle" onClick={clearQueue} aria-label="Clear queue">
                     <Icon icon="lucide:list" width={16} />
@@ -106,7 +109,7 @@ export function PlayerBar() {
                 <Icon icon="lucide:square" width={14} />
               </ActionIcon>
 
-              <Group gap={4} wrap="nowrap" style={{ width: 100 }}>
+              <Group gap={4} wrap="nowrap" style={{ width: isMobile ? 60 : 100 }}>
                 <Icon icon="lucide:volume" width={14} />
                 <Slider
                   value={volume}

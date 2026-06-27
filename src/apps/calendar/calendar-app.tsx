@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { Container, Group, Button, Tooltip } from '@mantine/core'
+import { useMediaQuery, useHotkeys } from '@mantine/hooks'
 import { Icon } from '@iconify/react'
-import { useHotkeys } from '@mantine/hooks'
 import { useCalendarStore, useCalendarView } from './store'
 import { CalendarHeader } from './components/calendar-header'
 import { CalendarGrid } from './components/calendar-grid'
@@ -14,6 +14,8 @@ import type { CalendarEvent } from './types'
 
 export default function CalendarApp() {
   const view = useCalendarView()
+  const isMobile = useMediaQuery('(max-width: 47.999em)')
+  const effectiveView = isMobile ? 'agenda' : view
   const events = useCalendarStore((s) => s.events)
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null)
@@ -78,13 +80,13 @@ export default function CalendarApp() {
         </Tooltip>
       </Group>
 
-      {view === 'month' && (
+      {effectiveView === 'month' && (
         <CalendarGrid onDateClick={openNewEvent} onEventClick={openEditEvent} />
       )}
-      {view === 'week' && (
+      {effectiveView === 'week' && (
         <WeekView onDateClick={openNewEvent} onEventClick={openEditEvent} />
       )}
-      {view === 'agenda' && (
+      {effectiveView === 'agenda' && (
         <AgendaView onEventClick={openEditEvent} />
       )}
 

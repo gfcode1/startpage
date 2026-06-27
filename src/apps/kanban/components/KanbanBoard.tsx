@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import { Container, Group, Center, Stack, Text } from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core'
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
 import { useKanbanColumns, useKanbanAddCard, useKanbanUpdateCard, useKanbanDeleteCard, useKanbanMoveCard, useKanbanRenameColumn, useKanbanDeleteColumn, useKanbanMoveColumn, getKanbanColumns } from '@/stores/kanban-store'
@@ -21,6 +22,7 @@ export function KanbanBoard() {
   const [modalOpen, setModalOpen] = useState(false)
   const [editingCard, setEditingCard] = useState<Card | null>(null)
   const [cardColumnId, setCardColumnId] = useState('')
+  const isMobile = useMediaQuery('(max-width: 47.999em)')
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -122,21 +124,39 @@ export function KanbanBoard() {
           items={columns.map((c) => `col:${c.id}`)}
           strategy={horizontalListSortingStrategy}
         >
-          <Group gap="md" align="flex-start" wrap="nowrap" style={{ overflow: 'auto', flex: 1, paddingBottom: 16 }}>
-            {columns.map((col) => (
-              <KanbanColumn
-                key={col.id}
-                column={col}
-                columnCount={columns.length}
-                onAddCard={openNewCard}
-                onEditCard={openEditCard}
-                onDeleteCard={deleteCard}
-                onDetailCard={() => {}}
-                onRenameColumn={renameColumn}
-                onDeleteColumn={deleteColumn}
-              />
-            ))}
-          </Group>
+          {isMobile ? (
+            <Stack gap="md" style={{ flex: 1, overflow: 'auto', paddingBottom: 16 }}>
+              {columns.map((col) => (
+                <KanbanColumn
+                  key={col.id}
+                  column={col}
+                  columnCount={columns.length}
+                  onAddCard={openNewCard}
+                  onEditCard={openEditCard}
+                  onDeleteCard={deleteCard}
+                  onDetailCard={() => {}}
+                  onRenameColumn={renameColumn}
+                  onDeleteColumn={deleteColumn}
+                />
+              ))}
+            </Stack>
+          ) : (
+            <Group gap="md" align="flex-start" wrap="nowrap" style={{ overflow: 'auto', flex: 1, paddingBottom: 16 }}>
+              {columns.map((col) => (
+                <KanbanColumn
+                  key={col.id}
+                  column={col}
+                  columnCount={columns.length}
+                  onAddCard={openNewCard}
+                  onEditCard={openEditCard}
+                  onDeleteCard={deleteCard}
+                  onDetailCard={() => {}}
+                  onRenameColumn={renameColumn}
+                  onDeleteColumn={deleteColumn}
+                />
+              ))}
+            </Group>
+          )}
         </SortableContext>
       </DndContext>
 

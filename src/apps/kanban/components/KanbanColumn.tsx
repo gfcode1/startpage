@@ -7,6 +7,7 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import type { Column, Card } from '../types'
 import { useKanbanSearchQuery, useKanbanFilter } from '@/stores/kanban-store'
 import { KanbanCard } from './KanbanCard'
+import { useMediaQuery } from '@mantine/hooks'
 
 interface KanbanColumnProps {
   column: Column
@@ -28,6 +29,7 @@ export function KanbanColumn({
   const searchQuery = useKanbanSearchQuery()
   const filter = useKanbanFilter()
   const [parent] = useAutoAnimate()
+  const isMobile = useMediaQuery('(max-width: 47.999em)')
 
   const cards = useMemo(() => {
     let result = column.cards
@@ -58,7 +60,14 @@ export function KanbanColumn({
       withBorder
       p="sm"
       radius="md"
-      style={{ minWidth: 280, maxWidth: 320, flex: 1, display: 'flex', flexDirection: 'column', maxHeight: 'calc(100vh - 140px)' }}
+      style={{
+        minWidth: isMobile ? undefined : 280,
+        maxWidth: isMobile ? undefined : 320,
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        maxHeight: isMobile ? undefined : 'calc(100vh - 140px)',
+      }}
     >
       <Group justify="space-between" mb="sm" style={{ flexShrink: 0 }}>
         {editingName ? (

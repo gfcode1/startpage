@@ -26,8 +26,8 @@ export function AppShellWrapper({ children }: AppShellWrapperProps) {
 
   return (
     <AppShell
-      header={{ height: 56 }}
-      padding="md"
+      header={{ height: { base: 48, sm: 56 } }}
+      padding={{ base: 'xs', sm: 'md' }}
       footer={{ height: playerHeight }}
     >
       <AppShell.Header>

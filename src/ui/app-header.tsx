@@ -1,4 +1,6 @@
-import { Group, Text, ActionIcon, TextInput } from '@mantine/core'
+import { useState } from 'react'
+import { Group, Text, ActionIcon, TextInput, Collapse } from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
 import { Icon } from '@iconify/react'
 import { ReactNode } from 'react'
 
@@ -23,43 +25,84 @@ interface AppHeaderProps {
 }
 
 export function AppHeader({ title, subtitle, badge, actions, search }: AppHeaderProps) {
+  const isMobile = useMediaQuery('(max-width: 47.999em)')
+  const [searchOpen, setSearchOpen] = useState(false)
+
   return (
-    <Group justify="space-between" mb="md" wrap="nowrap">
-      <Group gap="xs" wrap="nowrap" style={{ minWidth: 0 }}>
-        <div style={{ minWidth: 0 }}>
-          <Group gap="xs" wrap="nowrap">
-            <Text fw={700} size="lg" style={{ fontFamily: 'var(--mantine-heading-font-family)' }} truncate="end">
-              {title}
-            </Text>
-            {badge}
-          </Group>
-          {subtitle && <Text size="sm" c="dimmed">{subtitle}</Text>}
-        </div>
+    <>
+      <Group justify="space-between" mb={searchOpen ? 0 : 'md'} wrap="nowrap">
+        <Group gap="xs" wrap="nowrap" style={{ minWidth: 0 }}>
+          {!searchOpen && (
+            <div style={{ minWidth: 0 }}>
+              <Group gap="xs" wrap="nowrap">
+                <Text
+                  fw={700}
+                  size="lg"
+                  style={{ fontFamily: 'var(--mantine-heading-font-family)' }}
+                  truncate="end"
+                >
+                  {title}
+                </Text>
+                {badge}
+              </Group>
+              {subtitle && (
+                <Text size="sm" c="dimmed" truncate="end">
+                  {subtitle}
+                </Text>
+              )}
+            </div>
+          )}
+        </Group>
+
+        <Group gap="xs" wrap="nowrap">
+          {search && isMobile ? (
+            <ActionIcon
+              variant={searchOpen ? 'filled' : 'subtle'}
+              onClick={() => {
+                setSearchOpen((o) => !o)
+                if (searchOpen) search.onChange('')
+              }}
+              aria-label="Toggle search"
+            >
+              <Icon icon={searchOpen ? 'lucide:x' : 'lucide:search'} width={18} />
+            </ActionIcon>
+          ) : search ? (
+            <TextInput
+              placeholder={search.placeholder ?? 'Search...'}
+              value={search.value}
+              onChange={(e) => search.onChange(e.currentTarget.value)}
+              leftSection={<Icon icon="lucide:search" width={14} />}
+              size="sm"
+              style={{ width: 160 }}
+            />
+          ) : null}
+          {!searchOpen &&
+            actions?.map((action) => (
+              <ActionIcon
+                key={action.id}
+                variant={action.variant === 'primary' ? 'filled' : 'subtle'}
+                onClick={action.onClick}
+                aria-label={action.label}
+                title={action.label}
+              >
+                <Icon icon={action.icon} width={18} />
+              </ActionIcon>
+            ))}
+        </Group>
       </Group>
 
-      <Group gap="xs" wrap="nowrap">
-        {search && (
+      {isMobile && search && (
+        <Collapse expanded={searchOpen} mb="md">
           <TextInput
             placeholder={search.placeholder ?? 'Search...'}
             value={search.value}
             onChange={(e) => search.onChange(e.currentTarget.value)}
             leftSection={<Icon icon="lucide:search" width={14} />}
             size="sm"
-            style={{ width: 160 }}
+            autoFocus
           />
-        )}
-        {actions?.map((action) => (
-          <ActionIcon
-            key={action.id}
-            variant={action.variant === 'primary' ? 'filled' : 'subtle'}
-            onClick={action.onClick}
-            aria-label={action.label}
-            title={action.label}
-          >
-            <Icon icon={action.icon} width={18} />
-          </ActionIcon>
-        ))}
-      </Group>
-    </Group>
+        </Collapse>
+      )}
+    </>
   )
 }

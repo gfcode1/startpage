@@ -4,7 +4,11 @@ import { Dock } from '@/ui/dock'
 
 export function Launcher() {
   return (
-    <Container size="xl" py="md">
+    <Container
+      size="xl"
+      py={{ base: 'xs', sm: 'md' }}
+      px={{ base: 'xs', sm: 'md' }}
+    >
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
         <Dock />
       </div>

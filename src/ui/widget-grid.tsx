@@ -60,17 +60,17 @@ function SortableWidget({ widget }: { widget: WidgetDefinition }) {
         <Box
           {...attributes}
           {...listeners}
-          style={{ cursor: 'grab', display: 'flex', alignItems: 'center' }}
+          style={{ cursor: 'grab', display: 'flex', alignItems: 'center', minWidth: 24, minHeight: 24 }}
           c="dimmed"
         >
-          <Icon icon="lucide:grip-vertical" width={14} />
+          <Icon icon="lucide:grip-vertical" width={16} />
         </Box>
         <Text size="sm" fw={600} style={{ flex: 1 }} truncate="end">
           {widget.name}
         </Text>
         <ActionIcon
           variant="subtle"
-          size="xs"
+          size="sm"
           onClick={() => removeWidget(widget.id)}
           aria-label={`Remove ${widget.name}`}
         >
