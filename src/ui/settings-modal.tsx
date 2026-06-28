@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react'
-import { Modal, Tabs, Stack, Group, Text, Button, Alert, Code, FileInput, useMantineColorScheme, Switch } from '@mantine/core'
+import { useState, useEffect, useCallback } from 'react'
+import { Modal, Tabs, Stack, Group, Text, Button, Alert, Code, FileInput, useMantineColorScheme, Switch, Divider, SegmentedControl, ColorInput, TextInput, SimpleGrid, Center, Loader } from '@mantine/core'
 import { Icon } from '@iconify/react'
 import { APP_CONFIG } from '@/config/app'
 import { useWidgetResetDefaults } from '@/stores/widget-store'
+import { useBackgroundStore } from '@/stores/background-store'
+import { useArticArtworks, getArticThumbnailUrl, getArticFullUrl } from '@/hooks/use-artic-api'
 import { downloadBackup, uploadBackup, createAutoBackup, restoreAutoBackup, hasAutoBackup } from '@/lib/persistence'
 import { useProfileStore, useCloudEmail, useLastSyncAt, useIsSyncing, useSyncError } from '@/stores/profile-store'
 import { SyncService } from '@/lib/sync/sync-service'
@@ -25,6 +27,41 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
   const syncError = useSyncError()
   const updateSyncStatus = useProfileStore((s) => s.updateSyncStatus)
   const clearError = useProfileStore((s) => s.clearError)
+
+  const backgroundType = useBackgroundStore((s) => s.backgroundType)
+  const backgroundColor = useBackgroundStore((s) => s.backgroundColor)
+  const backgroundImage = useBackgroundStore((s) => s.backgroundImage)
+  const articArtwork = useBackgroundStore((s) => s.articArtwork)
+  const setBackgroundType = useBackgroundStore((s) => s.setBackgroundType)
+  const setBackgroundColor = useBackgroundStore((s) => s.setBackgroundColor)
+  const setBackgroundImage = useBackgroundStore((s) => s.setBackgroundImage)
+  const setArticArtwork = useBackgroundStore((s) => s.setArticArtwork)
+
+  const [articSearch, setArticSearch] = useState('')
+  const [articDebounced, setArticDebounced] = useState('')
+  const [articPage, setArticPage] = useState(1)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setArticDebounced(articSearch)
+      setArticPage(1)
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [articSearch])
+
+  const articQuery = useArticArtworks(articDebounced, articPage)
+
+  const selectArticArtwork = useCallback((artwork: { id: number; title: string; artist_display: string; image_id: string | null }) => {
+    if (!artwork.image_id) return
+    const fullUrl = getArticFullUrl(artwork.image_id)
+    setBackgroundImage(fullUrl)
+    setArticArtwork({
+      id: artwork.id,
+      title: artwork.title,
+      artist: artwork.artist_display,
+      imageId: artwork.image_id,
+    })
+  }, [setBackgroundImage, setArticArtwork])
 
   const [now, setNow] = useState(0)
 
@@ -96,6 +133,127 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
                 aria-label="Toggle dark mode"
               />
             </Group>
+
+            <Divider />
+
+            <div>
+              <Text size="sm" fw={500} mb="xs">Background</Text>
+
+              <SegmentedControl
+                fullWidth
+                size="xs"
+                data={[
+                  { value: 'none', label: 'None' },
+                  { value: 'solid', label: 'Color' },
+                  { value: 'image', label: 'Image' },
+                ]}
+                value={backgroundType}
+                onChange={(value) => setBackgroundType(value as 'none' | 'solid' | 'image')}
+                mb="sm"
+              />
+
+              {backgroundType === 'solid' && (
+                <ColorInput
+                  value={backgroundColor}
+                  onChange={(value) => setBackgroundColor(value)}
+                  format="hex"
+                  swatches={['#241d1a', '#1a1412', '#3a3028', '#2d4a3e', '#2a3a4a', '#4a2a3a', '#3a2a2a', '#2a3a3a']}
+                  mb="sm"
+                />
+              )}
+
+              {backgroundType === 'image' && (
+                <>
+                  <TextInput
+                    placeholder="Enter image URL or browse below..."
+                    value={backgroundImage}
+                    onChange={(e) => {
+                      setBackgroundImage(e.target.value)
+                      if (articArtwork) setArticArtwork(null)
+                    }}
+                    mb="sm"
+                  />
+
+                  <Divider label="Browse Art Institute of Chicago" labelPosition="center" mb="sm" />
+
+                  <TextInput
+                    placeholder="Search artworks..."
+                    leftSection={<Icon icon="lucide:search" width={16} />}
+                    value={articSearch}
+                    onChange={(e) => setArticSearch(e.target.value)}
+                    mb="sm"
+                  />
+
+                  {articQuery.isLoading && (
+                    <Center py="sm"><Loader size="sm" /></Center>
+                  )}
+
+                  {articQuery.data && articQuery.data.data.length > 0 && (
+                    <>
+                      <SimpleGrid cols={4} spacing="sm" mb="sm">
+                        {articQuery.data.data.map((artwork) => {
+                          if (!artwork.image_id) return null
+                          const thumbUrl = getArticThumbnailUrl(artwork.image_id)
+                          return (
+                            <div
+                              key={artwork.id}
+                              onClick={() => selectArticArtwork(artwork)}
+                              style={{
+                                cursor: 'pointer',
+                                borderRadius: 4,
+                                overflow: 'hidden',
+                                height: 80,
+                                backgroundImage: `url(${thumbUrl})`,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                                border: articArtwork?.imageId === artwork.image_id
+                                  ? '2px solid var(--mantine-color-accent-5)'
+                                  : '2px solid transparent',
+                              }}
+                            />
+                          )
+                        })}
+                      </SimpleGrid>
+
+                      {articQuery.data.pagination.current_page < articQuery.data.pagination.total_pages && (
+                        <Button
+                          variant="light"
+                          size="compact-sm"
+                          fullWidth
+                          onClick={() => setArticPage((p) => p + 1)}
+                          loading={articQuery.isFetching}
+                        >
+                          Load more
+                        </Button>
+                      )}
+                    </>
+                  )}
+                </>
+              )}
+
+              {backgroundType !== 'none' && (
+                <div
+                  style={{
+                    height: 60,
+                    borderRadius: 8,
+                    overflow: 'hidden',
+                    marginTop: 8,
+                    backgroundImage: backgroundType === 'image' && backgroundImage ? `url(${backgroundImage})` : undefined,
+                    backgroundColor: backgroundType === 'solid' ? backgroundColor : backgroundType === 'image' && !backgroundImage ? 'var(--mantine-color-dark-5)' : undefined,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                  }}
+                />
+              )}
+
+              {articArtwork && (
+                <Text size="xs" c="dimmed" mt={4} lineClamp={1}>
+                  {articArtwork.title} — {articArtwork.artist}
+                </Text>
+              )}
+            </div>
+
+            <Divider />
 
             <Group justify="space-between">
               <div>
