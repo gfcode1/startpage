@@ -27,12 +27,12 @@ export interface Preset {
   sounds: Record<string, number>
 }
 
-export interface MoodistState {
+export interface SoundscapeState {
   isPlaying: boolean
   sounds: SoundsState
 }
 
-export type MoodistAction =
+export type SoundscapeAction =
   | { type: 'SELECT'; id: string }
   | { type: 'UNSELECT'; id: string }
   | { type: 'SET_VOLUME'; id: string; volume: number }

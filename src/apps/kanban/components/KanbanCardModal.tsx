@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Modal, TextInput, Textarea, Select, Group, Button, MultiSelect, Stack } from '@mantine/core'
+import { Modal, TextInput, Textarea, Select, Group, Button, MultiSelect, Stack, Text } from '@mantine/core'
 import type { Card, Priority } from '../types'
 
 interface KanbanCardModalProps {
@@ -57,13 +57,16 @@ function FormContent({ card, onSave, onClose }: { card: Card | null; onSave: (da
         autoFocus
         required
       />
-      <Textarea
-        label="Description"
-        value={description}
-        onChange={(e) => setDescription(e.currentTarget.value)}
-        autosize
-        minRows={2}
-      />
+      <Stack gap={4}>
+        <Textarea
+          label="Description"
+          value={description}
+          onChange={(e) => setDescription(e.currentTarget.value)}
+          autosize
+          minRows={2}
+        />
+        <Text size="xs" c="dimmed">Supports **bold**, *italic* and [links](url)</Text>
+      </Stack>
       <Group grow>
         <Select
           label="Priority"

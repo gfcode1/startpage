@@ -11,7 +11,7 @@ interface PresetsPanelProps {
 }
 
 export function PresetsPanel({ sounds, onApplyPreset }: PresetsPanelProps) {
-  const [presets, setPresets] = useLocalStorage<Preset[]>({ key: 'moodist:presets', defaultValue: [] })
+  const [presets, setPresets] = useLocalStorage<Preset[]>({ key: 'soundscape:presets', defaultValue: [] })
   const [newLabel, setNewLabel] = useState('')
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editLabel, setEditLabel] = useState('')

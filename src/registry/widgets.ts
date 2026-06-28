@@ -111,4 +111,12 @@ export const widgets: WidgetDefinition[] = [
     icon: 'lucide:bookmark', category: 'app', defaultActive: false,
     size: 'medium', component: lazy(() => import('@/apps/bookmarks/widgets/bookmarks-widget')),
   },
+  {
+    id: 'chat', name: 'Quick Chat', description: 'Quick AI chat',
+    icon: 'lucide:bot', category: 'app', defaultActive: false,
+    size: 'medium', component: lazy(() => import('@/apps/chat/widgets/chat-widget')),
+    options: [
+      { key: 'defaultModel', label: 'Default model', type: 'text', defaultValue: 'openai/gpt-4o' },
+    ],
+  },
 ]

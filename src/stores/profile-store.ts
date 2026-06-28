@@ -132,7 +132,7 @@ export const useProfileStore = create<ProfileStore>()((set, get) => ({
 
   cloudLogout: () => {
     SyncService.getInstance().logout().catch(() => {})
-    set({ cloudProfiles: [], cloudAuthEmail: null, cloudAuthLoading: false, isReady: true, activeProfileName: null })
+    set({ cloudProfiles: [], cloudAuthEmail: null, cloudAuthLoading: false, isReady: true, activeProfileId: null, activeProfileName: null })
   },
 
   createCloudProfile: async (name, localPassword) => {
@@ -162,6 +162,7 @@ export const useProfileStore = create<ProfileStore>()((set, get) => ({
       }
 
       // Set up encrypted storage
+      resetStorage()
       const storage = getStorage()
       const cache = await decryptAllForProfile(storage, id, key)
       const encrypted = createEncryptedAdapter(storage, { profileId: id, key })
@@ -175,6 +176,7 @@ export const useProfileStore = create<ProfileStore>()((set, get) => ({
       svc.setProfileKey(key)
 
       rehydrateEagerStores()
+      rehydrateAllStores()
 
       const email = get().cloudAuthEmail
 
@@ -219,6 +221,7 @@ export const useProfileStore = create<ProfileStore>()((set, get) => ({
       svc.setProfileKey(key)
 
       // Set up encrypted storage
+      resetStorage()
       const storage = getStorage()
       const cache = await decryptAllForProfile(storage, cloudProfile.id, key)
       const encrypted = createEncryptedAdapter(storage, {
@@ -323,17 +326,17 @@ export const useProfileStore = create<ProfileStore>()((set, get) => ({
       SyncService.getInstance().stop()
       SyncService.getInstance().clearProfileKey()
       resetStorage()
-    }
 
-    set({
-      activeProfileId: null,
-      activeProfileName: null,
-      isUnlocked: false,
-      error: null,
-      lastSyncAt: null,
-      isSyncing: false,
-      syncError: null,
-    })
+      set({
+        activeProfileId: null,
+        activeProfileName: null,
+        isUnlocked: false,
+        error: null,
+        lastSyncAt: null,
+        isSyncing: false,
+        syncError: null,
+      })
+    }
   },
 
   clearError: () => set({ error: null }),

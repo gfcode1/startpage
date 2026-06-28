@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Text, SimpleGrid } from '@mantine/core'
+import { Text, SimpleGrid, Paper } from '@mantine/core'
 import { Icon } from '@iconify/react'
 import type { Category, SoundsState } from '../types'
 import { SoundCard } from './SoundCard'
@@ -10,6 +10,9 @@ interface CategorySectionProps {
   category: Category
   soundsState: SoundsState
   isGloballyPlaying: boolean
+  masterVolume: number
+  searchQuery: string
+  isFavorites?: boolean
   onSelect: (id: string) => void
   onUnselect: (id: string) => void
   onSetVolume: (id: string, volume: number) => void
@@ -17,20 +20,28 @@ interface CategorySectionProps {
 }
 
 export function CategorySection({
-  category, soundsState, isGloballyPlaying,
+  category, soundsState, isGloballyPlaying, masterVolume,
+  searchQuery, isFavorites,
   onSelect, onUnselect, onSetVolume, onToggleFavorite,
 }: CategorySectionProps) {
   const [showAll, setShowAll] = useState(false)
-  const hasMore = category.sounds.length > VISIBLE_COUNT
-  const hasHiddenSelected = !showAll && category.sounds.slice(VISIBLE_COUNT).some((s) => soundsState[s.id]?.selected)
-  const visible = showAll ? category.sounds : category.sounds.slice(0, VISIBLE_COUNT)
+
+  const filteredSounds = searchQuery
+    ? category.sounds.filter((s) => s.label.toLowerCase().includes(searchQuery.toLowerCase()))
+    : category.sounds
+
+  if (filteredSounds.length === 0) return null
+
+  const hasMore = filteredSounds.length > VISIBLE_COUNT
+  const hasHiddenSelected = !showAll && filteredSounds.slice(VISIBLE_COUNT).some((s) => soundsState[s.id]?.selected)
+  const visible = showAll ? filteredSounds : filteredSounds.slice(0, VISIBLE_COUNT)
 
   return (
-    <div style={{ marginBottom: 24 }}>
+    <Paper p={isFavorites ? 'sm' : undefined} mb="lg" style={isFavorites ? { border: '1px solid var(--mantine-color-accent-3)' } : undefined}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-        <Icon icon={category.icon} width={16} />
+        <Icon icon={category.icon} width={16} style={isFavorites ? { color: 'var(--mantine-color-accent-5)' } : undefined} />
         <Text fw={600} size="sm">{category.title}</Text>
-        <Text size="xs" c="dimmed">({category.sounds.length} sounds)</Text>
+        <Text size="xs" c="dimmed">({filteredSounds.length} sounds)</Text>
       </div>
 
       <SimpleGrid cols={{ base: 2, sm: 3, md: 4, lg: 6 }} spacing="sm">
@@ -40,7 +51,7 @@ export function CategorySection({
             sound={sound}
             state={soundsState[sound.id] ?? { selected: false, favorite: false, volume: 0.5 }}
             isGloballyPlaying={isGloballyPlaying}
-            hidden={false}
+            masterVolume={masterVolume}
             onSelect={() => onSelect(sound.id)}
             onUnselect={() => onUnselect(sound.id)}
             onSetVolume={(vol) => onSetVolume(sound.id, vol)}
@@ -66,9 +77,9 @@ export function CategorySection({
             color: hasHiddenSelected ? 'var(--mantine-color-accent-5)' : 'light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-3))',
           }}
         >
-          {showAll ? 'Show Less' : `Show More (${category.sounds.length - VISIBLE_COUNT} more)`}
+          {showAll ? 'Show Less' : `Show More (${filteredSounds.length - VISIBLE_COUNT} more)`}
         </div>
       )}
-    </div>
+    </Paper>
   )
 }

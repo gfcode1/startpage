@@ -1,5 +1,5 @@
 import { XMLParser } from 'fast-xml-parser'
-import type { NewsArticle, FeedSource } from './types'
+import type { NewsArticle, FeedSource, SortBy } from './types'
 import { generateId } from '@/lib/utils/id'
 
 export const MAX_ARTICLES_PER_FEED = 50
@@ -209,16 +209,18 @@ export async function fetchAndParseFeed(feed: FeedSource): Promise<NewsArticle[]
     if (data.status !== 'ok') return []
     const feedTitle = ((data.feed as Record<string, string> | undefined)?.title) ?? feed.title
     const items = (data.items as Array<Record<string, string>>) ?? []
-    return items.map((item) => ({
-      id: generateId(),
-      feedId: feed.id,
-      feedTitle,
-      title: item.title || '',
-      description: (item.description || '').replace(/<[^>]*>/g, '').slice(0, 500),
-      link: item.link || '',
-      author: item.author || undefined,
-      publishedAt: item.pubDate ? new Date(item.pubDate).getTime() : Date.now(),
-      imageUrl: (() => {
+    return items.map((item) => {
+      const pub = item.pubDate ? new Date(item.pubDate).getTime() : Date.now()
+      return {
+        id: generateId(),
+        feedId: feed.id,
+        feedTitle,
+        title: item.title || '',
+        description: (item.description || '').replace(/<[^>]*>/g, '').slice(0, 500),
+        link: item.link || '',
+        author: item.author || undefined,
+        publishedAt: Number.isNaN(pub) ? Date.now() : pub,
+        imageUrl: (() => {
         const enc = item.enclosure
         if (typeof enc === 'string') return enc
         if (enc && typeof enc === 'object') return (enc as Record<string, string>).link || undefined
@@ -227,7 +229,7 @@ export async function fetchAndParseFeed(feed: FeedSource): Promise<NewsArticle[]
       isRead: false,
       isBookmarked: false,
       cachedAt: Date.now(),
-    })).filter((a) => a.link || a.title)
+    }}).filter((a) => a.link || a.title)
   } catch {
     return []
   }
@@ -271,4 +273,150 @@ export function formatDate(timestamp: number): string {
     day: 'numeric',
     year: 'numeric',
   })
+}
+
+export interface ArticleFilters {
+  searchQuery: string
+  selectedCategory: string | null
+  selectedCountry: string | null
+  showBookmarksOnly: boolean
+  showUnreadOnly: boolean
+  bookmarks: string[]
+  sortBy: SortBy
+  catalog: FeedSource[]
+  customFeeds: FeedSource[]
+}
+
+export function filterArticles(articles: NewsArticle[], f: ArticleFilters): NewsArticle[] {
+  let filtered = [...articles]
+
+  if (f.showBookmarksOnly) {
+    filtered = filtered.filter((a) => f.bookmarks.includes(a.id))
+  }
+
+  if (f.showUnreadOnly) {
+    filtered = filtered.filter((a) => !a.isRead)
+  }
+
+  if (f.searchQuery) {
+    const q = f.searchQuery.toLowerCase()
+    filtered = filtered.filter(
+      (a) =>
+        a.title.toLowerCase().includes(q) ||
+        a.description.toLowerCase().includes(q) ||
+        a.feedTitle.toLowerCase().includes(q)
+    )
+  }
+
+  if (f.selectedCategory) {
+    const catFeedIds = [...f.catalog, ...f.customFeeds]
+      .filter((feed) => feed.category === f.selectedCategory)
+      .map((feed) => feed.id)
+    filtered = filtered.filter((a) => catFeedIds.includes(a.feedId))
+  }
+
+  if (f.selectedCountry) {
+    const countryFeedIds = [...f.catalog, ...f.customFeeds]
+      .filter((feed) => feed.country === f.selectedCountry)
+      .map((feed) => feed.id)
+    filtered = filtered.filter((a) => countryFeedIds.includes(a.feedId))
+  }
+
+  switch (f.sortBy) {
+    case 'oldest':
+      filtered.sort((a, b) => a.publishedAt - b.publishedAt)
+      break
+    case 'unread-first':
+      filtered.sort((a, b) => {
+        if (a.isRead !== b.isRead) return a.isRead ? 1 : -1
+        return b.publishedAt - a.publishedAt
+      })
+      break
+    default:
+      filtered.sort((a, b) => b.publishedAt - a.publishedAt)
+  }
+
+  return filtered
+}
+
+export async function validateFeedUrl(url: string): Promise<{ valid: boolean; title?: string }> {
+  try {
+    const viaProxy = `/rss-fetch?url=${encodeURIComponent(url)}`
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 10000)
+    const res = await fetch(viaProxy, { signal: controller.signal })
+    clearTimeout(timeout)
+    if (!res.ok) return { valid: false }
+    const xml = await res.text()
+    const parsed = parser.parse(xml)
+    const title =
+      (parsed.rss?.channel as Record<string, unknown> | undefined)?.title as string
+      || (parsed.feed?.title as string)
+      || undefined
+    return { valid: true, title }
+  } catch {
+    return { valid: false }
+  }
+}
+
+function escXml(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+}
+
+export function generateOpml(feeds: FeedSource[]): string {
+  const outlines = feeds
+    .map((f) => {
+      const escapedTitle = escXml(f.title)
+      const escapedUrl = escXml(f.url)
+      const cat = f.category ? ` category="${escXml(f.category)}"` : ''
+      const lang = f.language ? ` language="${escXml(f.language)}"` : ''
+      return `      <outline type="rss" text="${escapedTitle}" title="${escapedTitle}" xmlUrl="${escapedUrl}"${cat}${lang} />`
+    })
+    .join('\n')
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<opml version="2.0">
+  <head>
+    <title>StartDeck News Subscriptions</title>
+    <dateCreated>${new Date().toUTCString()}</dateCreated>
+  </head>
+  <body>
+${outlines}
+  </body>
+</opml>`
+}
+
+export function parseOpml(xml: string): FeedSource[] {
+  const feeds: FeedSource[] = []
+  try {
+    const parsed = parser.parse(xml)
+    const body = parsed.opml?.body
+    if (!body) return feeds
+
+    function walk(node: unknown, depth = 0) {
+      if (!node || typeof node !== 'object' || depth > 10) return
+      const obj = node as Record<string, unknown>
+      if (obj.outline) {
+        const outlines = Array.isArray(obj.outline) ? obj.outline : [obj.outline]
+        for (const o of outlines) {
+          const outline = o as Record<string, string>
+          const xmlUrl = outline['@_xmlUrl'] || outline['@_xmlurl'] || outline['@_xml_url']
+          const text = outline['@_text'] || outline['@_title']
+          const type = outline['@_type']
+          if (xmlUrl && (type === 'rss' || !type)) {
+            const title = text || getFeedTitleFromUrl(xmlUrl)
+            feeds.push({
+              id: `custom-${generateId().slice(0, 8)}`,
+              title,
+              url: xmlUrl,
+              category: (outline['@_category'] as string) || 'Custom',
+            })
+          }
+          walk(outline, depth + 1)
+        }
+      }
+    }
+    walk(body)
+  } catch { /* invalid OPML */ }
+  return feeds
 }

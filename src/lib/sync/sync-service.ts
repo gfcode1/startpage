@@ -319,6 +319,9 @@ export class SyncService {
       })
     } catch (err) {
       this._lastError = err instanceof Error ? err.message : String(err)
+      for (const c of changes) {
+        SyncQueue.enqueue(c)
+      }
       throw err
     }
   }
@@ -612,7 +615,7 @@ export class SyncService {
               deviceId: q.deviceId,
             }))
             await this.pushChanges(queuedChanges, profileId)
-            SyncQueue.clear()
+            SyncQueue.clearProcessed(queue.map((q) => q.id))
           }
         }
       } catch {

@@ -49,6 +49,7 @@ async function reverseGeocode(lat: number, lon: number): Promise<string> {
   try {
     const res = await fetch(
       `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=en`,
+      { headers: { 'User-Agent': 'StartDeck/1.0' } },
     )
     if (!res.ok) throw new Error('Reverse geocode failed')
     const data = await res.json()
@@ -108,7 +109,7 @@ export const useWeatherLocation = create<LocationState>((set, get) => ({
       set({ geoLoading: false })
     } catch (err) {
       const msg = err instanceof GeolocationPositionError
-        ? err.code === err.PERMISSION_DENIED ? 'Location denied' : 'Location unavailable'
+        ? err.code === GeolocationPositionError.PERMISSION_DENIED ? 'Location denied' : 'Location unavailable'
         : 'Geolocation failed'
       set({ geoError: msg, geoLoading: false })
     }

@@ -1,4 +1,4 @@
-import { Text, Group, Paper, Badge, ActionIcon } from '@mantine/core'
+import { Text, Group, Paper, Badge, ActionIcon, Tooltip } from '@mantine/core'
 import { Icon } from '@iconify/react'
 import type { NewsArticle } from '../types'
 import { timeAgo } from '../utils'
@@ -10,6 +10,19 @@ interface ArticleCardProps {
 }
 
 export function ArticleCard({ article, onSelect, onToggleBookmark }: ArticleCardProps) {
+  const handleCopyLink = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    navigator.clipboard.writeText(article.link).catch(() => {})
+  }
+
+  const handleShare = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (navigator.share) {
+      navigator.share({ title: article.title, url: article.link }).catch(() => {})
+    } else {
+      navigator.clipboard.writeText(article.link).catch(() => {})
+    }
+  }
   return (
     <Paper
       withBorder
@@ -38,7 +51,10 @@ export function ArticleCard({ article, onSelect, onToggleBookmark }: ArticleCard
               src={article.imageUrl}
               alt=""
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+              onError={(e) => {
+                const parent = (e.target as HTMLImageElement).parentElement
+                if (parent) parent.style.display = 'none'
+              }}
             />
           </div>
         )}
@@ -66,11 +82,29 @@ export function ArticleCard({ article, onSelect, onToggleBookmark }: ArticleCard
               onClick={(e) => { e.stopPropagation(); onToggleBookmark(article.id) }}
             >
               <Icon
-                icon={article.isBookmarked ? 'lucide:bookmark' : 'lucide:bookmark'}
+                icon={article.isBookmarked ? 'lucide:bookmark-check' : 'lucide:bookmark'}
                 width={14}
                 color={article.isBookmarked ? 'var(--mantine-color-accent-filled)' : undefined}
               />
             </ActionIcon>
+            <Tooltip label="Copy link" withArrow>
+              <ActionIcon
+                variant="subtle"
+                size="sm"
+                onClick={handleCopyLink}
+              >
+                <Icon icon="lucide:link" width={14} />
+              </ActionIcon>
+            </Tooltip>
+            <Tooltip label="Share" withArrow>
+              <ActionIcon
+                variant="subtle"
+                size="sm"
+                onClick={handleShare}
+              >
+                <Icon icon="lucide:share" width={14} />
+              </ActionIcon>
+            </Tooltip>
           </Group>
           {article.description && (
             <Text size="xs" c="dimmed" lineClamp={2} mb={4}>

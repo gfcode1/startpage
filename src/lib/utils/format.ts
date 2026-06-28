@@ -1,7 +1,10 @@
 export function formatTime(seconds: number): string {
-  const m = Math.floor(seconds / 60)
-  const s = seconds % 60
-  return `${m}:${s.toString().padStart(2, '0')}`
+  const totalSeconds = Math.max(0, Math.floor(seconds))
+  const h = Math.floor(totalSeconds / 3600)
+  const m = Math.floor((totalSeconds % 3600) / 60)
+  const s = totalSeconds % 60
+  const pad = (n: number) => n.toString().padStart(2, '0')
+  return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`
 }
 
 export function formatDate(date: Date): string {
@@ -13,7 +16,10 @@ export function formatDate(date: Date): string {
 }
 
 export function truncate(str: string, max: number): string {
-  return str.length <= max ? str : str.slice(0, max).trimEnd() + '...'
+  if (str.length <= max) return str
+  const suffix = '...'
+  const limit = Math.max(0, max - suffix.length)
+  return str.slice(0, limit).trimEnd() + suffix
 }
 
 export function clamp(value: number, min: number, max: number): number {

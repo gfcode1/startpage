@@ -1,15 +1,28 @@
-import { useState } from 'react'
-import { Text, Group, TextInput, Button, ActionIcon } from '@mantine/core'
+import { useState, useEffect, useCallback } from 'react'
+import { Group, TextInput, Button, ActionIcon, Switch } from '@mantine/core'
 import { Icon } from '@iconify/react'
 import type { Filter } from '../types'
-import { useKanbanCardCount, useKanbanSetSearchQuery, useKanbanSetFilter, useKanbanAddColumn } from '@/stores/kanban-store'
+import {
+  useKanbanSetSearchQuery, useKanbanSetFilter,
+  useKanbanAddColumn, useKanbanUndo, useKanbanRedo,
+  useKanbanUndoCount, useKanbanRedoCount,
+} from '@/stores/kanban-store'
+import { BoardSwitcher } from './BoardSwitcher'
 
-export function KanbanHeader() {
+interface KanbanHeaderProps {
+  showArchived: boolean
+  onToggleArchived: () => void
+}
+
+export function KanbanHeader({ showArchived, onToggleArchived }: KanbanHeaderProps) {
   const [newColTitle, setNewColTitle] = useState('')
-  const cardCount = useKanbanCardCount()
   const setSearchQuery = useKanbanSetSearchQuery()
   const setFilter = useKanbanSetFilter()
   const addColumn = useKanbanAddColumn()
+  const undo = useKanbanUndo()
+  const redo = useKanbanRedo()
+  const undoCount = useKanbanUndoCount()
+  const redoCount = useKanbanRedoCount()
 
   const handleAddColumn = () => {
     const title = newColTitle.trim()
@@ -17,6 +30,29 @@ export function KanbanHeader() {
     addColumn(title)
     setNewColTitle('')
   }
+
+  const handleUndo = useCallback(() => undo(), [undo])
+  const handleRedo = useCallback(() => redo(), [redo])
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const ctrl = e.ctrlKey || e.metaKey
+      if (ctrl && !e.shiftKey && e.key === 'z') {
+        e.preventDefault()
+        handleUndo()
+      }
+      if (ctrl && e.shiftKey && e.key === 'z') {
+        e.preventDefault()
+        handleRedo()
+      }
+      if (ctrl && e.key === 'y') {
+        e.preventDefault()
+        handleRedo()
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [handleUndo, handleRedo])
 
   const filters: { value: Filter; label: string; icon: string }[] = [
     { value: 'all', label: 'All', icon: 'lucide:list' },
@@ -28,12 +64,9 @@ export function KanbanHeader() {
 
   return (
     <Group justify="space-between" mb="md" wrap="wrap">
-      <div>
-        <Text fw={700} size="lg" style={{ fontFamily: 'var(--mantine-heading-font-family)' }}>
-          Kanban
-        </Text>
-        <Text size="sm" c="dimmed">{cardCount} cards in total</Text>
-      </div>
+      <Group gap="xs">
+        <BoardSwitcher />
+      </Group>
 
       <Group gap="xs" wrap="wrap">
         <TextInput
@@ -59,6 +92,29 @@ export function KanbanHeader() {
           ))}
         </Button.Group>
 
+        <Group gap={2}>
+          <ActionIcon
+            size="xs"
+            variant="subtle"
+            onClick={handleUndo}
+            disabled={undoCount === 0}
+            aria-label="Undo"
+            title="Undo (Ctrl+Z)"
+          >
+            <Icon icon="lucide:undo-2" width={14} />
+          </ActionIcon>
+          <ActionIcon
+            size="xs"
+            variant="subtle"
+            onClick={handleRedo}
+            disabled={redoCount === 0}
+            aria-label="Redo"
+            title="Redo (Ctrl+Shift+Z)"
+          >
+            <Icon icon="lucide:redo-2" width={14} />
+          </ActionIcon>
+        </Group>
+
         <Group gap={4}>
           <TextInput
             placeholder="New column..."
@@ -71,6 +127,13 @@ export function KanbanHeader() {
             <Icon icon="lucide:plus" width={14} />
           </ActionIcon>
         </Group>
+
+        <Switch
+          size="xs"
+          label="Archived"
+          checked={showArchived}
+          onChange={onToggleArchived}
+        />
       </Group>
     </Group>
   )

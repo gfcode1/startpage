@@ -3,18 +3,24 @@ import { Text, Group, Stack, Badge, Paper } from '@mantine/core'
 import { Icon } from '@iconify/react'
 import { Link } from 'react-router-dom'
 import { WidgetEmpty } from '@/ui/widget-container'
-import { useKanbanColumns } from '@/stores/kanban-store'
+import { useKanbanBoards, useActiveBoardId } from '@/stores/kanban-store'
 
 export default function KanbanWidget() {
-  const columns = useKanbanColumns()
+  const boards = useKanbanBoards()
+  const activeBoardId = useActiveBoardId()
 
-  if (columns.length === 0) {
+  const activeBoard = useMemo(
+    () => boards.find((b) => b.id === activeBoardId),
+    [boards, activeBoardId],
+  )
+
+  if (!activeBoard || activeBoard.columns.length === 0) {
     return (
       <Stack gap="xs">
-        <Text size="xs" c="dimmed" ta="center">No columns yet</Text>
+        <Text size="xs" c="dimmed" ta="center">No board yet</Text>
         <WidgetEmpty>Create a board in Kanban</WidgetEmpty>
         <Text size="xs" c="dimmed" ta="center" component={Link} to="/kanban" style={{ textDecoration: 'none' }}>
-          Open board →
+          Open boards →
         </Text>
       </Stack>
     )
@@ -22,7 +28,8 @@ export default function KanbanWidget() {
 
   return (
     <Stack gap="sm">
-      {columns.map((col) => (
+      <Text size="xs" fw={500} ta="center" c="dimmed">{activeBoard.name}</Text>
+      {activeBoard.columns.map((col) => (
         <ColumnSummary key={col.id} columnId={col.id} title={col.title} />
       ))}
       <Text
@@ -30,7 +37,7 @@ export default function KanbanWidget() {
         c="dimmed"
         ta="center"
         component={Link}
-        to="/kanban"
+        to={`/kanban/${activeBoard.id}`}
         style={{ textDecoration: 'none' }}
       >
         Open board →
@@ -42,7 +49,8 @@ export default function KanbanWidget() {
 const _initTime = Date.now()
 
 function ColumnSummary({ columnId, title }: { columnId: string; title: string }) {
-  const columns = useKanbanColumns()
+  const boards = useKanbanBoards()
+  const activeBoardId = useActiveBoardId()
   const [now, setNow] = useState(_initTime)
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 60000)
@@ -50,12 +58,14 @@ function ColumnSummary({ columnId, title }: { columnId: string; title: string })
   }, [])
 
   const cards = useMemo(() => {
-    const column = columns.find((c) => c.id === columnId)
+    const board = boards.find((b) => b.id === activeBoardId)
+    const column = board?.columns.find((c) => c.id === columnId)
     return column?.cards ?? []
-  }, [columns, columnId])
+  }, [boards, activeBoardId, columnId])
 
-  const criticalCount = useMemo(() => cards.filter((c) => c.priority === 'critical').length, [cards])
-  const overdueCount = useMemo(() => cards.filter((c) => c.dueDate !== null && c.dueDate < now).length, [cards, now])
+  const activeCards = useMemo(() => cards.filter((c) => !c.archived), [cards])
+  const criticalCount = useMemo(() => activeCards.filter((c) => c.priority === 'critical').length, [activeCards])
+  const overdueCount = useMemo(() => activeCards.filter((c) => c.dueDate !== null && c.dueDate < now).length, [activeCards, now])
 
   return (
     <Paper withBorder p="xs" radius="sm">
@@ -72,7 +82,7 @@ function ColumnSummary({ columnId, title }: { columnId: string; title: string })
               <Icon icon="lucide:clock" width={10} style={{ verticalAlign: -1 }} /> {overdueCount}
             </Badge>
           )}
-          <Badge size="xs" variant="light">{cards.length}</Badge>
+          <Badge size="xs" variant="light">{activeCards.length}</Badge>
         </Group>
       </Group>
     </Paper>

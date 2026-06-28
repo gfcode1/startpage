@@ -1,10 +1,18 @@
 import { create } from 'zustand'
 import { getStorage } from '@/lib/storage/engine'
-import type { FeedSource, NewsArticle, ArticleCache, ReaderSettings, ViewMode } from '@/apps/news/types'
+import type { FeedSource, NewsArticle, ArticleCache, ReaderSettings, ViewMode, SortBy, AutoRefresh, RetentionDays, FeedStats } from '@/apps/news/types'
 import { DEFAULT_READER_SETTINGS } from '@/apps/news/types'
 import { fetchAndParseFeed, uniqueByLink, MAX_ARTICLES_PER_FEED, getFeedTitleFromUrl } from '@/apps/news/utils'
 import { generateId } from '@/lib/utils/id'
 import catalogData from '@/apps/news/news-catalog.json'
+
+const RETENTION_DEFAULT: RetentionDays = 30
+const REFRESH_INTERVALS: Record<AutoRefresh, number | null> = {
+  off: null,
+  '15m': 15 * 60 * 1000,
+  '30m': 30 * 60 * 1000,
+  '1h': 60 * 60 * 1000,
+}
 
 interface NewsState {
   catalog: FeedSource[]
@@ -18,9 +26,15 @@ interface NewsState {
   activeArticle: NewsArticle | null
   viewMode: ViewMode
   showBookmarksOnly: boolean
+  showUnreadOnly: boolean
+  sortBy: SortBy
   readerSettings: ReaderSettings
   isRefreshing: boolean
   feedErrors: string[]
+  readerCache: Record<string, string>
+  autoRefreshInterval: AutoRefresh
+  retentionDays: RetentionDays
+  feedStats: Record<string, FeedStats>
 
   init: () => void
   toggleFeed: (feedId: string) => void
@@ -29,6 +43,7 @@ interface NewsState {
   refreshAllFeeds: () => Promise<void>
   refreshFeed: (feed: FeedSource) => Promise<NewsArticle[]>
   markAsRead: (articleId: string) => void
+  markAllRead: () => void
   toggleBookmark: (articleId: string) => void
   setActiveArticle: (article: NewsArticle | null) => void
   setSearchQuery: (query: string) => void
@@ -36,9 +51,17 @@ interface NewsState {
   setSelectedCountry: (country: string | null) => void
   setViewMode: (mode: ViewMode) => void
   setShowBookmarksOnly: (show: boolean) => void
+  setShowUnreadOnly: (show: boolean) => void
+  setSortBy: (sort: SortBy) => void
   setReaderSettings: (settings: ReaderSettings) => void
   getEnabledFeeds: () => FeedSource[]
-  getDisplayArticles: () => NewsArticle[]
+  getUnreadCount: () => number
+  cacheReaderContent: (id: string, html: string) => void
+  getCachedReaderContent: (id: string) => string | null
+  setAutoRefreshInterval: (interval: AutoRefresh) => void
+  setRetentionDays: (days: RetentionDays) => void
+  cleanOldArticles: () => void
+  getRefreshIntervalMs: () => number | null
 }
 
 export const useNewsStore = create<NewsState>((set, get) => ({
@@ -53,9 +76,15 @@ export const useNewsStore = create<NewsState>((set, get) => ({
   activeArticle: null,
   viewMode: 'grid',
   showBookmarksOnly: false,
+  showUnreadOnly: false,
+  sortBy: 'newest',
   readerSettings: DEFAULT_READER_SETTINGS,
   isRefreshing: false,
   feedErrors: [],
+  readerCache: {},
+  autoRefreshInterval: 'off',
+  retentionDays: RETENTION_DEFAULT,
+  feedStats: {},
 
   init: () => {
     const storage = getStorage()
@@ -92,16 +121,30 @@ export const useNewsStore = create<NewsState>((set, get) => ({
       readerSettings: reader,
       viewMode: view,
     })
+
+    const autoRefresh = storage.get<AutoRefresh>('news:autoRefresh') ?? 'off'
+    const retention = storage.get<RetentionDays>('news:retention') ?? RETENTION_DEFAULT
+    const savedStats = storage.get<string>('news:feedStats')
+    let feedStats: Record<string, FeedStats> = {}
+    if (savedStats) {
+      try { feedStats = JSON.parse(savedStats) } catch { /* ignore */ }
+    }
+    set({ autoRefreshInterval: autoRefresh, retentionDays: retention, feedStats })
+    get().cleanOldArticles()
   },
 
   toggleFeed: (feedId) => {
     const { enabledFeedIds } = get()
-    const updated = enabledFeedIds.includes(feedId)
+    const isCurrentlyEnabled = enabledFeedIds.includes(feedId)
+    const updated = isCurrentlyEnabled
       ? enabledFeedIds.filter((id) => id !== feedId)
       : [...enabledFeedIds, feedId]
     set({ enabledFeedIds: updated })
     getStorage().set('news:feeds', updated)
-    get().refreshFeed(get().getEnabledFeeds().find((f) => f.id === feedId)!)
+    if (!isCurrentlyEnabled) {
+      const feed = get().getEnabledFeeds().find((f) => f.id === feedId)
+      if (feed) get().refreshFeed(feed)
+    }
   },
 
   addCustomFeed: async (url) => {
@@ -140,16 +183,32 @@ export const useNewsStore = create<NewsState>((set, get) => ({
   refreshAllFeeds: async () => {
     const feeds = get().getEnabledFeeds()
     if (feeds.length === 0) return
+    if (get().isRefreshing) return
+
+    const prevArticles = get().articles
+    const prevLinks = new Set<string>()
+    for (const cache of Object.values(prevArticles)) {
+      for (const item of cache.items) {
+        prevLinks.add(item.link)
+      }
+    }
 
     set({ isRefreshing: true, feedErrors: [] })
 
     const errors: string[] = []
     const batchSize = 4
+    const newArticles: NewsArticle[] = []
     for (let i = 0; i < feeds.length; i += batchSize) {
       const batch = feeds.slice(i, i + batchSize)
       const results = await Promise.allSettled(batch.map((f) => get().refreshFeed(f)))
       results.forEach((r, j) => {
-        if (r.status === 'rejected') {
+        if (r.status === 'fulfilled') {
+          for (const article of r.value) {
+            if (!prevLinks.has(article.link)) {
+              newArticles.push(article)
+            }
+          }
+        } else {
           const feed = batch[j]
           if (feed) errors.push(feed.title)
         }
@@ -159,7 +218,28 @@ export const useNewsStore = create<NewsState>((set, get) => ({
       }
     }
 
+    // Collect errors from feedStats for feeds that had fetch failures
+    const finalStats = get().feedStats
+    for (const feed of feeds) {
+      const s = finalStats[feed.id]
+      if (s && s.errorCount > 0 && !errors.includes(feed.title)) {
+        errors.push(feed.title)
+      }
+    }
+
     set({ isRefreshing: false, feedErrors: errors })
+
+    if (newArticles.length > 0 && 'Notification' in window && Notification.permission === 'granted') {
+      const count = newArticles.length
+      const top = newArticles.slice(0, 3)
+      if (count === 1 && top[0]) {
+        new Notification(top[0].feedTitle, { body: top[0].title, icon: top[0].imageUrl })
+      } else {
+        new Notification(`${count} new articles`, {
+          body: top.map((a) => a.title).join('\n'),
+        })
+      }
+    }
   },
 
   refreshFeed: async (feed) => {
@@ -178,11 +258,23 @@ export const useNewsStore = create<NewsState>((set, get) => ({
         [feed.id]: { items: merged, fetchedAt: Date.now() },
       }
 
-      set({ articles: newArticles })
+      const stats = { ...get().feedStats }
+      stats[feed.id] = { lastFetched: Date.now(), errorCount: 0 }
+
+      set({ articles: newArticles, feedStats: stats })
       getStorage().set('news:articles', newArticles)
+      getStorage().set('news:feedStats', JSON.stringify(stats))
 
       return articles
     } catch {
+      const stats = { ...get().feedStats }
+      const existing = stats[feed.id]
+      stats[feed.id] = {
+        lastFetched: existing?.lastFetched ?? 0,
+        errorCount: (existing?.errorCount ?? 0) + 1,
+      }
+      set({ feedStats: stats })
+      getStorage().set('news:feedStats', JSON.stringify(stats))
       return []
     }
   },
@@ -195,6 +287,19 @@ export const useNewsStore = create<NewsState>((set, get) => ({
         items: cache.items.map((a) =>
           a.id === articleId ? { ...a, isRead: true } : a
         ),
+        fetchedAt: cache.fetchedAt,
+      }
+    }
+    set({ articles: newArticles })
+    getStorage().set('news:articles', newArticles)
+  },
+
+  markAllRead: () => {
+    const { articles } = get()
+    const newArticles: Record<string, ArticleCache> = {}
+    for (const [key, cache] of Object.entries(articles)) {
+      newArticles[key] = {
+        items: cache.items.map((a) => ({ ...a, isRead: true })),
         fetchedAt: cache.fetchedAt,
       }
     }
@@ -232,6 +337,8 @@ export const useNewsStore = create<NewsState>((set, get) => ({
     getStorage().set('news:view', mode)
   },
   setShowBookmarksOnly: (show) => set({ showBookmarksOnly: show }),
+  setShowUnreadOnly: (show) => set({ showUnreadOnly: show }),
+  setSortBy: (sort) => set({ sortBy: sort }),
 
   setReaderSettings: (settings) => {
     set({ readerSettings: settings })
@@ -244,50 +351,69 @@ export const useNewsStore = create<NewsState>((set, get) => ({
     return [...catalogFeeds, ...customFeeds]
   },
 
-  getDisplayArticles: () => {
-    const { articles, enabledFeedIds, customFeeds, searchQuery, selectedCategory, selectedCountry, showBookmarksOnly, bookmarks } = get()
-
+  getUnreadCount: () => {
+    const { articles, enabledFeedIds, customFeeds } = get()
     const activeIds = [...enabledFeedIds, ...customFeeds.map((f) => f.id)]
-    const all: NewsArticle[] = []
-
+    let count = 0
     for (const id of activeIds) {
       const cache = articles[id]
-      if (cache) all.push(...cache.items)
+      if (cache) {
+        for (const item of cache.items) {
+          if (!item.isRead) count++
+        }
+      }
     }
+    return count
+  },
 
-    let filtered = all.sort((a, b) => b.publishedAt - a.publishedAt)
+  cacheReaderContent: (id, html) => {
+    const { readerCache } = get()
+    set({ readerCache: { ...readerCache, [id]: html } })
+  },
 
-    if (showBookmarksOnly) {
-      filtered = filtered.filter((a) => bookmarks.includes(a.id))
+  getCachedReaderContent: (id) => {
+    return get().readerCache[id] ?? null
+  },
+
+  setAutoRefreshInterval: (interval) => {
+    set({ autoRefreshInterval: interval })
+    getStorage().set('news:autoRefresh', interval)
+  },
+
+  setRetentionDays: (days) => {
+    set({ retentionDays: days })
+    getStorage().set('news:retention', days)
+    get().cleanOldArticles()
+  },
+
+  cleanOldArticles: () => {
+    const { articles, retentionDays, readerCache } = get()
+    const cutoff = Date.now() - retentionDays * 24 * 60 * 60 * 1000
+    const newArticles: Record<string, ArticleCache> = {}
+    let changed = false
+    const keptIds = new Set<string>()
+    for (const [key, cache] of Object.entries(articles)) {
+      const filtered = cache.items.filter((a) => a.publishedAt > cutoff)
+      if (filtered.length !== cache.items.length) changed = true
+      for (const item of filtered) keptIds.add(item.id)
+      newArticles[key] = { items: filtered, fetchedAt: cache.fetchedAt }
     }
-
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase()
-      filtered = filtered.filter(
-        (a) =>
-          a.title.toLowerCase().includes(q) ||
-          a.description.toLowerCase().includes(q) ||
-          a.feedTitle.toLowerCase().includes(q)
-      )
+    const newReaderCache: Record<string, string> = {}
+    for (const [id, html] of Object.entries(readerCache)) {
+      if (keptIds.has(id)) newReaderCache[id] = html
     }
-
-    if (selectedCategory) {
-      const { catalog } = get()
-      const catFeedIds = catalog
-        .filter((f) => f.category === selectedCategory)
-        .map((f) => f.id)
-      filtered = filtered.filter((a) => catFeedIds.includes(a.feedId))
+    const cacheChanged = Object.keys(newReaderCache).length !== Object.keys(readerCache).length
+    if (changed) {
+      set({ articles: newArticles })
+      getStorage().set('news:articles', newArticles)
     }
-
-    if (selectedCountry) {
-      const { catalog } = get()
-      const countryFeedIds = catalog
-        .filter((f) => f.country === selectedCountry)
-        .map((f) => f.id)
-      filtered = filtered.filter((a) => countryFeedIds.includes(a.feedId))
+    if (cacheChanged) {
+      set({ readerCache: newReaderCache })
     }
+  },
 
-    return filtered
+  getRefreshIntervalMs: () => {
+    return REFRESH_INTERVALS[get().autoRefreshInterval]
   },
 }))
 

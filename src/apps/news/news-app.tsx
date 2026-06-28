@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Container, Text, Group, ActionIcon, Tooltip, Loader, Center, Alert } from '@mantine/core'
+import { Container, Text, Group, ActionIcon, Tooltip, Loader, Center, Alert, Badge } from '@mantine/core'
 import { Icon } from '@iconify/react'
 import { useHotkeys } from '@mantine/hooks'
 import { useNewsStore } from '@/stores/news-store'
@@ -23,7 +23,21 @@ export default function NewsApp() {
   const setViewMode = useNewsStore((s) => s.setViewMode)
   const showBookmarksOnly = useNewsStore((s) => s.showBookmarksOnly)
   const setShowBookmarksOnly = useNewsStore((s) => s.setShowBookmarksOnly)
-  const articles = useNewsStore((s) => s.articles)
+  const showUnreadOnly = useNewsStore((s) => s.showUnreadOnly)
+  const setShowUnreadOnly = useNewsStore((s) => s.setShowUnreadOnly)
+  const sortBy = useNewsStore((s) => s.sortBy)
+  const setSortBy = useNewsStore((s) => s.setSortBy)
+  const markAllRead = useNewsStore((s) => s.markAllRead)
+  const getUnreadCount = useNewsStore((s) => s.getUnreadCount)
+  const autoRefreshInterval = useNewsStore((s) => s.autoRefreshInterval)
+  const setAutoRefreshInterval = useNewsStore((s) => s.setAutoRefreshInterval)
+  const retentionDays = useNewsStore((s) => s.retentionDays)
+  const setRetentionDays = useNewsStore((s) => s.setRetentionDays)
+  const getRefreshIntervalMs = useNewsStore((s) => s.getRefreshIntervalMs)
+  const hasContent = useNewsStore((s) => {
+    const ids = [...s.enabledFeedIds, ...s.customFeeds.map((f) => f.id)]
+    return ids.some((id) => (s.articles[id]?.items.length ?? 0) > 0)
+  })
 
   const [catalogOpen, setCatalogOpen] = useState(false)
   const [initialized, setInitialized] = useState(false)
@@ -33,20 +47,37 @@ export default function NewsApp() {
     setInitialized(true) // eslint-disable-line react-hooks/set-state-in-effect
   }, [init])
 
+  useEffect(() => {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission()
+    }
+  }, [])
+
   const hasFeeds = enabledFeedIds.length > 0 || customFeeds.length > 0
-  const hasContent = hasFeeds && Object.values(articles).some((c) => c.items.length > 0)
+  const needsInitialFetch = hasFeeds && !hasContent
 
   useEffect(() => {
-    if (initialized && hasFeeds && !hasContent) {
+    if (initialized && needsInitialFetch) {
       refreshAllFeeds()
     }
-  }, [initialized, hasFeeds, hasContent, refreshAllFeeds])
+  }, [initialized, needsInitialFetch, refreshAllFeeds])
+
+  useEffect(() => {
+    const ms = getRefreshIntervalMs()
+    if (!ms || !initialized) return
+    const timer = setInterval(() => refreshAllFeeds(), ms)
+    return () => clearInterval(timer)
+  }, [autoRefreshInterval, initialized, refreshAllFeeds, getRefreshIntervalMs])
+
+  const unreadCount = getUnreadCount()
 
   useHotkeys([
     ['alt+N', () => setCatalogOpen(true)],
     ['Escape', () => { if (activeArticle) setActiveArticle(null) }],
     ['mod+B', () => setShowBookmarksOnly(!showBookmarksOnly)],
+    ['mod+I', () => setShowUnreadOnly(!showUnreadOnly)],
     ['mod+G', () => setViewMode(viewMode === 'grid' ? 'list' : 'grid')],
+    ['mod+U', () => markAllRead()],
   ])
 
   if (!initialized) {
@@ -74,6 +105,12 @@ export default function NewsApp() {
         <Group gap="xs">
           <SearchBar />
 
+          {unreadCount > 0 && (
+            <Badge size="sm" variant="filled" color="accent" style={{ fontWeight: 600 }}>
+              {unreadCount} unread
+            </Badge>
+          )}
+
           <Tooltip label="Feed catalog (Alt+N)">
             <ActionIcon
               variant="light"
@@ -94,6 +131,16 @@ export default function NewsApp() {
             </ActionIcon>
           </Tooltip>
 
+          <Tooltip label={showUnreadOnly ? 'Show all' : 'Unread only (⌘I)'}>
+            <ActionIcon
+              variant={showUnreadOnly ? 'filled' : 'subtle'}
+              size="md"
+              onClick={() => setShowUnreadOnly(!showUnreadOnly)}
+            >
+              <Icon icon="lucide:eye" width={18} />
+            </ActionIcon>
+          </Tooltip>
+
           <Tooltip label={viewMode === 'grid' ? 'List view (⌘G)' : 'Grid view (⌘G)'}>
             <ActionIcon
               variant="subtle"
@@ -104,6 +151,16 @@ export default function NewsApp() {
                 icon={viewMode === 'grid' ? 'lucide:list' : 'lucide:layout-grid'}
                 width={18}
               />
+            </ActionIcon>
+          </Tooltip>
+
+          <Tooltip label="Mark all read (⌘U)">
+            <ActionIcon
+              variant="subtle"
+              size="md"
+              onClick={() => markAllRead()}
+            >
+              <Icon icon="lucide:check-check" width={18} />
             </ActionIcon>
           </Tooltip>
 
@@ -122,8 +179,64 @@ export default function NewsApp() {
         </Group>
       </Group>
 
-      <FeedManager />
-      <CategoryNav />
+      <Group gap="xs" mb="sm" align="center">
+        <FeedManager />
+      </Group>
+      <Group gap="xs" mb="sm" align="center">
+        <CategoryNav />
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.currentTarget.value as 'newest' | 'oldest' | 'unread-first')}
+          style={{
+            padding: '4px 8px',
+            borderRadius: 'var(--mantine-radius-sm)',
+            border: '1px solid var(--mantine-color-default-border)',
+            background: 'var(--mantine-color-default)',
+            color: 'var(--mantine-color-text)',
+            fontSize: 12,
+            maxWidth: 140,
+          }}
+        >
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+          <option value="unread-first">Unread first</option>
+        </select>
+        <select
+          value={autoRefreshInterval}
+          onChange={(e) => setAutoRefreshInterval(e.currentTarget.value as 'off' | '15m' | '30m' | '1h')}
+          style={{
+            padding: '4px 8px',
+            borderRadius: 'var(--mantine-radius-sm)',
+            border: '1px solid var(--mantine-color-default-border)',
+            background: 'var(--mantine-color-default)',
+            color: 'var(--mantine-color-text)',
+            fontSize: 12,
+            maxWidth: 130,
+          }}
+        >
+          <option value="off">Auto: off</option>
+          <option value="15m">Auto: 15m</option>
+          <option value="30m">Auto: 30m</option>
+          <option value="1h">Auto: 1h</option>
+        </select>
+        <select
+          value={String(retentionDays)}
+          onChange={(e) => setRetentionDays(Number(e.currentTarget.value) as 7 | 30 | 90)}
+          style={{
+            padding: '4px 8px',
+            borderRadius: 'var(--mantine-radius-sm)',
+            border: '1px solid var(--mantine-color-default-border)',
+            background: 'var(--mantine-color-default)',
+            color: 'var(--mantine-color-text)',
+            fontSize: 12,
+            maxWidth: 125,
+          }}
+        >
+          <option value="7">Keep 7d</option>
+          <option value="30">Keep 30d</option>
+          <option value="90">Keep 90d</option>
+        </select>
+      </Group>
 
       {feedErrors.length > 0 && (
         <Alert color="red" variant="light" py="xs" my="sm" styles={{ body: { padding: 0 } }}>

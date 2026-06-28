@@ -13,6 +13,7 @@ export default function NewsWidget() {
   const customFeeds = useNewsStore((s) => s.customFeeds)
   const articles = useNewsStore((s) => s.articles)
   const refreshAllFeeds = useNewsStore((s) => s.refreshAllFeeds)
+  const isRefreshing = useNewsStore((s) => s.isRefreshing)
   const activeIds = [...enabledFeedIds, ...customFeeds.map((f) => f.id)]
   const hasFeeds = activeIds.length > 0
 
@@ -41,7 +42,15 @@ export default function NewsWidget() {
     .sort((a, b) => b.publishedAt - a.publishedAt)
     .slice(0, 5)
 
-  if (allArticles.length === 0) return <WidgetLoading />
+  if (allArticles.length === 0) {
+    if (isRefreshing) return <WidgetLoading />
+    return (
+      <WidgetContainer>
+        <Text size="sm" fw={600}>News</Text>
+        <WidgetEmpty>No articles yet</WidgetEmpty>
+      </WidgetContainer>
+    )
+  }
 
   return (
     <WidgetContainer>
@@ -58,7 +67,43 @@ export default function NewsWidget() {
             style={{ cursor: 'pointer' }}
             onClick={() => navigate('/news')}
           >
-            {!article.isRead && (
+            {article.imageUrl && (
+              <div
+                style={{
+                  width: 40,
+                  height: 30,
+                  borderRadius: 4,
+                  overflow: 'hidden',
+                  flexShrink: 0,
+                  background: 'var(--mantine-color-default-hover)',
+                  position: 'relative',
+                }}
+              >
+                <img
+                  src={article.imageUrl}
+                  alt=""
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  onError={(e) => {
+                    const parent = (e.target as HTMLImageElement).parentElement
+                    if (parent) parent.style.display = 'none'
+                  }}
+                />
+                {!article.isRead && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: 2,
+                      left: 2,
+                      width: 5,
+                      height: 5,
+                      borderRadius: '50%',
+                      background: 'var(--mantine-color-accent-filled)',
+                    }}
+                  />
+                )}
+              </div>
+            )}
+            {!article.isRead && !article.imageUrl && (
               <span
                 style={{
                   width: 5,

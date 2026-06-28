@@ -5,14 +5,18 @@ interface SleepTimerProps {
   onSleep: () => void
 }
 
+const FADE_DURATION = 30_000
+
 export function SleepTimer({ onSleep }: SleepTimerProps) {
   const [minutes, setMinutes] = useState<string>('15')
   const [remaining, setRemaining] = useState(0)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const fadeRef = useRef(false)
 
   const stop = useCallback(() => {
     if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null }
     setRemaining(0)
+    fadeRef.current = false
   }, [])
 
   const start = useCallback(() => {
@@ -20,11 +24,17 @@ export function SleepTimer({ onSleep }: SleepTimerProps) {
     const ms = Number(minutes) * 60 * 1000
     const end = Date.now() + ms
     setRemaining(ms)
+    fadeRef.current = false
     intervalRef.current = setInterval(() => {
       const left = end - Date.now()
       if (left <= 0) { stop(); onSleep() }
-      else setRemaining(left)
-    }, 1000)
+      else {
+        setRemaining(left)
+        if (left <= FADE_DURATION && !fadeRef.current) {
+          fadeRef.current = true
+        }
+      }
+    }, 200)
   }, [minutes, stop, onSleep])
 
   useEffect(() => { return stop }, [stop])
@@ -36,6 +46,7 @@ export function SleepTimer({ onSleep }: SleepTimerProps) {
   }
 
   const isActive = remaining > 0
+  const isFading = remaining > 0 && remaining <= FADE_DURATION
 
   return (
     <Stack gap="sm">
@@ -51,7 +62,10 @@ export function SleepTimer({ onSleep }: SleepTimerProps) {
         />
         {isActive ? (
           <>
-            <Text fw={700} style={{ fontFamily: 'var(--app-font-mono)' }}>{formatTime(remaining)}</Text>
+            <Text fw={700} style={{ fontFamily: 'var(--app-font-mono)', color: isFading ? 'var(--mantine-color-accent-5)' : undefined }}>
+              {formatTime(remaining)}
+              {isFading && <Text component="span" size="xs" ml={4}>fade</Text>}
+            </Text>
             <Button size="compact-sm" variant="light" color="red" onClick={stop}>Cancel</Button>
           </>
         ) : (

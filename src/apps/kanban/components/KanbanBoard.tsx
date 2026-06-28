@@ -3,7 +3,12 @@ import { Container, Group, Center, Stack, Text } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core'
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
-import { useKanbanColumns, useKanbanAddCard, useKanbanUpdateCard, useKanbanDeleteCard, useKanbanMoveCard, useKanbanRenameColumn, useKanbanDeleteColumn, useKanbanMoveColumn, getKanbanColumns } from '@/stores/kanban-store'
+import {
+  useKanbanColumns, useKanbanAddCard, useKanbanUpdateCard,
+  useKanbanDeleteCard, useKanbanDuplicateCard, useKanbanArchiveCard, useKanbanRestoreCard,
+  useKanbanMoveCard, useKanbanRenameColumn, useKanbanDeleteColumn, useKanbanMoveColumn,
+  getKanbanColumns,
+} from '@/stores/kanban-store'
 import type { Card } from '../types'
 import { KanbanHeader } from './KanbanHeader'
 import { KanbanColumn } from './KanbanColumn'
@@ -14,6 +19,9 @@ export function KanbanBoard() {
   const addCard = useKanbanAddCard()
   const updateCard = useKanbanUpdateCard()
   const deleteCard = useKanbanDeleteCard()
+  const duplicateCard = useKanbanDuplicateCard()
+  const archiveCard = useKanbanArchiveCard()
+  const restoreCard = useKanbanRestoreCard()
   const moveCard = useKanbanMoveCard()
   const renameColumn = useKanbanRenameColumn()
   const deleteColumn = useKanbanDeleteColumn()
@@ -22,6 +30,7 @@ export function KanbanBoard() {
   const [modalOpen, setModalOpen] = useState(false)
   const [editingCard, setEditingCard] = useState<Card | null>(null)
   const [cardColumnId, setCardColumnId] = useState('')
+  const [showArchived, setShowArchived] = useState(false)
   const isMobile = useMediaQuery('(max-width: 47.999em)')
 
   const sensors = useSensors(
@@ -55,7 +64,6 @@ export function KanbanBoard() {
     }
   }, [editingCard, cardColumnId, addCard, updateCard])
 
-  // Stable drag handler — reads fresh state via getKanbanColumns instead of closure
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event
     if (!over || active.id === over.id) return
@@ -104,7 +112,7 @@ export function KanbanBoard() {
   if (columns.length === 0) {
     return (
       <Container size="xl" py="md">
-        <KanbanHeader />
+        <KanbanHeader showArchived={showArchived} onToggleArchived={() => setShowArchived((v) => !v)} />
         <Center py="xl">
           <Stack align="center" gap="sm">
             <Text c="dimmed">No columns yet</Text>
@@ -117,7 +125,7 @@ export function KanbanBoard() {
 
   return (
     <Container size="xl" py="md" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <KanbanHeader />
+      <KanbanHeader showArchived={showArchived} onToggleArchived={() => setShowArchived((v) => !v)} />
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext
@@ -131,9 +139,13 @@ export function KanbanBoard() {
                   key={col.id}
                   column={col}
                   columnCount={columns.length}
+                  showArchived={showArchived}
                   onAddCard={openNewCard}
                   onEditCard={openEditCard}
                   onDeleteCard={deleteCard}
+                  onDuplicateCard={duplicateCard}
+                  onArchiveCard={archiveCard}
+                  onRestoreCard={restoreCard}
                   onDetailCard={() => {}}
                   onRenameColumn={renameColumn}
                   onDeleteColumn={deleteColumn}
@@ -147,9 +159,13 @@ export function KanbanBoard() {
                   key={col.id}
                   column={col}
                   columnCount={columns.length}
+                  showArchived={showArchived}
                   onAddCard={openNewCard}
                   onEditCard={openEditCard}
                   onDeleteCard={deleteCard}
+                  onDuplicateCard={duplicateCard}
+                  onArchiveCard={archiveCard}
+                  onRestoreCard={restoreCard}
                   onDetailCard={() => {}}
                   onRenameColumn={renameColumn}
                   onDeleteColumn={deleteColumn}

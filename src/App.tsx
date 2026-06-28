@@ -18,7 +18,8 @@ import { CLOUD_CONFIG } from './config/cloud'
 
 function AppInner() {
   const navigate = useNavigate()
-  const { checkCloudSession, updateSyncStatus } = useProfileStore()
+  const checkCloudSession = useProfileStore((s) => s.checkCloudSession)
+  const updateSyncStatus = useProfileStore((s) => s.updateSyncStatus)
   const isReady = useIsReady()
   const isUnlocked = useIsUnlocked()
   const cloudEmail = useCloudEmail()
@@ -62,7 +63,7 @@ function AppInner() {
     id: app.id,
     label: app.name,
     description: app.description,
-    onClick: () => navigate(app.path),
+    onClick: () => navigate(app.path.replace(/\/:\w+\??$/, '')),
     leftSection: <Icon icon={app.icon} width={18} />,
   }))
 

@@ -22,18 +22,26 @@ export function NoisePanel() {
   }, [active, color, volume, noise])
 
   return (
-    <div style={{ padding: 16, marginBottom: 16, border: '1px solid var(--mantine-color-default-border)', borderRadius: 'var(--mantine-radius-md)' }}>
-      <Text fw={600} mb="sm">Noise Generator</Text>
-      <Stack gap="sm">
-        <SegmentedControl value={color} onChange={(v) => { const c = NOISE_OPTIONS.find((o) => o.value === v); if (c) { setColor(c.value); if (active) noise.startNoise(c.value, volume) } }} data={NOISE_OPTIONS} size="xs" />
-        <div>
-          <Text size="xs">Volume</Text>
-          <Slider value={volume} onChange={(v) => { setVolume(v); if (active) noise.setNoiseVolume(v) }} min={0} max={1} step={0.01} size="xs" />
-        </div>
-        <Button variant={active ? 'light' : 'filled'} size="sm" onClick={toggle}>
-          {active ? 'Stop' : 'Start'}
-        </Button>
-      </Stack>
-    </div>
+    <Stack gap="sm">
+      <SegmentedControl
+        value={color}
+        onChange={(v) => {
+          const c = NOISE_OPTIONS.find((o) => o.value === v)
+          if (c) {
+            setColor(c.value)
+            if (active) noise.startNoise(c.value, volume)
+          }
+        }}
+        data={NOISE_OPTIONS}
+        size="xs"
+      />
+      <div>
+        <Text size="xs">Volume</Text>
+        <Slider value={volume} onChange={(v) => { setVolume(v); noise.setNoiseVolume(v) }} min={0} max={1} step={0.01} size="xs" />
+      </div>
+      <Button variant={active ? 'light' : 'filled'} size="sm" onClick={toggle}>
+        {active ? 'Stop' : 'Start'}
+      </Button>
+    </Stack>
   )
 }

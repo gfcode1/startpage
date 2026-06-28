@@ -52,8 +52,11 @@ function notifyCompletion(mode: Mode) {
 
 const audioCtx = typeof AudioContext !== 'undefined' ? new AudioContext() : null
 
-function playBeep() {
+async function playBeep() {
   if (!audioCtx) return
+  if (audioCtx.state === 'suspended') {
+    await audioCtx.resume()
+  }
   const osc = audioCtx.createOscillator()
   const gain = audioCtx.createGain()
   osc.frequency.value = 800

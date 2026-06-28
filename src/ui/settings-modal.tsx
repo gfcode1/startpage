@@ -23,7 +23,8 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
   const lastSyncAt = useLastSyncAt()
   const isSyncing = useIsSyncing()
   const syncError = useSyncError()
-  const { updateSyncStatus, clearError } = useProfileStore()
+  const updateSyncStatus = useProfileStore((s) => s.updateSyncStatus)
+  const clearError = useProfileStore((s) => s.clearError)
 
   const [now, setNow] = useState(0)
 
@@ -33,8 +34,17 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
   }, [])
 
   useEffect(() => {
-    if (opened) clearError()
+    if (opened) {
+      clearError()
+    }
   }, [opened, clearError])
+
+  const handleClose = () => {
+    setResetConfirm(false)
+    setImportSuccess(null)
+    setRestoreSuccess(null)
+    onClose()
+  }
 
   async function handleSyncNow() {
     const svc = SyncService.getInstance()
@@ -56,7 +66,7 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
   }
 
   function formatLastSync(timestamp: number | null): string {
-    if (!timestamp) return 'Never'
+    if (timestamp === null || timestamp === undefined) return 'Never'
     const diff = now - timestamp
     if (diff < 60000) return 'Just now'
     if (diff < 3600000) return `${Math.floor(diff / 60000)} min ago`
@@ -64,7 +74,7 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
   }
 
   return (
-    <Modal opened={opened} onClose={onClose} title="Settings" size="md">
+    <Modal opened={opened} onClose={handleClose} title="Settings" size="md">
       <Tabs defaultValue="theme">
         <Tabs.List mb="md">
           <Tabs.Tab value="theme" leftSection={<Icon icon="lucide:palette" width={16} />}>Theme</Tabs.Tab>
@@ -176,7 +186,7 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
                   createAutoBackup()
                   uploadBackup(file).then((ok) => {
                     setImportSuccess(ok)
-                    if (ok) setTimeout(() => { setImportSuccess(null); onClose() }, 1500)
+                    if (ok) setTimeout(() => { setImportSuccess(null); handleClose() }, 1500)
                   })
                 }}
                 clearable

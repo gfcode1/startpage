@@ -1,8 +1,11 @@
-import { useMemo } from 'react'
-import { SimpleGrid, Center, Text } from '@mantine/core'
+import { useMemo, useState, useEffect, useRef, useCallback } from 'react'
+import { SimpleGrid, Center, Text, Loader, Group } from '@mantine/core'
 import { Icon } from '@iconify/react'
 import { useNewsStore } from '@/stores/news-store'
 import { ArticleCard } from './article-card'
+import { filterArticles } from '../utils'
+
+const PAGE_SIZE = 30
 
 export function ArticleGrid() {
   const articles = useNewsStore((s) => s.articles)
@@ -13,10 +16,15 @@ export function ArticleGrid() {
   const selectedCategory = useNewsStore((s) => s.selectedCategory)
   const selectedCountry = useNewsStore((s) => s.selectedCountry)
   const showBookmarksOnly = useNewsStore((s) => s.showBookmarksOnly)
+  const showUnreadOnly = useNewsStore((s) => s.showUnreadOnly)
+  const sortBy = useNewsStore((s) => s.sortBy)
   const setActiveArticle = useNewsStore((s) => s.setActiveArticle)
   const toggleBookmark = useNewsStore((s) => s.toggleBookmark)
   const viewMode = useNewsStore((s) => s.viewMode)
   const catalog = useNewsStore((s) => s.catalog)
+
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
+  const sentinelRef = useRef<HTMLDivElement>(null)
 
   const allArticles = useMemo(() => {
     const ids = [...enabledFeedIds, ...customFeeds.map((f) => f.id)]
@@ -25,42 +33,47 @@ export function ArticleGrid() {
       const cache = articles[id]
       if (cache) result.push(...cache.items)
     }
-    return result.sort((a, b) => b.publishedAt - a.publishedAt)
+    return result
   }, [articles, enabledFeedIds, customFeeds])
 
-  const filtered = useMemo(() => {
-    let items = allArticles
+  const filtered = useMemo(() =>
+    filterArticles(allArticles, {
+      searchQuery,
+      selectedCategory,
+      selectedCountry,
+      showBookmarksOnly,
+      showUnreadOnly,
+      bookmarks,
+      sortBy,
+      catalog,
+      customFeeds,
+    }),
+  [allArticles, searchQuery, selectedCategory, selectedCountry, showBookmarksOnly, showUnreadOnly, bookmarks, sortBy, catalog, customFeeds])
 
-    if (showBookmarksOnly) {
-      items = items.filter((a) => bookmarks.includes(a.id))
-    }
+  // Reset visible count when filters change
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE) // eslint-disable-line react-hooks/set-state-in-effect
+  }, [searchQuery, selectedCategory, selectedCountry, showBookmarksOnly, showUnreadOnly, sortBy])
 
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase()
-      items = items.filter(
-        (a) =>
-          a.title.toLowerCase().includes(q) ||
-          a.description.toLowerCase().includes(q) ||
-          a.feedTitle.toLowerCase().includes(q)
-      )
-    }
+  const loadMore = useCallback(() => {
+    setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, filtered.length))
+  }, [filtered.length])
 
-    if (selectedCategory) {
-      const catFeedIds = catalog
-        .filter((f) => f.category === selectedCategory)
-        .map((f) => f.id)
-      items = items.filter((a) => catFeedIds.includes(a.feedId))
-    }
+  useEffect(() => {
+    const el = sentinelRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) loadMore()
+      },
+      { rootMargin: '200px' }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [loadMore])
 
-    if (selectedCountry) {
-      const countryFeedIds = catalog
-        .filter((f) => f.country === selectedCountry)
-        .map((f) => f.id)
-      items = items.filter((a) => countryFeedIds.includes(a.feedId))
-    }
-
-    return items
-  }, [allArticles, showBookmarksOnly, bookmarks, searchQuery, selectedCategory, selectedCountry, catalog])
+  const displayed = filtered.slice(0, visibleCount)
+  const hasMore = visibleCount < filtered.length
 
   if (filtered.length === 0) {
     return (
@@ -77,15 +90,27 @@ export function ArticleGrid() {
   const cols = viewMode === 'grid' ? { base: 1, sm: 2, lg: 3 } : { base: 1 }
 
   return (
-    <SimpleGrid cols={cols} spacing="sm">
-      {filtered.slice(0, 200).map((article) => (
-        <ArticleCard
-          key={article.id}
-          article={article}
-          onSelect={setActiveArticle}
-          onToggleBookmark={toggleBookmark}
-        />
-      ))}
-    </SimpleGrid>
+    <div>
+      <SimpleGrid cols={cols} spacing="sm">
+        {displayed.map((article) => (
+          <ArticleCard
+            key={article.id}
+            article={article}
+            onSelect={setActiveArticle}
+            onToggleBookmark={toggleBookmark}
+          />
+        ))}
+      </SimpleGrid>
+      {hasMore && (
+        <Center py="md" ref={sentinelRef}>
+          <Group gap="xs">
+            <Loader size="sm" />
+            <Text size="xs" c="dimmed">
+              {visibleCount} of {filtered.length} articles
+            </Text>
+          </Group>
+        </Center>
+      )}
+    </div>
   )
 }

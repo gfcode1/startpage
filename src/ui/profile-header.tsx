@@ -22,7 +22,7 @@ export function ProfileHeader() {
             aria-label="Profile"
             style={{ cursor: 'pointer' }}
           >
-            <Avatar size="sm" radius="xl" color="initials">
+            <Avatar size="sm" radius="xl" color="accent" variant="light">
               {initial}
             </Avatar>
           </ActionIcon>

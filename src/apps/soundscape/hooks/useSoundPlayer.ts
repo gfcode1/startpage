@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState, useEffect } from 'react'
+import { useCallback, useRef, useState, useEffect, useMemo } from 'react'
 import { Howl } from 'howler'
 
 const FADE_DURATION = 250
@@ -74,5 +74,6 @@ export function useSoundPlayer(src: string) {
     return () => { clearFade(); howlRef.current?.unload() }
   }, [clearFade])
 
-  return { play, pause, stop, setVolume, isLoading, hasLoaded, hasError }
+  return useMemo(() => ({ play, pause, stop, setVolume, isLoading, hasLoaded, hasError }),
+    [play, pause, stop, setVolume, isLoading, hasLoaded, hasError])
 }

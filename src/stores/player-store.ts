@@ -6,7 +6,7 @@ export interface QueueItem {
   id: string
   title: string
   subtitle?: string
-  type: 'somafm' | 'moodist' | 'radio' | 'youtube'
+  type: 'somafm' | 'soundscape' | 'radio' | 'youtube'
 }
 
 export interface PlayerState {

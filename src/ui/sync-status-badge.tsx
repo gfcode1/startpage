@@ -9,7 +9,7 @@ export function SyncStatusBadge() {
   const isSyncing = useIsSyncing()
   const syncError = useSyncError()
   const cloudEmail = useCloudEmail()
-  const { updateSyncStatus } = useProfileStore()
+  const updateSyncStatus = useProfileStore((s) => s.updateSyncStatus)
   const [now, setNow] = useState(0)
 
   useEffect(() => {
@@ -20,7 +20,7 @@ export function SyncStatusBadge() {
   if (!cloudEmail) return null
 
   const formatLastSync = (timestamp: number | null): string => {
-    if (!timestamp) return 'Never'
+    if (timestamp === null || timestamp === undefined) return 'Never'
     const diff = now - timestamp
     if (diff < 60000) return 'Just now'
     if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`

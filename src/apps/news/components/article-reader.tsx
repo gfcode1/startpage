@@ -1,7 +1,8 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useMemo } from 'react'
 import { Container, Text, Group, Paper, ActionIcon, Loader, Center, Alert, SegmentedControl, Text as MText } from '@mantine/core'
 import { Icon } from '@iconify/react'
 import { Readability } from '@mozilla/readability'
+import DOMPurify from 'dompurify'
 import { useNewsStore } from '@/stores/news-store'
 import { formatDate } from '../utils'
 
@@ -12,6 +13,8 @@ export function ArticleReader() {
   const setReaderSettings = useNewsStore((s) => s.setReaderSettings)
   const markAsRead = useNewsStore((s) => s.markAsRead)
   const toggleBookmark = useNewsStore((s) => s.toggleBookmark)
+  const cacheReaderContent = useNewsStore((s) => s.cacheReaderContent)
+  const getCachedReaderContent = useNewsStore((s) => s.getCachedReaderContent)
 
   const [fetchState, setFetchState] = useState<{ status: 'loading' | 'done' | 'error'; content: string | null }>({ status: 'loading', content: null })
   const iframeRef = useRef<HTMLIFrameElement>(null)
@@ -19,7 +22,13 @@ export function ArticleReader() {
   useEffect(() => {
     if (!activeArticle) return
     markAsRead(activeArticle.id)
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+
+    const cached = getCachedReaderContent(activeArticle.id)
+    if (cached) {
+      setFetchState({ status: 'done', content: cached }) // eslint-disable-line react-hooks/set-state-in-effect
+      return
+    }
+
     setFetchState({ status: 'loading', content: null })
 
     let cancelled = false
@@ -30,7 +39,11 @@ export function ArticleReader() {
         const reader = new Readability(doc)
         const result = reader.parse()
         if (!cancelled) {
-          setFetchState({ status: 'done', content: result?.content ?? null })
+          const content = result?.content ?? null
+          if (content) {
+            cacheReaderContent(activeArticle.id, content)
+          }
+          setFetchState({ status: 'done', content })
         }
       })
       .catch(() => {
@@ -39,9 +52,10 @@ export function ArticleReader() {
         }
       })
     return () => { cancelled = true }
-  }, [activeArticle, markAsRead])
+  }, [activeArticle, markAsRead, cacheReaderContent, getCachedReaderContent])
 
   const { status: fetchStatus, content: extracted } = fetchState
+  const sanitized = useMemo(() => (extracted ? DOMPurify.sanitize(extracted, { ADD_ATTR: ['target'] }) : null), [extracted])
   const loading = fetchStatus === 'loading'
   const fetchError = fetchStatus === 'error' ? 'Could not load article content' : null
 
@@ -81,6 +95,19 @@ export function ArticleReader() {
             rel="noopener noreferrer"
           >
             <Icon icon="lucide:external-link" width={16} />
+          </ActionIcon>
+          <ActionIcon
+            variant="subtle"
+            size="sm"
+            onClick={() => {
+              if (navigator.share) {
+                navigator.share({ title: activeArticle.title, url: activeArticle.link }).catch(() => {})
+              } else {
+                navigator.clipboard.writeText(activeArticle.link).catch(() => {})
+              }
+            }}
+          >
+            <Icon icon="lucide:share" width={16} />
           </ActionIcon>
         </Group>
       </Group>
@@ -165,7 +192,7 @@ export function ArticleReader() {
 
           <div
             className="news-reader-content"
-            dangerouslySetInnerHTML={{ __html: extracted }}
+            dangerouslySetInnerHTML={{ __html: sanitized ?? '' }}
             style={{ color: 'inherit' }}
           />
         </Paper>

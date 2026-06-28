@@ -20,11 +20,12 @@ interface QueuedChange extends DataChange {
 
 export function hashValue(value: unknown): string {
   const str = JSON.stringify(value)
-  let hash = 5381
+  let h = 0xcbf29ce484222325n
   for (let i = 0; i < str.length; i++) {
-    hash = ((hash << 5) + hash + str.charCodeAt(i)) | 0
+    h ^= BigInt(str.charCodeAt(i))
+    h *= 0x100000001b3n
   }
-  return `${str.length.toString(36)}_${Math.abs(hash).toString(36)}`
+  return h.toString(36)
 }
 
 export class SyncQueue {
@@ -89,6 +90,13 @@ export class SyncQueue {
       entry.nextRetryAt = Date.now() + Math.min(1000 * 2 ** entry.retries, 60000)
       getStorage().set(QUEUE_KEY, queue)
     }
+  }
+
+  static clearProcessed(ids: string[]): void {
+    if (ids.length === 0) return
+    const idSet = new Set(ids)
+    const queue = SyncQueue.getAll().filter((q) => !idSet.has(q.id))
+    getStorage().set(QUEUE_KEY, queue)
   }
 
   static clear(): void {

@@ -12,7 +12,7 @@ export default function NowPlayingWidget() {
     return <WidgetEmpty>Nothing playing</WidgetEmpty>
   }
 
-  const typeLabel = type === 'somafm' ? 'Radio' : type === 'moodist' ? 'Ambient' : 'Stream'
+  const typeLabel = type === 'radio' ? 'Radio' : type === 'somafm' ? 'Radio' : type === 'soundscape' ? 'Ambient' : 'Stream'
 
   return (
     <Stack align="center" gap={4}>

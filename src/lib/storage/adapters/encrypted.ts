@@ -8,8 +8,8 @@ const SYSTEM_PREFIX = '_'
 
 // ── Crypto primitives ──────────────────────────────────────────────
 
-function toBuffer(bytes: Uint8Array): ArrayBufferView<ArrayBuffer> {
-  return new Uint8Array(bytes.buffer, bytes.byteOffset, bytes.byteLength) as unknown as ArrayBufferView<ArrayBuffer>
+function toView(bytes: Uint8Array): Uint8Array<ArrayBuffer> {
+  return new Uint8Array(bytes.buffer as ArrayBuffer, bytes.byteOffset, bytes.byteLength)
 }
 
 export async function deriveKey(
@@ -25,7 +25,7 @@ export async function deriveKey(
     ['deriveKey'],
   )
   return crypto.subtle.deriveKey(
-    { name: 'PBKDF2', salt: toBuffer(salt), iterations: ITERATIONS, hash: 'SHA-256' },
+    { name: 'PBKDF2', salt: toView(salt), iterations: ITERATIONS, hash: 'SHA-256' },
     keyMaterial,
     { name: 'AES-GCM', length: KEY_LENGTH },
     false,
@@ -44,7 +44,7 @@ export async function encrypt(
   const iv = crypto.getRandomValues(new Uint8Array(IV_LENGTH))
   const encoded = new TextEncoder().encode(JSON.stringify(plaintext))
   const ciphertext = await crypto.subtle.encrypt(
-    { name: 'AES-GCM', iv: toBuffer(iv) },
+    { name: 'AES-GCM', iv: toView(iv) },
     key,
     encoded,
   )
@@ -60,15 +60,20 @@ export async function decrypt<T>(
   const iv = base64ToBytes(ciphertext.slice(0, colon))
   const data = base64ToBytes(ciphertext.slice(colon + 1))
   const decrypted = await crypto.subtle.decrypt(
-    { name: 'AES-GCM', iv: toBuffer(iv) },
+    { name: 'AES-GCM', iv: toView(iv) },
     key,
-    toBuffer(data),
+    toView(data),
   )
   return JSON.parse(new TextDecoder().decode(decrypted)) as T
 }
 
 function bytesToBase64(bytes: Uint8Array): string {
-  return btoa(String.fromCharCode(...bytes))
+  const chunkSize = 0x8000
+  const chunks: string[] = []
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    chunks.push(String.fromCharCode(...bytes.subarray(i, i + chunkSize)))
+  }
+  return btoa(chunks.join(''))
 }
 
 function base64ToBytes(str: string): Uint8Array {
@@ -140,6 +145,7 @@ export function createEncryptedAdapter(
     }
   }
 
+  _encryptedDispose?.()
   window.addEventListener('storage', handleStorage)
   _encryptedDispose = () => window.removeEventListener('storage', handleStorage)
 

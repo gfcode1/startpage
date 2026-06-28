@@ -13,13 +13,11 @@ const CROSSFADE_SAMPLES = 512
 export function useNoiseGenerator() {
   const sourceRef = useRef<AudioBufferSourceNode | null>(null)
   const gainRef = useRef<GainNode | null>(null)
-  const isPlaying = useRef(false)
 
   const stopNoise = useCallback(() => {
     try { sourceRef.current?.stop() } catch { /* ignore */ }
     sourceRef.current?.disconnect(); sourceRef.current = null
     gainRef.current?.disconnect(); gainRef.current = null
-    isPlaying.current = false
   }, [])
 
   const startNoise = useCallback(async (color: NoiseColor, volume: number) => {
@@ -29,7 +27,7 @@ export function useNoiseGenerator() {
     const sr = ctx.sampleRate
     const len = sr * 30
     const buffer = ctx.createBuffer(1, len, sr)
-    const _data = buffer.getChannelData(0); const data = _data as unknown as number[]
+    const data = buffer.getChannelData(0)
 
     if (color === 'pink') {
       let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0
@@ -48,8 +46,9 @@ export function useNoiseGenerator() {
       let lastOut = 0
       for (let i = 0; i < len; i++) {
         const white = Math.random() * 2 - 1
-        data[i] = (lastOut + 0.02 * white) * 0.5
-        lastOut = data[i]!
+        const val = (lastOut + 0.02 * white) * 0.5
+        data[i] = val
+        lastOut = val
       }
     } else {
       for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1
@@ -57,8 +56,8 @@ export function useNoiseGenerator() {
 
     for (let i = 0; i < CROSSFADE_SAMPLES; i++) {
       const t = i / CROSSFADE_SAMPLES
-      data[i]! *= t
-      data[len - 1 - i]! *= t
+      const di = data[i]; if (di !== undefined) data[i] = di * t
+      const dli = data[len - 1 - i]; if (dli !== undefined) data[len - 1 - i] = dli * t
     }
 
     const source = ctx.createBufferSource()
@@ -67,7 +66,6 @@ export function useNoiseGenerator() {
     source.connect(gain); gain.connect(ctx.destination)
     source.start()
     sourceRef.current = source; gainRef.current = gain
-    isPlaying.current = true
   }, [stopNoise])
 
   const setNoiseVolume = useCallback((vol: number) => {
@@ -78,7 +76,7 @@ export function useNoiseGenerator() {
     return () => { stopNoise() }
   }, [stopNoise])
 
-  return { startNoise, stopNoise, setNoiseVolume, isPlaying }
+  return { startNoise, stopNoise, setNoiseVolume }
 }
 
 export function useBinauralBeat() {
@@ -87,20 +85,41 @@ export function useBinauralBeat() {
   const gainLeft = useRef<GainNode | null>(null)
   const gainRight = useRef<GainNode | null>(null)
   const gainOut = useRef<GainNode | null>(null)
-  const isPlaying = useRef(false)
+  const freqRef = useRef<BinauralFreq>('alpha')
+  const carrierRef = useRef(200)
 
   const stop = useCallback(() => {
     try { oscLeft.current?.stop() } catch { /* ignore */ }
     try { oscRight.current?.stop() } catch { /* ignore */ }
     ;[oscLeft, oscRight, gainLeft, gainRight, gainOut].forEach((r) => r.current?.disconnect())
     ;[oscLeft, oscRight, gainLeft, gainRight, gainOut].forEach((r) => { r.current = null })
-    isPlaying.current = false
+  }, [])
+
+  const setFrequency = useCallback((freq: BinauralFreq, carrierHz: number) => {
+    freqRef.current = freq
+    carrierRef.current = carrierHz
+    const beatHz = BINAURAL_MAP[freq]
+    if (oscLeft.current) oscLeft.current.frequency.value = carrierHz
+    if (oscRight.current) oscRight.current.frequency.value = carrierHz + beatHz
+  }, [])
+
+  const setCarrier = useCallback((carrierHz: number) => {
+    carrierRef.current = carrierHz
+    const beatHz = BINAURAL_MAP[freqRef.current]
+    if (oscLeft.current) oscLeft.current.frequency.value = carrierHz
+    if (oscRight.current) oscRight.current.frequency.value = carrierHz + beatHz
+  }, [])
+
+  const setVolume = useCallback((vol: number) => {
+    if (gainOut.current) gainOut.current.gain.value = vol * 0.3
   }, [])
 
   const start = useCallback(async (freq: BinauralFreq, carrierHz: number, volume: number) => {
     stop()
     const ctx = await ensureAudioContext()
 
+    freqRef.current = freq
+    carrierRef.current = carrierHz
     const beatHz = BINAURAL_MAP[freq]
     const gL = ctx.createGain(); gL.gain.value = 1
     const gR = ctx.createGain(); gR.gain.value = 1
@@ -116,16 +135,11 @@ export function useBinauralBeat() {
 
     oscLeft.current = oL; oscRight.current = oR
     gainLeft.current = gL; gainRight.current = gR; gainOut.current = out
-    isPlaying.current = true
   }, [stop])
-
-  const setVolume = useCallback((vol: number) => {
-    if (gainOut.current) gainOut.current.gain.value = vol * 0.3
-  }, [])
 
   useEffect(() => {
     return () => { stop() }
   }, [stop])
 
-  return { start, stop, setVolume, isPlaying }
+  return { start, stop, setVolume, setFrequency, setCarrier }
 }

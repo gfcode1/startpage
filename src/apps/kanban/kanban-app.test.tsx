@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { createCard, createColumn, loadBoard, saveBoard } from './utils'
+import { createCard, createColumn, createBoard, loadData, saveData, sortCards, snapshotBoard, restoreBoardSnapshot } from './utils'
 
 describe('Kanban utils', () => {
   beforeEach(() => localStorage.clear())
@@ -14,6 +14,7 @@ describe('Kanban utils', () => {
       expect(card.labels).toEqual([])
       expect(card.dueDate).toBeNull()
       expect(card.assignee).toBe('')
+      expect(card.archived).toBe(false)
       expect(card.createdAt).toBeGreaterThan(0)
       expect(card.updatedAt).toBeGreaterThan(0)
     })
@@ -46,6 +47,7 @@ describe('Kanban utils', () => {
       expect(col.id).toBeTruthy()
       expect(col.title).toBe('In Progress')
       expect(col.cards).toEqual([])
+      expect(col.sortBy).toBe('manual')
       expect(col.createdAt).toBeGreaterThan(0)
     })
 
@@ -55,31 +57,85 @@ describe('Kanban utils', () => {
     })
   })
 
-  describe('loadBoard', () => {
-    it('returns default board when no storage exists', () => {
-      const board = loadBoard()
+  describe('createBoard', () => {
+    it('creates a board with default columns', () => {
+      const board = createBoard('My Project')
+      expect(board.id).toBeTruthy()
+      expect(board.name).toBe('My Project')
       expect(board.columns).toHaveLength(3)
       expect(board.columns[0]!.title).toBe('Todo')
       expect(board.columns[1]!.title).toBe('In Progress')
       expect(board.columns[2]!.title).toBe('Done')
-      expect(board.columns[0]!.cards).toEqual([])
     })
   })
 
-  describe('saveBoard and loadBoard roundtrip', () => {
-    it('persists and loads board data', () => {
-      const col1 = createColumn('Backlog')
-      const card = createCard('Something', '', 'high')
-      col1.cards.push(card)
-      const board = { columns: [col1] }
-      saveBoard(board)
+  describe('loadData', () => {
+    it('returns default data when no storage exists', () => {
+      const data = loadData()
+      expect(data.boards).toHaveLength(1)
+      expect(data.boards[0]!.name).toBe('Default')
+      expect(data.boards[0]!.columns).toHaveLength(3)
+    })
+  })
 
-      const loaded = loadBoard()
-      expect(loaded.columns).toHaveLength(1)
-      expect(loaded.columns[0]!.title).toBe('Backlog')
-      expect(loaded.columns[0]!.cards).toHaveLength(1)
-      expect(loaded.columns[0]!.cards[0]!.title).toBe('Something')
-      expect(loaded.columns[0]!.cards[0]!.priority).toBe('high')
+  describe('saveData and loadData roundtrip', () => {
+    it('persists and loads multi-board data', () => {
+      const board = createBoard('Project Alpha')
+      const col = board.columns[0]!
+      col.cards.push(createCard('Do something', '', 'high'))
+      const data = { boards: [board], activeBoardId: board.id }
+      saveData(data)
+
+      const loaded = loadData()
+      expect(loaded.boards).toHaveLength(1)
+      expect(loaded.boards[0]!.name).toBe('Project Alpha')
+      expect(loaded.boards[0]!.columns[0]!.cards[0]!.title).toBe('Do something')
+    })
+  })
+
+  describe('sortCards', () => {
+    it('keeps manual order', () => {
+      const cards = [
+        createCard('B', '', 'low'),
+        createCard('A', '', 'critical'),
+      ]
+      const sorted = sortCards(cards, 'manual')
+      expect(sorted[0]!.title).toBe('B')
+      expect(sorted[1]!.title).toBe('A')
+    })
+
+    it('sorts by priority', () => {
+      const cards = [
+        createCard('A', '', 'low'),
+        createCard('B', '', 'critical'),
+        createCard('C', '', 'high'),
+      ]
+      const sorted = sortCards(cards, 'priority')
+      expect(sorted[0]!.priority).toBe('critical')
+      expect(sorted[1]!.priority).toBe('high')
+      expect(sorted[2]!.priority).toBe('low')
+    })
+
+    it('sorts by title', () => {
+      const cards = [
+        createCard('C'),
+        createCard('A'),
+        createCard('B'),
+      ]
+      const sorted = sortCards(cards, 'title')
+      expect(sorted.map((c) => c.title)).toEqual(['A', 'B', 'C'])
+    })
+  })
+
+  describe('snapshot and restore', () => {
+    it('roundtrips board columns', () => {
+      const board = createBoard('Test')
+      board.columns[0]!.cards.push(createCard('Task 1'))
+      const snap = snapshotBoard(board)
+      board.columns[0]!.cards.push(createCard('Task 2'))
+      const restored = restoreBoardSnapshot(snap)
+      expect(restored[0]!.cards).toHaveLength(1)
+      expect(restored[0]!.cards[0]!.title).toBe('Task 1')
     })
   })
 })

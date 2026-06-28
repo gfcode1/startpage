@@ -2,11 +2,19 @@ import type { StorageAdapter } from '../types'
 
 const PREFIX = 'sd'
 
+let _localDispose: (() => void) | null = null
+
+export function disposeLocalAdapter(): void {
+  _localDispose?.()
+  _localDispose = null
+}
+
 function prefixed(key: string): string {
   return `${PREFIX}:${key}`
 }
 
 export function createLocalAdapter(): StorageAdapter {
+  _localDispose?.()
   const listeners = new Map<string, Set<(value: unknown) => void>>()
 
   function notify(key: string, value: unknown) {
@@ -17,7 +25,7 @@ export function createLocalAdapter(): StorageAdapter {
     return fullKey.startsWith(`${PREFIX}:`) ? fullKey.slice(PREFIX.length + 1) : fullKey
   }
 
-  window.addEventListener('storage', (e: StorageEvent) => {
+  const onStorage = (e: StorageEvent) => {
     if (!e.key?.startsWith(`${PREFIX}:`)) return
     if (e.newValue === null) {
       notify(keyFromFull(e.key), undefined)
@@ -28,7 +36,10 @@ export function createLocalAdapter(): StorageAdapter {
         // skip invalid JSON from other tabs
       }
     }
-  })
+  }
+
+  window.addEventListener('storage', onStorage)
+  _localDispose = () => window.removeEventListener('storage', onStorage)
 
   return {
     get<T>(key: string): T | null {

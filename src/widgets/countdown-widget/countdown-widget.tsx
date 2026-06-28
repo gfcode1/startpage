@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Text, Stack, Group, TextInput, Button } from '@mantine/core'
 import { Icon } from '@iconify/react'
 import { getStorage } from '@/lib/storage/engine'
@@ -27,11 +27,48 @@ export default function CountdownWidget() {
   const [minutes, setMinutes] = useState('25')
   const [label, setLabel] = useState('')
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const dataRef = useRef(data)
 
-  // Persist data changes outside of state updater
   useEffect(() => {
-    if (data.active) save(data)
+    dataRef.current = data
   }, [data])
+
+  const persist = useCallback(() => {
+    save(dataRef.current)
+  }, [])
+
+  useEffect(() => {
+    if (!data.active) return
+    intervalRef.current = setInterval(() => {
+      setData((prev) => {
+        const remaining = Math.max(0, prev.remaining - 1)
+        if (remaining <= 0 && intervalRef.current) {
+          clearInterval(intervalRef.current)
+        }
+        return { ...prev, remaining }
+      })
+    }, 1000)
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+        intervalRef.current = null
+      }
+    }
+  }, [data.active])
+
+  useEffect(() => {
+    if (!data.active && data.updatedAt > 0) {
+      save(data)
+    }
+    // only trigger on active -> inactive transition
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data.active])
+
+  useEffect(() => {
+    if (!data.active) return
+    const id = setInterval(persist, 2000)
+    return () => clearInterval(id)
+  }, [data.active, persist])
 
   useEffect(() => {
     if (!data.active || data.remaining <= 0) return

@@ -36,6 +36,14 @@ export interface ReaderSettings {
 
 export type ViewMode = 'grid' | 'list'
 export type FeedView = 'all' | 'bookmarks'
+export type SortBy = 'newest' | 'oldest' | 'unread-first'
+export type AutoRefresh = 'off' | '15m' | '30m' | '1h'
+export type RetentionDays = 7 | 30 | 90
+
+export interface FeedStats {
+  lastFetched: number
+  errorCount: number
+}
 
 export const DEFAULT_READER_SETTINGS: ReaderSettings = {
   fontSize: 'md',

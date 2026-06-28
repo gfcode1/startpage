@@ -29,7 +29,7 @@ export const apps: AppDefinition[] = [
   },
   {
     id: 'kanban', name: 'Kanban', description: 'Project board',
-    path: '/kanban', color: '#4a9eff', icon: 'lucide:columns-3',
+    path: '/kanban/:boardId?', color: '#4a9eff', icon: 'lucide:columns-3',
     category: 'productivity', component: lazy(() => import('@/apps/kanban/kanban-app')),
     widgets: ['kanban'],
   },
@@ -63,15 +63,15 @@ export const apps: AppDefinition[] = [
     widgets: ['wikipedia'],
   },
   {
-    id: 'somafm', name: 'SomaFM', description: 'Internet radio channels',
-    path: '/somafm', color: '#d4763a', icon: 'lucide:music',
-    category: 'music', component: lazy(() => import('@/apps/somafm/somafm-app')),
+    id: 'radio', name: 'Radio', description: 'Internet radio channels',
+    path: '/radio', color: '#c44b4b', icon: 'lucide:radio',
+    category: 'music', component: lazy(() => import('@/apps/radio/radio-app')),
     widgets: ['nowplaying'],
   },
   {
-    id: 'moodist', name: 'Moodist', description: '84 ambient sounds — focus, relax, and sleep with layered soundscapes',
-    path: '/moodist', color: '#8a5ad4', icon: 'lucide:headphones',
-    category: 'music', component: lazy(() => import('@/apps/moodist/moodist-app')),
+    id: 'soundscape', name: 'Soundscape', description: '84 ambient sounds — focus, relax, and sleep with layered soundscapes',
+    path: '/soundscape', color: '#8a5ad4', icon: 'lucide:headphones',
+    category: 'music', component: lazy(() => import('@/apps/soundscape/soundscape-app')),
     widgets: ['nowplaying'],
   },
   {
@@ -85,6 +85,12 @@ export const apps: AppDefinition[] = [
     path: '/bookmarks', color: '#d4a43a', icon: 'lucide:bookmark',
     category: 'productivity', component: lazy(() => import('@/apps/bookmarks/bookmarks-app')),
     widgets: ['bookmarks'],
+  },
+  {
+    id: 'chat', name: 'Chat', description: 'AI chat with OpenRouter',
+    path: '/chat', color: '#22c55e', icon: 'lucide:bot',
+    category: 'utilities', component: lazy(() => import('@/apps/chat/chat-app')),
+    widgets: ['chat'],
   },
 ]
 

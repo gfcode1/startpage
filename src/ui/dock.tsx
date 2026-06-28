@@ -124,13 +124,14 @@ export function Dock() {
         return (
           <Box key={cat.key} style={{ display: 'flex', alignItems: 'flex-end', gap: 2 }}>
             {catApps.map((app) => {
-              const isActive = currentPath === app.path
+              const basePath = app.path.replace(/\/:\w+\??(\/|$).*$/, '')
+              const isActive = currentPath === app.path || currentPath === basePath || currentPath.startsWith(basePath + '/')
               return (
                 <DockItem
                   key={app.id}
                   app={app}
                   isActive={isActive}
-                  onClick={() => navigate(app.path)}
+                  onClick={() => navigate(app.path.replace(/\/:\w+\??$/, ''))}
                   mobile={false}
                 />
               )
@@ -175,13 +176,14 @@ export function Dock() {
         bg="var(--mantine-color-body)"
       >
         {apps.map((app) => {
-          const isActive = currentPath === app.path
+          const basePath = app.path.replace(/\/:\w+\??(\/|$).*$/, '')
+          const isActive = currentPath === app.path || currentPath === basePath || currentPath.startsWith(basePath + '/')
           return (
             <DockItem
               key={app.id}
               app={app}
               isActive={isActive}
-              onClick={() => navigate(app.path)}
+              onClick={() => navigate(app.path.replace(/\/:\w+\??$/, ''))}
               mobile={true}
             />
           )
