@@ -1,3 +1,4 @@
+import Prism from 'prismjs'
 import 'prismjs/themes/prism-okaidia.css'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import {
