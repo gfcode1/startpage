@@ -28,25 +28,27 @@ function DockItem({
 
   if (mobile) {
     return (
-      <UnstyledButton
-        onClick={onClick}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 2,
-          minWidth: 44,
-          minHeight: 44,
-          borderRadius: 'var(--mantine-radius-sm)',
-          background: navColor,
-          transition: 'background 0.15s',
-          flex: '1 1 0',
-        }}
-        aria-label={app.name}
-      >
-        <Icon icon={app.icon} width={22} height={22} color={app.color} />
-      </UnstyledButton>
+      <Tooltip label={app.name} position="top" withArrow openDelay={300}>
+        <UnstyledButton
+          onClick={onClick}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 2,
+            minWidth: 44,
+            minHeight: 44,
+            borderRadius: 'var(--mantine-radius-sm)',
+            background: navColor,
+            transition: 'background 0.15s',
+            flex: '1 1 0',
+          }}
+          aria-label={app.name}
+        >
+          <Icon icon={app.icon} width={22} height={22} color={app.color} />
+        </UnstyledButton>
+      </Tooltip>
     )
   }
 

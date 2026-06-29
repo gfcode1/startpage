@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { SimpleGrid, Paper, Text, Group, ActionIcon, Box } from '@mantine/core'
+import { SimpleGrid, Paper, Text, Group, ActionIcon, Box, Stack, ThemeIcon } from '@mantine/core'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 
 import { Icon } from '@iconify/react'
@@ -10,7 +10,9 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  DragOverlay,
   type DragEndEvent,
+  type DragStartEvent,
 } from '@dnd-kit/core'
 import {
   SortableContext,
@@ -23,6 +25,7 @@ import { useWidgetActiveWidgets, useWidgetRemoveWidget, useWidgetReorderWidgets 
 import { widgets, type WidgetDefinition, type WidgetSize } from '@/registry/widgets'
 import { WidgetPickerDialog } from './widget-picker-dialog'
 import { WidgetContainer } from './widget-container'
+import { WidgetSettingsPopover } from './widget-settings-popover'
 
 function getWidgetSpan(size: WidgetSize): string {
   switch (size) {
@@ -68,6 +71,13 @@ function SortableWidget({ widget }: { widget: WidgetDefinition }) {
         <Text size="sm" fw={600} style={{ flex: 1 }} truncate="end">
           {widget.name}
         </Text>
+        {widget.options && widget.options.length > 0 && (
+          <WidgetSettingsPopover widgetId={widget.id} options={widget.options}>
+            <ActionIcon variant="subtle" size="sm" aria-label={`${widget.name} settings`}>
+              <Icon icon="lucide:settings" width={14} />
+            </ActionIcon>
+          </WidgetSettingsPopover>
+        )}
         <ActionIcon
           variant="subtle"
           size="sm"
@@ -89,6 +99,7 @@ export function WidgetGrid() {
   const activeWidgets = useWidgetActiveWidgets()
   const reorderWidgets = useWidgetReorderWidgets()
   const [pickerOpen, setPickerOpen] = useState(false)
+  const [activeDragId, setActiveDragId] = useState<string | null>(null)
   const [parent] = useAutoAnimate()
 
   const sensors = useSensors(
@@ -100,7 +111,16 @@ export function WidgetGrid() {
     .map((id) => widgets.find((w: WidgetDefinition) => w.id === id))
     .filter((w): w is WidgetDefinition => w !== undefined)
 
+  const activeDragWidget = activeDragId
+    ? activeWidgetDefs.find((w) => w.id === activeDragId)
+    : null
+
+  function handleDragStart(event: DragStartEvent) {
+    setActiveDragId(event.active.id as string)
+  }
+
   function handleDragEnd(event: DragEndEvent) {
+    setActiveDragId(null)
     const { active, over } = event
     if (!over || active.id === over.id) return
     const oldIndex = activeWidgets.indexOf(active.id as string)
@@ -122,6 +142,15 @@ export function WidgetGrid() {
         const W = w.component
         return (
           <Paper key={w.id} withBorder p="md" radius="md" mb="md" bg="var(--mantine-color-body)">
+            {w.options && w.options.length > 0 && (
+              <Group gap="xs" mb="xs" justify="flex-end">
+                <WidgetSettingsPopover widgetId={w.id} options={w.options}>
+                  <ActionIcon variant="subtle" size="sm" aria-label={`${w.name} settings`}>
+                    <Icon icon="lucide:settings" width={14} />
+                  </ActionIcon>
+                </WidgetSettingsPopover>
+              </Group>
+            )}
             <WidgetContainer align={w.align ?? 'left'}>
               <W />
             </WidgetContainer>
@@ -129,16 +158,22 @@ export function WidgetGrid() {
         )
       })}
 
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <SortableContext items={standardWidgets.map((w) => w.id)} strategy={rectSortingStrategy}>
           <SimpleGrid
             cols={{ base: 2, sm: 3, lg: 4 }}
             spacing="md"
           >
             {standardWidgets.length === 0 ? (
-              <Text c="dimmed" size="sm" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '2rem 0' }}>
-                No widgets active. Click + to add one.
-              </Text>
+              <Stack align="center" gap="sm" style={{ gridColumn: '1 / -1', padding: '3rem 1rem' }}>
+                <ThemeIcon variant="light" size={48} radius="xl">
+                  <Icon icon="lucide:layout-dashboard" width={24} />
+                </ThemeIcon>
+                <Text c="dimmed" size="sm" ta="center">No widgets active yet</Text>
+                <ActionIcon variant="light" size="lg" radius="xl" onClick={() => setPickerOpen(true)} aria-label="Add your first widget">
+                  <Icon icon="lucide:plus" width={18} />
+                </ActionIcon>
+              </Stack>
             ) : (
               standardWidgets.map((w) => (
                 <SortableWidget key={w.id} widget={w} />
@@ -146,6 +181,32 @@ export function WidgetGrid() {
             )}
           </SimpleGrid>
         </SortableContext>
+
+        <DragOverlay dropAnimation={null}>
+          {activeDragWidget ? (
+            <Paper
+              withBorder
+              p="md"
+              radius="md"
+              shadow="lg"
+              bg="var(--mantine-color-body)"
+              style={{
+                gridColumn: getWidgetSpan(activeDragWidget.size),
+                opacity: 0.92,
+                cursor: 'grabbing',
+              }}
+            >
+              <Group gap="xs" mb="xs" wrap="nowrap">
+                <Box c="dimmed" style={{ display: 'flex', alignItems: 'center' }}>
+                  <Icon icon="lucide:grip-vertical" width={16} />
+                </Box>
+                <Text size="sm" fw={600} style={{ flex: 1 }} truncate="end">
+                  {activeDragWidget.name}
+                </Text>
+              </Group>
+            </Paper>
+          ) : null}
+        </DragOverlay>
       </DndContext>
 
       <Group justify="center" mt="md">

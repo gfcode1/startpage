@@ -1,14 +1,27 @@
-import { useState, useEffect, useCallback } from 'react'
-import { Modal, Tabs, Stack, Group, Text, Button, Alert, Code, FileInput, useMantineColorScheme, Switch, Divider, SegmentedControl, ColorInput, TextInput, SimpleGrid, Center, Loader } from '@mantine/core'
+import { useState, useEffect, useCallback, useMemo } from 'react'
+import { Drawer, Tabs, Stack, Group, Text, Button, Alert, Code, FileInput, useMantineColorScheme, Switch, Divider, SegmentedControl, ColorInput, SimpleGrid, Card, ThemeIcon, Skeleton } from '@mantine/core'
 import { Icon } from '@iconify/react'
 import { APP_CONFIG } from '@/config/app'
 import { useWidgetResetDefaults } from '@/stores/widget-store'
 import { useBackgroundStore } from '@/stores/background-store'
-import { useArticArtworks, getArticThumbnailUrl, getArticFullUrl } from '@/hooks/use-artic-api'
+import { resizeImage } from '@/lib/resize-image'
 import { downloadBackup, uploadBackup, createAutoBackup, restoreAutoBackup, hasAutoBackup } from '@/lib/persistence'
 import { useProfileStore, useCloudEmail, useLastSyncAt, useIsSyncing, useSyncError } from '@/stores/profile-store'
 import { SyncService } from '@/lib/sync/sync-service'
 import { showSyncNotification } from '@/lib/sync/notify'
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024
+const MAX_IMAGE_WIDTH = 1920
+const JPEG_QUALITY = 0.85
+const PICSUM_PER_PAGE = 20
+
+function makeSeed(): string {
+  return `sd_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`
+}
+
+function makeInitialSeeds(): string[] {
+  return Array.from({ length: PICSUM_PER_PAGE }, () => makeSeed())
+}
 
 interface SettingsModalProps {
   opened: boolean
@@ -31,38 +44,14 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
   const backgroundType = useBackgroundStore((s) => s.backgroundType)
   const backgroundColor = useBackgroundStore((s) => s.backgroundColor)
   const backgroundImage = useBackgroundStore((s) => s.backgroundImage)
-  const articArtwork = useBackgroundStore((s) => s.articArtwork)
+  const picsumSeed = useBackgroundStore((s) => s.picsumSeed)
   const setBackgroundType = useBackgroundStore((s) => s.setBackgroundType)
   const setBackgroundColor = useBackgroundStore((s) => s.setBackgroundColor)
   const setBackgroundImage = useBackgroundStore((s) => s.setBackgroundImage)
-  const setArticArtwork = useBackgroundStore((s) => s.setArticArtwork)
+  const setPicsumSeed = useBackgroundStore((s) => s.setPicsumSeed)
 
-  const [articSearch, setArticSearch] = useState('')
-  const [articDebounced, setArticDebounced] = useState('')
-  const [articPage, setArticPage] = useState(1)
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setArticDebounced(articSearch)
-      setArticPage(1)
-    }, 300)
-    return () => clearTimeout(timer)
-  }, [articSearch])
-
-  const articQuery = useArticArtworks(articDebounced, articPage)
-
-  const selectArticArtwork = useCallback((artwork: { id: number; title: string; artist_display: string; image_id: string | null }) => {
-    if (!artwork.image_id) return
-    const fullUrl = getArticFullUrl(artwork.image_id)
-    setBackgroundImage(fullUrl)
-    setArticArtwork({
-      id: artwork.id,
-      title: artwork.title,
-      artist: artwork.artist_display,
-      imageId: artwork.image_id,
-    })
-  }, [setBackgroundImage, setArticArtwork])
-
+  const [uploadError, setUploadError] = useState<string | null>(null)
+  const [picsumSeeds, setPicsumSeeds] = useState<string[]>(makeInitialSeeds)
   const [now, setNow] = useState(0)
 
   useEffect(() => {
@@ -80,8 +69,63 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
     setResetConfirm(false)
     setImportSuccess(null)
     setRestoreSuccess(null)
+    setUploadError(null)
     onClose()
   }
+
+  const handleFileUpload = useCallback(async (file: File | null) => {
+    setUploadError(null)
+    if (!file) return
+    if (file.size > MAX_FILE_SIZE) {
+      setUploadError('File is too large. Maximum size is 5 MB.')
+      return
+    }
+    try {
+      const dataUrl = await resizeImage(file, MAX_IMAGE_WIDTH, JPEG_QUALITY)
+      setBackgroundImage(dataUrl)
+      setPicsumSeed(null)
+    } catch {
+      setUploadError('Failed to process image. Please try another file.')
+    }
+  }, [setBackgroundImage, setPicsumSeed])
+
+  const selectPicsumImage = useCallback((seed: string) => {
+    setBackgroundImage(`https://picsum.photos/seed/${seed}/1920/1080`)
+    setPicsumSeed(seed)
+  }, [setBackgroundImage, setPicsumSeed])
+
+  const loadMoreSeeds = useCallback(() => {
+    setPicsumSeeds((prev) => [...prev, ...Array.from({ length: PICSUM_PER_PAGE }, () => makeSeed())])
+  }, [])
+
+  const refreshSeeds = useCallback(() => {
+    setPicsumSeeds(makeInitialSeeds())
+  }, [])
+
+  const handlePicsumScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget
+    if (scrollHeight - scrollTop - clientHeight < 40) {
+      loadMoreSeeds()
+    }
+  }, [loadMoreSeeds])
+
+  const preview = useMemo(() => (
+    <div
+      style={{
+        height: 48,
+        borderRadius: 8,
+        overflow: 'hidden',
+        backgroundImage: backgroundType === 'image' && backgroundImage ? `url(${backgroundImage})` : undefined,
+        backgroundColor: backgroundType === 'solid'
+          ? backgroundColor
+          : backgroundType === 'image' && !backgroundImage
+            ? 'var(--mantine-color-dark-5)'
+            : undefined,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    />
+  ), [backgroundType, backgroundColor, backgroundImage])
 
   async function handleSyncNow() {
     const svc = SyncService.getInstance()
@@ -111,37 +155,88 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
   }
 
   return (
-    <Modal opened={opened} onClose={handleClose} title="Settings" size="md">
-      <Tabs defaultValue="theme">
-        <Tabs.List mb="md">
-          <Tabs.Tab value="theme" leftSection={<Icon icon="lucide:palette" width={16} />}>Theme</Tabs.Tab>
-          <Tabs.Tab value="cloud" leftSection={<Icon icon="lucide:cloud" width={16} />}>Cloud Sync</Tabs.Tab>
-          <Tabs.Tab value="backup" leftSection={<Icon icon="lucide:database" width={16} />}>Backup</Tabs.Tab>
-          <Tabs.Tab value="info" leftSection={<Icon icon="lucide:info" width={16} />}>Info</Tabs.Tab>
+    <Drawer
+      opened={opened}
+      onClose={handleClose}
+      position="right"
+      size="lg"
+      title={
+        <Group gap="sm">
+          <Icon icon="lucide:settings" width={20} />
+          <Text fw={600} fz="md">Settings</Text>
+        </Group>
+      }
+      closeButtonProps={{ 'aria-label': 'Close settings' }}
+    >
+      <Tabs defaultValue="appearance" orientation="vertical" style={{ display: 'flex', gap: 0 }}>
+        <Tabs.List style={{ minWidth: 160 }}>
+          <Tabs.Tab value="appearance" leftSection={<Icon icon="lucide:palette" width={16} />}>
+            Appearance
+          </Tabs.Tab>
+          <Tabs.Tab value="background" leftSection={<Icon icon="lucide:image" width={16} />}>
+            Background
+          </Tabs.Tab>
+          <Tabs.Tab value="cloud" leftSection={<Icon icon="lucide:cloud" width={16} />}>
+            Cloud Sync
+          </Tabs.Tab>
+          <Tabs.Tab value="backup" leftSection={<Icon icon="lucide:database" width={16} />}>
+            Backup
+          </Tabs.Tab>
+          <Tabs.Tab value="info" leftSection={<Icon icon="lucide:info" width={16} />}>
+            Info
+          </Tabs.Tab>
         </Tabs.List>
 
-        <Tabs.Panel value="theme">
+        <Tabs.Panel value="appearance" pl="md" style={{ flex: 1, minWidth: 0 }} className="settings-tab-panel">
           <Stack gap="md">
-            <Group justify="space-between">
-              <div>
-                <Text size="sm" fw={500}>Dark mode</Text>
-                <Text size="xs" c="dimmed">Toggle between dark and light theme</Text>
-              </div>
-              <Switch
-                checked={colorScheme === 'dark'}
-                onChange={toggleColorScheme}
-                aria-label="Toggle dark mode"
-              />
-            </Group>
+            <Card withBorder padding="md">
+              <Group justify="space-between" wrap="nowrap" align="flex-start">
+                <div style={{ flex: 1 }}>
+                  <Text size="sm" fw={500}>Dark mode</Text>
+                  <Text size="xs" c="dimmed" mt={2}>Toggle between dark and light theme</Text>
+                </div>
+                <Switch
+                  checked={colorScheme === 'dark'}
+                  onChange={toggleColorScheme}
+                  aria-label="Toggle dark mode"
+                  size="md"
+                />
+              </Group>
+            </Card>
 
-            <Divider />
+            <Divider label="Danger Zone" labelPosition="center" color="red" />
 
-            <div>
-              <Text size="sm" fw={500} mb="xs">Background</Text>
+            <Card withBorder padding="md" style={{ borderColor: 'var(--mantine-color-red-3)' }}>
+              <Group justify="space-between" wrap="nowrap" align="flex-start">
+                <div style={{ flex: 1 }}>
+                  <Text size="sm" fw={500}>Reset widgets</Text>
+                  <Text size="xs" c="dimmed" mt={2}>
+                    Restore all widget positions and sizes to their default layout. This action cannot be undone.
+                  </Text>
+                </div>
+                <Button
+                  size="compact-sm"
+                  variant={resetConfirm ? 'filled' : 'light'}
+                  color="red"
+                  onClick={() => {
+                    if (resetConfirm) { resetDefaults(); setResetConfirm(false) }
+                    else setResetConfirm(true)
+                  }}
+                >
+                  {resetConfirm ? 'Confirm reset?' : 'Reset'}
+                </Button>
+              </Group>
+            </Card>
+          </Stack>
+        </Tabs.Panel>
 
+        <Tabs.Panel value="background" pl="md" style={{ flex: 1, minWidth: 0 }} className="settings-tab-panel">
+          <Stack gap="md">
+            <Card withBorder padding="md">
+              <Text size="sm" fw={500} mb="sm">Background type</Text>
               <SegmentedControl
                 fullWidth
-                size="xs"
+                size="sm"
                 data={[
                   { value: 'none', label: 'None' },
                   { value: 'solid', label: 'Color' },
@@ -149,180 +244,190 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
                 ]}
                 value={backgroundType}
                 onChange={(value) => setBackgroundType(value as 'none' | 'solid' | 'image')}
-                mb="sm"
               />
+            </Card>
 
-              {backgroundType === 'solid' && (
+            {backgroundType === 'solid' && (
+              <Card withBorder padding="md">
+                <Text size="sm" fw={500} mb="sm">Choose color</Text>
                 <ColorInput
                   value={backgroundColor}
                   onChange={(value) => setBackgroundColor(value)}
                   format="hex"
                   swatches={['#241d1a', '#1a1412', '#3a3028', '#2d4a3e', '#2a3a4a', '#4a2a3a', '#3a2a2a', '#2a3a3a']}
-                  mb="sm"
                 />
-              )}
+              </Card>
+            )}
 
-              {backgroundType === 'image' && (
-                <>
-                  <TextInput
-                    placeholder="Enter image URL or browse below..."
-                    value={backgroundImage}
-                    onChange={(e) => {
-                      setBackgroundImage(e.target.value)
-                      if (articArtwork) setArticArtwork(null)
-                    }}
-                    mb="sm"
+            {backgroundType === 'image' && (
+              <>
+                <Card withBorder padding="md">
+                  <Text size="sm" fw={500} mb="xs">Upload custom image</Text>
+                  <FileInput
+                    accept="image/*"
+                    placeholder="Choose an image..."
+                    onChange={handleFileUpload}
+                    clearable
                   />
-
-                  <Divider label="Browse Art Institute of Chicago" labelPosition="center" mb="sm" />
-
-                  <TextInput
-                    placeholder="Search artworks..."
-                    leftSection={<Icon icon="lucide:search" width={16} />}
-                    value={articSearch}
-                    onChange={(e) => setArticSearch(e.target.value)}
-                    mb="sm"
-                  />
-
-                  {articQuery.isLoading && (
-                    <Center py="sm"><Loader size="sm" /></Center>
+                  <Text size="xs" c="dimmed" mt={4}>JPEG/PNG, max 5 MB. Images are resized to 1920px width.</Text>
+                  {uploadError && (
+                    <Alert color="red" mt="sm" py="xs" icon={<Icon icon="lucide:alert-circle" width={16} />}>
+                      <Text size="xs">{uploadError}</Text>
+                    </Alert>
                   )}
+                </Card>
 
-                  {articQuery.data && articQuery.data.data.length > 0 && (
-                    <>
-                      <SimpleGrid cols={4} spacing="sm" mb="sm">
-                        {articQuery.data.data.map((artwork) => {
-                          if (!artwork.image_id) return null
-                          const thumbUrl = getArticThumbnailUrl(artwork.image_id)
-                          return (
-                            <div
-                              key={artwork.id}
-                              onClick={() => selectArticArtwork(artwork)}
+                <Card withBorder padding="md">
+                  <Group justify="space-between" mb="sm">
+                    <Text size="sm" fw={500}>Picsum gallery</Text>
+                    <Button
+                      variant="light"
+                      size="compact-xs"
+                      leftSection={<Icon icon="lucide:refresh-cw" width={12} />}
+                      onClick={refreshSeeds}
+                    >
+                      Refresh
+                    </Button>
+                  </Group>
+                  <div
+                    onScroll={handlePicsumScroll}
+                    style={{ maxHeight: 280, overflowY: 'auto' }}
+                  >
+                    <SimpleGrid cols={4} spacing="sm">
+                      {picsumSeeds.map((seed) => {
+                        const thumbUrl = `https://picsum.photos/seed/${seed}/200/200`
+                        const isSelected = picsumSeed === seed
+                        return (
+                          <div
+                            key={seed}
+                            onClick={() => selectPicsumImage(seed)}
+                            style={{
+                              cursor: 'pointer',
+                              borderRadius: 4,
+                              overflow: 'hidden',
+                              height: 80,
+                              position: 'relative',
+                              border: isSelected
+                                ? '2px solid var(--mantine-color-accent-5)'
+                                : '2px solid transparent',
+                              transition: 'border-color 150ms ease',
+                            }}
+                          >
+                            <Skeleton height={80} radius={0} style={{ position: 'absolute', inset: 0, zIndex: 0 }} />
+                            <img
+                              src={thumbUrl}
+                              alt=""
+                              loading="lazy"
                               style={{
-                                cursor: 'pointer',
-                                borderRadius: 4,
-                                overflow: 'hidden',
-                                height: 80,
-                                backgroundImage: `url(${thumbUrl})`,
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                                border: articArtwork?.imageId === artwork.image_id
-                                  ? '2px solid var(--mantine-color-accent-5)'
-                                  : '2px solid transparent',
+                                position: 'absolute',
+                                inset: 0,
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'cover',
+                                zIndex: 1,
                               }}
                             />
-                          )
-                        })}
-                      </SimpleGrid>
-
-                      {articQuery.data.pagination.current_page < articQuery.data.pagination.total_pages && (
-                        <Button
-                          variant="light"
-                          size="compact-sm"
-                          fullWidth
-                          onClick={() => setArticPage((p) => p + 1)}
-                          loading={articQuery.isFetching}
-                        >
-                          Load more
-                        </Button>
-                      )}
-                    </>
-                  )}
-                </>
-              )}
-
-              {backgroundType !== 'none' && (
-                <div
-                  style={{
-                    height: 60,
-                    borderRadius: 8,
-                    overflow: 'hidden',
-                    marginTop: 8,
-                    backgroundImage: backgroundType === 'image' && backgroundImage ? `url(${backgroundImage})` : undefined,
-                    backgroundColor: backgroundType === 'solid' ? backgroundColor : backgroundType === 'image' && !backgroundImage ? 'var(--mantine-color-dark-5)' : undefined,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                  }}
-                />
-              )}
-
-              {articArtwork && (
-                <Text size="xs" c="dimmed" mt={4} lineClamp={1}>
-                  {articArtwork.title} — {articArtwork.artist}
-                </Text>
-              )}
-            </div>
-
-            <Divider />
-
-            <Group justify="space-between">
-              <div>
-                <Text size="sm" fw={500}>Reset widgets</Text>
-                <Text size="xs" c="dimmed">Restore widget layout to defaults</Text>
-              </div>
-              <Button
-                size="compact-sm"
-                variant="light"
-                color={resetConfirm ? 'red' : 'gray'}
-                onClick={() => {
-                  if (resetConfirm) { resetDefaults(); setResetConfirm(false) }
-                  else setResetConfirm(true)
-                }}
-              >
-                {resetConfirm ? 'Confirm?' : 'Reset'}
-              </Button>
-            </Group>
-          </Stack>
-        </Tabs.Panel>
-
-        <Tabs.Panel value="cloud">
-          <Stack gap="md">
-            {cloudEmail ? (
-              <>
-                <Alert color="green" variant="light" icon={<Icon icon="lucide:cloud" width={18} />}>
-                  <Text size="sm">Synced as <b>{cloudEmail}</b></Text>
-                </Alert>
-
-                <Group justify="space-between">
-                  <div>
-                    <Text size="sm" fw={500}>Last sync</Text>
-                    <Text size="xs" c="dimmed">{formatLastSync(lastSyncAt)}</Text>
+                          </div>
+                        )
+                      })}
+                    </SimpleGrid>
                   </div>
-                  <Button
-                    size="compact-sm"
-                    variant="light"
-                    leftSection={<Icon icon="lucide:refresh-cw" width={14} />}
-                    onClick={handleSyncNow}
-                    loading={isSyncing}
-                  >
-                    Sync now
-                  </Button>
-                </Group>
-
-                {syncError && (
-                  <Alert color="red" variant="light" icon={<Icon icon="lucide:alert-circle" width={18} />}>
-                    <Text size="sm">{syncError}</Text>
-                  </Alert>
-                )}
-
-                <Text size="xs" c="dimmed">
-                  Your data is end-to-end encrypted with your profile password.
-                  Automatic sync every 5 minutes.
-                </Text>
+                </Card>
               </>
-            ) : (
-              <Alert color="blue" variant="light" icon={<Icon icon="lucide:cloud" width={18} />}>
-                <Text size="sm">No profile unlocked. Cloud sync status unavailable.</Text>
-              </Alert>
+            )}
+
+            {backgroundType !== 'none' && (
+              <Card withBorder padding="md">
+                <Text size="xs" c="dimmed" mb="xs">Preview</Text>
+                {preview}
+                {picsumSeed && (
+                  <Text size="xs" c="dimmed" mt="xs">
+                    Picsum photo — seed: {picsumSeed}
+                  </Text>
+                )}
+              </Card>
             )}
           </Stack>
         </Tabs.Panel>
 
-        <Tabs.Panel value="backup">
+        <Tabs.Panel value="cloud" pl="md" style={{ flex: 1, minWidth: 0 }} className="settings-tab-panel">
           <Stack gap="md">
-            <div>
-              <Text size="sm" fw={500} mb="xs">Export backup</Text>
-              <Text size="xs" c="dimmed" mb="sm">Download all app data as JSON file</Text>
+            {cloudEmail ? (
+              <>
+                <Card withBorder padding="md">
+                  <Group gap="sm">
+                    <ThemeIcon variant="light" color="green" radius="md" size="lg">
+                      <Icon icon="lucide:check-circle" width={18} />
+                    </ThemeIcon>
+                    <div>
+                      <Text size="sm">Synced as <b>{cloudEmail}</b></Text>
+                      <Text size="xs" c="dimmed">Profile unlocked</Text>
+                    </div>
+                  </Group>
+                </Card>
+
+                <Card withBorder padding="md">
+                  <Group justify="space-between" wrap="nowrap" align="flex-start">
+                    <div>
+                      <Text size="sm" fw={500}>Last sync</Text>
+                      <Text size="xs" c="dimmed" mt={2}>{formatLastSync(lastSyncAt)}</Text>
+                    </div>
+                    <Button
+                      size="compact-sm"
+                      variant="light"
+                      leftSection={<Icon icon="lucide:refresh-cw" width={14} />}
+                      onClick={handleSyncNow}
+                      loading={isSyncing}
+                    >
+                      Sync now
+                    </Button>
+                  </Group>
+
+                  {syncError && (
+                    <Alert color="red" variant="light" mt="md" icon={<Icon icon="lucide:alert-circle" width={18} />}>
+                      <Text size="sm">{syncError}</Text>
+                    </Alert>
+                  )}
+                </Card>
+
+                <Card withBorder padding="md">
+                  <Group gap="sm">
+                    <ThemeIcon variant="light" color="blue" radius="md" size="md">
+                      <Icon icon="lucide:shield-check" width={14} />
+                    </ThemeIcon>
+                    <Text size="xs" c="dimmed">
+                      Your data is end-to-end encrypted with your profile password.
+                      Automatic sync every 5 minutes.
+                    </Text>
+                  </Group>
+                </Card>
+              </>
+            ) : (
+              <Card withBorder padding="md">
+                <Group gap="sm">
+                  <ThemeIcon variant="light" color="blue" radius="md" size="lg">
+                    <Icon icon="lucide:cloud-off" width={18} />
+                  </ThemeIcon>
+                  <div>
+                    <Text size="sm">No profile unlocked</Text>
+                    <Text size="xs" c="dimmed" mt={2}>Cloud sync status is unavailable until you unlock a profile.</Text>
+                  </div>
+                </Group>
+              </Card>
+            )}
+          </Stack>
+        </Tabs.Panel>
+
+        <Tabs.Panel value="backup" pl="md" style={{ flex: 1, minWidth: 0 }} className="settings-tab-panel">
+          <Stack gap="md">
+            <Card withBorder padding="md">
+              <Group gap="sm" mb="sm">
+                <ThemeIcon variant="light" color="violet" radius="md" size="md">
+                  <Icon icon="lucide:download" width={14} />
+                </ThemeIcon>
+                <Text size="sm" fw={500}>Export backup</Text>
+              </Group>
+              <Text size="xs" c="dimmed" mb="md">Download all app data as a single JSON file</Text>
               <Button
                 variant="light"
                 leftSection={<Icon icon="lucide:download" width={16} />}
@@ -331,11 +436,16 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
               >
                 Download backup
               </Button>
-            </div>
+            </Card>
 
-            <div>
-              <Text size="sm" fw={500} mb="xs">Import backup</Text>
-              <Text size="xs" c="dimmed" mb="sm">Restore data from a previous backup file</Text>
+            <Card withBorder padding="md">
+              <Group gap="sm" mb="sm">
+                <ThemeIcon variant="light" color="teal" radius="md" size="md">
+                  <Icon icon="lucide:upload" width={14} />
+                </ThemeIcon>
+                <Text size="sm" fw={500}>Import backup</Text>
+              </Group>
+              <Text size="xs" c="dimmed" mb="md">Restore data from a previously exported backup file</Text>
               <FileInput
                 accept=".json"
                 placeholder="Select backup file..."
@@ -350,17 +460,28 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
                 clearable
               />
               {importSuccess === true && (
-                <Alert color="green" mt="sm" py="xs">Backup restored successfully!</Alert>
+                <Alert color="green" mt="sm" py="xs" icon={<Icon icon="lucide:check-circle" width={16} />}>
+                  Backup restored successfully!
+                </Alert>
               )}
               {importSuccess === false && (
-                <Alert color="red" mt="sm" py="xs">Invalid backup file.</Alert>
+                <Alert color="red" mt="sm" py="xs" icon={<Icon icon="lucide:alert-circle" width={16} />}>
+                  Invalid backup file.
+                </Alert>
               )}
-            </div>
+            </Card>
 
             {hasAutoBackup() && (
-              <div>
-                <Text size="sm" fw={500} mb="xs">Restore auto-backup</Text>
-                <Text size="xs" c="dimmed" mb="sm">Revert to snapshot taken before last sync or import</Text>
+              <Card withBorder padding="md" style={{ borderColor: 'var(--mantine-color-yellow-5)' }}>
+                <Group gap="sm" mb="sm">
+                  <ThemeIcon variant="light" color="yellow" radius="md" size="md">
+                    <Icon icon="lucide:undo-2" width={14} />
+                  </ThemeIcon>
+                  <Text size="sm" fw={500}>Restore auto-backup</Text>
+                </Group>
+                <Text size="xs" c="dimmed" mb="md">
+                  Revert to a snapshot taken automatically before your last sync or import
+                </Text>
                 <Button
                   variant="light"
                   color="yellow"
@@ -375,36 +496,47 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
                   Restore snapshot
                 </Button>
                 {restoreSuccess === true && (
-                  <Alert color="green" mt="sm" py="xs">Auto-backup restored!</Alert>
+                  <Alert color="green" mt="sm" py="xs" icon={<Icon icon="lucide:check-circle" width={16} />}>
+                    Auto-backup restored!
+                  </Alert>
                 )}
                 {restoreSuccess === false && (
-                  <Alert color="red" mt="sm" py="xs">No snapshot available.</Alert>
+                  <Alert color="red" mt="sm" py="xs" icon={<Icon icon="lucide:alert-circle" width={16} />}>
+                    No snapshot available.
+                  </Alert>
                 )}
-              </div>
+              </Card>
             )}
           </Stack>
         </Tabs.Panel>
 
-        <Tabs.Panel value="info">
-          <Stack gap="sm">
-            <Group justify="space-between">
-              <Text size="sm">App</Text>
-              <Text size="sm" fw={500}>{APP_CONFIG.name}</Text>
-            </Group>
-            <Group justify="space-between">
-              <Text size="sm">Version</Text>
-              <Text size="sm" fw={500}>{APP_CONFIG.version}</Text>
-            </Group>
-            <Group justify="space-between">
-              <Text size="sm">Base path</Text>
-              <Code>{APP_CONFIG.basePath}</Code>
-            </Group>
-            <Text size="xs" c="dimmed" mt="md">
-              StartDeck is a customizable startpage with apps, widgets, and tools.
-            </Text>
+        <Tabs.Panel value="info" pl="md" style={{ flex: 1, minWidth: 0 }} className="settings-tab-panel">
+          <Stack gap="md">
+            <Card withBorder padding="md">
+              <Group gap="md" mb="md">
+                <ThemeIcon variant="gradient" radius="md" size="xl"
+                  gradient={{ from: 'amber', to: 'orange', deg: 135 }}>
+                  <Icon icon="lucide:layers" width={22} />
+                </ThemeIcon>
+                <div>
+                  <Text fw={700} size="lg" style={{ fontFamily: 'var(--mantine-heading-font-family)' }}>
+                    {APP_CONFIG.name}
+                  </Text>
+                  <Text size="sm" c="dimmed">v{APP_CONFIG.version}</Text>
+                </div>
+              </Group>
+              <Divider mb="md" />
+              <Group justify="space-between" mb="xs">
+                <Text size="sm" c="dimmed">Base path</Text>
+                <Code>{APP_CONFIG.basePath}</Code>
+              </Group>
+              <Text size="xs" c="dimmed" mt="md">
+                StartDeck is a customizable startpage with apps, widgets, and tools.
+              </Text>
+            </Card>
           </Stack>
         </Tabs.Panel>
       </Tabs>
-    </Modal>
+    </Drawer>
   )
 }

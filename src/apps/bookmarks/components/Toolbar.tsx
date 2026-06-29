@@ -1,4 +1,4 @@
-import { Group, Button, Tooltip, Menu } from '@mantine/core'
+import { Group, Button, Tooltip, Menu, ActionIcon } from '@mantine/core'
 import { Icon } from '@iconify/react'
 import SearchBar from './SearchBar'
 import ViewToggle from './ViewToggle'
@@ -9,9 +9,10 @@ interface ToolbarProps {
   onAddBookmark: () => void
   onAddCollection: () => void
   onImport: () => void
+  onHelp: () => void
 }
 
-export default function Toolbar({ onAddBookmark, onAddCollection, onImport }: ToolbarProps) {
+export default function Toolbar({ onAddBookmark, onAddCollection, onImport, onHelp }: ToolbarProps) {
   const bookmarks = useFilteredBookmarks()
   const collections = useCollections()
 
@@ -62,6 +63,7 @@ export default function Toolbar({ onAddBookmark, onAddCollection, onImport }: To
             <Menu.Item leftSection={<Icon icon="lucide:file-input" width={14} />} onClick={onImport}>
               Import from browser
             </Menu.Item>
+            <Menu.Divider />
             <Menu.Item leftSection={<Icon icon="lucide:file-json" width={14} />} onClick={handleExportJson}>
               Export as JSON
             </Menu.Item>
@@ -70,6 +72,11 @@ export default function Toolbar({ onAddBookmark, onAddCollection, onImport }: To
             </Menu.Item>
           </Menu.Dropdown>
         </Menu>
+        <Tooltip label="Setup quick saving">
+          <ActionIcon size="input-sm" variant="subtle" onClick={onHelp}>
+            <Icon icon="lucide:help-circle" width={18} />
+          </ActionIcon>
+        </Tooltip>
       </Group>
     </Group>
   )

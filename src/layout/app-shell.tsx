@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react'
-import { AppShell, Group, ActionIcon, Text, useMantineColorScheme, Tooltip } from '@mantine/core'
+import { AppShell, Box, Group, ActionIcon, Text, useMantineColorScheme, Tooltip } from '@mantine/core'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Icon } from '@iconify/react'
 import { APP_CONFIG } from '@/config/app'
@@ -9,6 +9,7 @@ import { SettingsModal } from '@/ui/settings-modal'
 import { ProfileHeader } from '@/ui/profile-header'
 import { SyncStatusBadge } from '@/ui/sync-status-badge'
 import { usePlayerIsPlaying } from '@/stores/player-store'
+import { SharedBackground } from '@/layout/shared-background'
 
 interface AppShellWrapperProps {
   children: ReactNode
@@ -65,9 +66,17 @@ export function AppShellWrapper({ children }: AppShellWrapperProps) {
         </Group>
       </AppShell.Header>
 
-      <AppShell.Main>
-        {children}
-        <div style={{ height: playerHeight }} />
+      <AppShell.Main
+        pb={playerHeight || undefined}
+        style={{
+          position: 'relative',
+          ...(!isHome ? { background: 'var(--mantine-color-body)' } : {}),
+        }}
+      >
+        <SharedBackground variant={isHome ? 'home' : 'app'} />
+        <Box style={{ position: 'relative' }}>
+          {children}
+        </Box>
       </AppShell.Main>
 
       <AppShell.Footer>

@@ -124,7 +124,7 @@ export function KanbanBoard() {
   }
 
   return (
-    <Container size="xl" py="md" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <Container size="xl" py="md" bg="var(--mantine-color-body)" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <KanbanHeader showArchived={showArchived} onToggleArchived={() => setShowArchived((v) => !v)} />
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>

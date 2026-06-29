@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Container, Text, Group, ActionIcon, Tooltip, Loader, Center, Alert, Badge } from '@mantine/core'
+import { Container, Text, Group, ActionIcon, Tooltip, Loader, Center, Alert, Badge, NativeSelect } from '@mantine/core'
 import { Icon } from '@iconify/react'
 import { useHotkeys } from '@mantine/hooks'
 import { useNewsStore } from '@/stores/news-store'
@@ -184,58 +184,40 @@ export default function NewsApp() {
       </Group>
       <Group gap="xs" mb="sm" align="center">
         <CategoryNav />
-        <select
+        <NativeSelect
+          size="xs"
+          data={[
+            { value: 'newest', label: 'Newest first' },
+            { value: 'oldest', label: 'Oldest first' },
+            { value: 'unread-first', label: 'Unread first' },
+          ]}
           value={sortBy}
           onChange={(e) => setSortBy(e.currentTarget.value as 'newest' | 'oldest' | 'unread-first')}
-          style={{
-            padding: '4px 8px',
-            borderRadius: 'var(--mantine-radius-sm)',
-            border: '1px solid var(--mantine-color-default-border)',
-            background: 'var(--mantine-color-default)',
-            color: 'var(--mantine-color-text)',
-            fontSize: 12,
-            maxWidth: 140,
-          }}
-        >
-          <option value="newest">Newest first</option>
-          <option value="oldest">Oldest first</option>
-          <option value="unread-first">Unread first</option>
-        </select>
-        <select
+          style={{ maxWidth: 140 }}
+        />
+        <NativeSelect
+          size="xs"
+          data={[
+            { value: 'off', label: 'Auto: off' },
+            { value: '15m', label: 'Auto: 15m' },
+            { value: '30m', label: 'Auto: 30m' },
+            { value: '1h', label: 'Auto: 1h' },
+          ]}
           value={autoRefreshInterval}
           onChange={(e) => setAutoRefreshInterval(e.currentTarget.value as 'off' | '15m' | '30m' | '1h')}
-          style={{
-            padding: '4px 8px',
-            borderRadius: 'var(--mantine-radius-sm)',
-            border: '1px solid var(--mantine-color-default-border)',
-            background: 'var(--mantine-color-default)',
-            color: 'var(--mantine-color-text)',
-            fontSize: 12,
-            maxWidth: 130,
-          }}
-        >
-          <option value="off">Auto: off</option>
-          <option value="15m">Auto: 15m</option>
-          <option value="30m">Auto: 30m</option>
-          <option value="1h">Auto: 1h</option>
-        </select>
-        <select
+          style={{ maxWidth: 130 }}
+        />
+        <NativeSelect
+          size="xs"
+          data={[
+            { value: '7', label: 'Keep 7d' },
+            { value: '30', label: 'Keep 30d' },
+            { value: '90', label: 'Keep 90d' },
+          ]}
           value={String(retentionDays)}
           onChange={(e) => setRetentionDays(Number(e.currentTarget.value) as 7 | 30 | 90)}
-          style={{
-            padding: '4px 8px',
-            borderRadius: 'var(--mantine-radius-sm)',
-            border: '1px solid var(--mantine-color-default-border)',
-            background: 'var(--mantine-color-default)',
-            color: 'var(--mantine-color-text)',
-            fontSize: 12,
-            maxWidth: 125,
-          }}
-        >
-          <option value="7">Keep 7d</option>
-          <option value="30">Keep 30d</option>
-          <option value="90">Keep 90d</option>
-        </select>
+          style={{ maxWidth: 125 }}
+        />
       </Group>
 
       {feedErrors.length > 0 && (

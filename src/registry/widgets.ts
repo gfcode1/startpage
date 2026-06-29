@@ -32,11 +32,28 @@ export const widgets: WidgetDefinition[] = [
     id: 'search', name: 'Search', description: 'Search the web',
     icon: 'lucide:search', category: 'system', defaultActive: true,
     size: 'large', component: lazy(() => import('@/widgets/search-widget/search-widget')),
+    options: [
+      { key: 'defaultEngine', label: 'Search engine', type: 'select', defaultValue: 'google',
+        options: [
+          { label: 'Google', value: 'google' },
+          { label: 'DuckDuckGo', value: 'duckduckgo' },
+          { label: 'Brave', value: 'brave' },
+        ],
+      },
+    ],
   },
   {
     id: 'clock', name: 'Clock', description: 'Current time',
     icon: 'lucide:clock', category: 'standard', defaultActive: true,
     size: 'small', align: 'center', component: lazy(() => import('@/widgets/clock-widget/clock-widget')),
+    options: [
+      { key: 'format', label: 'Time format', type: 'select', defaultValue: '12h',
+        options: [
+          { label: '12-hour', value: '12h' },
+          { label: '24-hour', value: '24h' },
+        ],
+      },
+    ],
   },
   {
     id: 'quicknote', name: 'Quick Note', description: 'Quick sticky note',
@@ -57,11 +74,22 @@ export const widgets: WidgetDefinition[] = [
     id: 'todo', name: 'Todo', description: 'Pending tasks',
     icon: 'lucide:check-square', category: 'app', defaultActive: false,
     size: 'medium', component: lazy(() => import('@/apps/todo/widgets/todo-widget')),
+    options: [
+      { key: 'listId', label: 'Filter by list ID', type: 'text', defaultValue: '' },
+    ],
   },
   {
     id: 'weather', name: 'Weather', description: 'Current weather',
     icon: 'lucide:cloud-sun', category: 'app', defaultActive: false,
     size: 'medium', align: 'center', component: lazy(() => import('@/apps/weather/widgets/weather-widget')),
+    options: [
+      { key: 'unit', label: 'Temperature unit', type: 'select', defaultValue: 'celsius',
+        options: [
+          { label: 'Celsius', value: 'celsius' },
+          { label: 'Fahrenheit', value: 'fahrenheit' },
+        ],
+      },
+    ],
   },
   {
     id: 'calendar', name: 'Calendar', description: 'Upcoming events',
@@ -100,11 +128,28 @@ export const widgets: WidgetDefinition[] = [
     id: 'news', name: 'News', description: 'Latest headlines',
     icon: 'lucide:rss', category: 'app', defaultActive: false,
     size: 'medium', component: lazy(() => import('@/apps/news/widgets/news-widget')),
+    options: [
+      { key: 'maxArticles', label: 'Max articles shown', type: 'number', defaultValue: 5, min: 1, max: 20 },
+    ],
   },
   {
     id: 'wikipedia', name: 'Wikipedia', description: 'Article browser widget',
     icon: 'lucide:book-open', category: 'app', defaultActive: false,
     size: 'small', align: 'center', component: lazy(() => import('@/apps/wikipedia/widgets/wikipedia-widget')),
+    options: [
+      { key: 'language', label: 'Language', type: 'select', defaultValue: 'en',
+        options: [
+          { label: 'English', value: 'en' },
+          { label: 'Español', value: 'es' },
+          { label: 'Français', value: 'fr' },
+          { label: 'Deutsch', value: 'de' },
+          { label: 'Italiano', value: 'it' },
+          { label: 'Português', value: 'pt' },
+          { label: '日本語', value: 'ja' },
+          { label: '中文', value: 'zh' },
+        ],
+      },
+    ],
   },
   {
     id: 'bookmarks', name: 'Bookmarks', description: 'Recent bookmarks',

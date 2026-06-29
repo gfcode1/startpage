@@ -16,15 +16,15 @@ React 19 · TypeScript 6 · Mantine v9 · Zustand · TanStack Query v5 · React 
 - **UI**: Mantine v9 components + custom components in src/ui/
 - **Routing**: React Router 7, all routes lazy-loaded
 - **Storage**: StorageAdapter interface (LocalAdapter impl) — pluggable for future cloud sync
-- **App registry**: src/registry/apps.ts — 10 apps
-- **Widget registry**: src/registry/widgets.ts — 12 widgets
+- **App registry**: src/registry/apps.ts — 13 apps
+- **Widget registry**: src/registry/widgets.ts — 16 widgets
 - **Theme**: Mantine createTheme, brown/amber palette, src/theme/index.ts
 
 ## Structure
 ```
 src/
-  apps/          # todo, notes, kanban, calendar, pomodoro, weather, rss-reader, wikipedia, somafm, moodist
-  widgets/       # search, clock, quick-note, quote, countdown, now-playing, password, calculator, world-clock
+  apps/          # todo, notes, kanban, calendar, pomodoro, weather, news, wikipedia, radio, soundscape, password-vault, bookmarks, chat
+  widgets/       # search, clock, quick-note, quote, countdown, now-playing, todo, weather, calendar, world-clock, calculator, password-vault, kanban, news, wikipedia, bookmarks, chat
   config/        # APP_CONFIG (name, basePath, version)
   theme/         # Mantine theme
   layout/        # AppShell wrapper

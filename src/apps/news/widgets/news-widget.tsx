@@ -3,11 +3,13 @@ import { Text, Group, Stack } from '@mantine/core'
 import { Icon } from '@iconify/react'
 import { useNavigate } from 'react-router-dom'
 import { useNewsStore } from '@/stores/news-store'
+import { useWidgetOptionsStore } from '@/stores/widget-options-store'
 import { WidgetContainer, WidgetLoading, WidgetEmpty } from '@/ui/widget-container'
 import { timeAgo } from '../utils'
 
 export default function NewsWidget() {
   const navigate = useNavigate()
+  const maxArticles = useWidgetOptionsStore((s) => (s.options.news?.maxArticles as number) ?? 5)
   const init = useNewsStore((s) => s.init)
   const enabledFeedIds = useNewsStore((s) => s.enabledFeedIds)
   const customFeeds = useNewsStore((s) => s.customFeeds)
@@ -40,7 +42,7 @@ export default function NewsWidget() {
   const allArticles = activeIds
     .flatMap((id) => articles[id]?.items ?? [])
     .sort((a, b) => b.publishedAt - a.publishedAt)
-    .slice(0, 5)
+    .slice(0, maxArticles)
 
   if (allArticles.length === 0) {
     if (isRefreshing) return <WidgetLoading />

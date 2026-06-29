@@ -43,6 +43,7 @@ export default function TaskItem({ task }: TaskItemProps) {
       px="md"
       py="sm"
       wrap="nowrap"
+      bg={isSelected ? undefined : 'var(--mantine-color-body)'}
       style={{
         borderBottom: '1px solid var(--mantine-color-default-border)',
         opacity: task.done ? 0.5 : 1,

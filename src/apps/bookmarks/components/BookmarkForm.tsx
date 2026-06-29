@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Modal, TextInput, Textarea, Select, Group, Button, Stack, TagsInput, Switch, Tooltip, ActionIcon } from '@mantine/core'
 import { Icon } from '@iconify/react'
 import { useCollections, useAddBookmark, useUpdateBookmark } from '../store'
@@ -10,9 +10,12 @@ interface BookmarkFormProps {
   onClose: () => void
   editBookmark?: Bookmark | null
   defaultCollectionId?: string | null
+  initialUrl?: string
+  initialTitle?: string
+  initialDescription?: string
 }
 
-export default function BookmarkForm({ opened, onClose, editBookmark, defaultCollectionId }: BookmarkFormProps) {
+export default function BookmarkForm({ opened, onClose, editBookmark, defaultCollectionId, initialUrl, initialTitle, initialDescription }: BookmarkFormProps) {
   return (
     <Modal opened={opened} onClose={onClose} title={editBookmark ? 'Edit bookmark' : 'Add bookmark'} size="md">
       <BookmarkFormContent
@@ -20,36 +23,50 @@ export default function BookmarkForm({ opened, onClose, editBookmark, defaultCol
         onClose={onClose}
         editBookmark={editBookmark}
         defaultCollectionId={defaultCollectionId}
+        initialUrl={initialUrl}
+        initialTitle={initialTitle}
+        initialDescription={initialDescription}
       />
     </Modal>
   )
 }
 
-function BookmarkFormContent({ onClose, editBookmark, defaultCollectionId }: Omit<BookmarkFormProps, 'opened'>) {
+function BookmarkFormContent({ onClose, editBookmark, defaultCollectionId, initialUrl, initialTitle, initialDescription }: Omit<BookmarkFormProps, 'opened'>) {
   const collections = useCollections()
   const addBookmark = useAddBookmark()
   const updateBookmark = useUpdateBookmark()
 
-  const [url, setUrl] = useState(editBookmark?.url ?? '')
-  const [title, setTitle] = useState(editBookmark?.title ?? '')
-  const [description, setDescription] = useState(editBookmark?.description ?? '')
+  const [url, setUrl] = useState(editBookmark?.url ?? initialUrl ?? '')
+  const [title, setTitle] = useState(editBookmark?.title ?? initialTitle ?? '')
+  const [description, setDescription] = useState(editBookmark?.description ?? initialDescription ?? '')
   const [collectionId, setCollectionId] = useState<string | null>(editBookmark?.collectionId ?? defaultCollectionId ?? null)
   const [tags, setTags] = useState<string[]>(editBookmark?.tags ?? [])
   const [notes, setNotes] = useState(editBookmark?.notes ?? '')
   const [isReadLater, setIsReadLater] = useState(editBookmark?.isReadLater ?? false)
   const [isFavorite, setIsFavorite] = useState(editBookmark?.isFavorite ?? false)
   const [fetching, setFetching] = useState(false)
+  const autoFetched = useRef(false)
 
   const isEditing = !!editBookmark
 
-  const handleFetchMetadata = async () => {
-    if (!url.trim()) return
+  const doFetchMetadata = useCallback(async (overrideUrl?: string, overrideTitle?: string, overrideDesc?: string) => {
+    const targetUrl = overrideUrl || url.trim()
+    if (!targetUrl) return
     setFetching(true)
-    const meta = await fetchMetadata(url.trim())
-    if (meta.title) setTitle(meta.title)
-    if (meta.description) setDescription(meta.description)
+    const meta = await fetchMetadata(targetUrl)
+    if (meta.title && !overrideTitle) setTitle(meta.title)
+    else if (overrideTitle) setTitle(overrideTitle)
+    if (meta.description && !overrideDesc) setDescription(meta.description)
+    else if (overrideDesc) setDescription(overrideDesc)
     setFetching(false)
-  }
+  }, [url])
+
+  useEffect(() => {
+    if (!isEditing && initialUrl && !autoFetched.current) {
+      autoFetched.current = true
+      doFetchMetadata(initialUrl, initialTitle, initialDescription)
+    }
+  }, [isEditing, initialUrl, initialTitle, initialDescription, doFetchMetadata])
 
   const handleSubmit = () => {
     if (!url.trim()) return
@@ -92,7 +109,7 @@ function BookmarkFormContent({ onClose, editBookmark, defaultCollectionId }: Omi
         onChange={(e) => setUrl(e.currentTarget.value)}
         rightSection={url.trim() && !isEditing ? (
           <Tooltip label="Fetch metadata">
-            <ActionIcon size="sm" variant="subtle" loading={fetching} onClick={handleFetchMetadata}>
+            <ActionIcon size="sm" variant="subtle" loading={fetching} onClick={() => doFetchMetadata()}>
               <Icon icon="lucide:refresh-cw" width={14} />
             </ActionIcon>
           </Tooltip>

@@ -38,7 +38,7 @@ const FEATURES = [
   { icon: 'lucide:headphones', label: 'Focus & Relax', desc: '84 ambient sounds, internet radio & focus timer' },
   { icon: 'lucide:globe', label: 'Live information', desc: 'Weather, world news & Wikipedia at a glance' },
   { icon: 'lucide:shield-check', label: 'Zero-knowledge encryption', desc: 'AES-256-GCM. Your data, your key only.' },
-  { icon: 'lucide:layout-dashboard', label: 'Customizable widgets', desc: '15 resizable widgets for your perfect dashboard' },
+  { icon: 'lucide:layout-dashboard', label: 'Customizable widgets', desc: `${widgets.length} resizable widgets for your perfect dashboard` },
 ]
 
 function FeatureCard({ icon, label, desc }: { icon: string; label: string; desc: string }) {

@@ -1,6 +1,7 @@
-import { Modal, Stack, Group, Text, Image, Anchor, Badge, Button, ActionIcon } from '@mantine/core'
+import { Modal, Stack, Group, Text, Image, Anchor, Badge, Button, ActionIcon, CopyButton, Tooltip, Divider } from '@mantine/core'
 import { Icon } from '@iconify/react'
 import type { Bookmark } from '../types'
+import { formatRelativeTime } from '../utils'
 
 interface BookmarkDetailProps {
   bookmark: Bookmark | null
@@ -29,14 +30,36 @@ export default function BookmarkDetail({
     <Modal opened={opened} onClose={onClose} title={bookmark.title} size="md">
       <Stack>
         {bookmark.ogImage && (
-          <Image src={bookmark.ogImage} alt={bookmark.title} radius="sm" fallbackSrc="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/svg%3E" />
+          <Image src={bookmark.ogImage} alt={bookmark.title} radius="sm" height={160} fit="cover" />
         )}
 
         <Group gap={6}>
           {bookmark.favicon && <img src={bookmark.favicon} alt="" width={16} height={16} />}
-          <Anchor href={bookmark.url} target="_blank" rel="noopener noreferrer" size="sm">
+          <Anchor href={bookmark.url} target="_blank" rel="noopener noreferrer" size="sm" lineClamp={1} style={{ flex: 1 }}>
             {bookmark.url.replace(/^https?:\/\//, '')}
           </Anchor>
+        </Group>
+
+        <Group gap="xs">
+          <Button
+            size="compact-sm"
+            leftSection={<Icon icon="lucide:external-link" width={14} />}
+            component="a"
+            href={bookmark.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open URL
+          </Button>
+          <CopyButton value={bookmark.url}>
+            {({ copied, copy }) => (
+              <Tooltip label={copied ? 'Copied' : 'Copy URL'}>
+                <Button size="compact-sm" variant="light" leftSection={<Icon icon={copied ? 'lucide:check' : 'lucide:copy'} width={14} />} onClick={copy}>
+                  {copied ? 'Copied' : 'Copy'}
+                </Button>
+              </Tooltip>
+            )}
+          </CopyButton>
         </Group>
 
         {bookmark.description && (
@@ -45,7 +68,7 @@ export default function BookmarkDetail({
 
         {bookmark.notes && (
           <div>
-            <Text size="xs" fw={600} c="dimmed">Notes</Text>
+            <Text size="xs" fw={600} c="dimmed" mb={2}>Notes</Text>
             <Text size="sm">{bookmark.notes}</Text>
           </div>
         )}
@@ -58,13 +81,19 @@ export default function BookmarkDetail({
           </Group>
         )}
 
-        {collectionName && (
-          <Text size="xs" c="dimmed">Collection: {collectionName}</Text>
-        )}
+        <Divider />
+
+        <Group gap="lg">
+          {collectionName && (
+            <Text size="xs" c="dimmed">Collection: {collectionName}</Text>
+          )}
+          <Text size="xs" c="dimmed">Created {formatRelativeTime(bookmark.createdAt)}</Text>
+          <Text size="xs" c="dimmed">Updated {formatRelativeTime(bookmark.updatedAt)}</Text>
+        </Group>
 
         <Group gap={4}>
           <ActionIcon size="sm" variant="subtle" onClick={() => onToggleFavorite(bookmark.id)} title="Toggle favorite">
-            <Icon icon={bookmark.isFavorite ? 'lucide:star' : 'lucide:star'} width={16} color={bookmark.isFavorite ? 'var(--mantine-color-yellow-5)' : undefined} />
+            <Icon icon="lucide:star" width={16} color={bookmark.isFavorite ? 'var(--mantine-color-yellow-5)' : undefined} />
           </ActionIcon>
           <ActionIcon size="sm" variant="subtle" onClick={() => onToggleReadLater(bookmark.id)} title="Toggle read later">
             <Icon icon={bookmark.isReadLater ? 'lucide:bookmark-check' : 'lucide:bookmark-plus'} width={16} />

@@ -4,15 +4,17 @@ import { Icon } from '@iconify/react'
 import { useQuery } from '@tanstack/react-query'
 import { fetchRandom } from '../utils'
 import { useWikipediaStore } from '../wikipedia-store'
+import { useWidgetOptionsStore } from '@/stores/widget-options-store'
 import { useNavigate } from 'react-router-dom'
 
 export default function WikipediaWidget() {
   const navigate = useNavigate()
+  const language = useWidgetOptionsStore((s) => (s.options.wikipedia?.language as string) ?? 'en')
   const bookmarks = useWikipediaStore((s) => s.bookmarks)
 
   const randomQuery = useQuery({
-    queryKey: ['wiki-random-widget'],
-    queryFn: ({ signal }) => fetchRandom(signal),
+    queryKey: ['wiki-random-widget', language],
+    queryFn: ({ signal }) => fetchRandom(signal, language),
     staleTime: 1000 * 60 * 30,
     refetchInterval: 1000 * 60 * 30,
   })

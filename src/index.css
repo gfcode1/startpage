@@ -63,6 +63,15 @@
   background: var(--mantine-color-gray-5);
 }
 
+/* Settings drawer tab panel fade-in */
+@keyframes settings-fade-in {
+  from { opacity: 0; transform: translateX(4px); }
+}
+
+.settings-tab-panel {
+  animation: settings-fade-in 0.2s ease;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

@@ -34,7 +34,7 @@ export function CalendarGrid({ onDateClick, onEventClick }: CalendarGridProps) {
       </SimpleGrid>
       <SimpleGrid cols={7} spacing="xs">
         {Array.from({ length: firstDay }).map((_, i) => (
-          <div key={`empty-${i}`} />
+          <div key={`empty-${i}`} style={{ background: 'var(--mantine-color-body)' }} />
         ))}
         {Array.from({ length: daysInMonth }).map((_, i) => {
           const day = i + 1

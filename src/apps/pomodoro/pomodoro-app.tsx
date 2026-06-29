@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import {
   Container, Text, Group, Button, Progress, Paper,
-  ActionIcon, Center, SegmentedControl,
+  ActionIcon, Center, SegmentedControl, Modal, Stack,
 } from '@mantine/core'
 import { Icon } from '@iconify/react'
 import { useHotkeys } from '@mantine/hooks'
@@ -72,6 +72,7 @@ export default function PomodoroApp() {
   const [status, setStatus] = useState<Status>('idle')
   const [timeLeft, setTimeLeft] = useState(POMODORO)
   const [stats, setStats] = useState(loadStats)
+  const [pendingMode, setPendingMode] = useState<Mode | null>(null)
   const statsRef = useRef(stats)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   useEffect(() => { statsRef.current = stats }, [stats])
@@ -134,12 +135,29 @@ export default function PomodoroApp() {
   }, [mode, clearTimer])
 
   const changeMode = useCallback((newMode: Mode) => {
-    if (status === 'running' && !window.confirm('Switch mode? Current session progress will be lost.')) return
+    if (newMode === mode) return
+    if (status === 'running') {
+      setPendingMode(newMode)
+      return
+    }
     clearTimer()
     setMode(newMode)
     setStatus('idle')
     setTimeLeft(MODE_DURATIONS[newMode])
-  }, [status, clearTimer])
+  }, [status, mode, clearTimer])
+
+  const confirmModeChange = useCallback(() => {
+    if (!pendingMode) return
+    clearTimer()
+    setMode(pendingMode)
+    setStatus('idle')
+    setTimeLeft(MODE_DURATIONS[pendingMode])
+    setPendingMode(null)
+  }, [pendingMode, clearTimer])
+
+  const cancelModeChange = useCallback(() => {
+    setPendingMode(null)
+  }, [])
 
   const handleModeChange = (val: string) => {
     const m = MODES.find((x) => x.value === val)
@@ -207,6 +225,22 @@ export default function PomodoroApp() {
           <Text size="xs" c="dimmed">Minutes</Text>
         </div>
       </Group>
+
+      <Modal
+        opened={pendingMode !== null}
+        onClose={cancelModeChange}
+        title="Switch mode?"
+        size="sm"
+        centered
+      >
+        <Stack>
+          <Text size="sm">Current session progress will be lost. Switch to <b>{pendingMode === 'short_break' ? 'Short Break' : pendingMode === 'long_break' ? 'Long Break' : 'Pomodoro'}</b>?</Text>
+          <Group justify="flex-end">
+            <Button variant="default" onClick={cancelModeChange}>Cancel</Button>
+            <Button onClick={confirmModeChange}>Switch</Button>
+          </Group>
+        </Stack>
+      </Modal>
     </Container>
   )
 }

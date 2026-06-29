@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StartDeck Bookmarks</title>
+  <style>
+    :root {
+      --bg: #141517;
+      --surface: #1a1b1e;
+      --surface-hover: #242529;
+      --border: #2c2e33;
+      --text: #c9c9c9;
+      --text-muted: #909296;
+      --text-dim: #5c5f66;
+      --amber: #d4a43a;
+      --amber-hover: #e0b84a;
+      --amber-bg: rgba(212, 164, 58, 0.1);
+      --amber-border: rgba(212, 164, 58, 0.3);
+      --radius: 8px;
+      --radius-sm: 6px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 340px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 0;
+      font-size: 13px;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .header .logo {
+      width: 28px;
+      height: 28px;
+      background: var(--amber);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .header .logo svg { stroke: #111; }
+    .header h1 { font-size: 14px; font-weight: 600; color: var(--amber); }
+    .content { padding: 14px 16px; }
+    .preview {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .preview .row { display: flex; align-items: center; gap: 8px; }
+    .preview .favicon {
+      width: 16px; height: 16px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .preview .title {
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .preview .url {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .field { margin-bottom: 12px; }
+    .field label {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+    input {
+      width: 100%;
+      padding: 7px 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 12px;
+      font-family: inherit;
+      transition: border-color 0.15s;
+    }
+    input:focus { outline: none; border-color: var(--amber); }
+    input::placeholder { color: var(--text-dim); }
+    .btn-primary {
+      width: 100%;
+      padding: 9px;
+      background: var(--amber);
+      color: #111;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-primary:hover { background: var(--amber-hover); }
+    .btn-primary:disabled { opacity: 0.5; cursor: default; }
+    .success {
+      background: rgba(34, 197, 94, 0.08);
+      border: 1px solid rgba(34, 197, 94, 0.25);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      font-size: 12px;
+      color: #4ade80;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .error {
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      font-size: 12px;
+      color: #f87171;
+    }
+    .settings-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-dim);
+      cursor: pointer;
+      padding: 8px 0;
+      transition: color 0.15s;
+      border: none;
+      background: none;
+      font-family: inherit;
+      width: 100%;
+      text-align: left;
+    }
+    .settings-toggle:hover { color: var(--amber); }
+    .settings-toggle svg { transition: transform 0.15s; flex-shrink: 0; }
+    .settings-toggle.open svg { transform: rotate(90deg); }
+    .settings-box {
+      padding: 0 0 8px 0;
+      border-top: 1px solid var(--border);
+      margin-top: 4px;
+    }
+    .settings-box label { font-size: 11px; color: var(--text-dim); margin-bottom: 5px; display: block; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>
+      </svg>
+    </div>
+    <h1>StartDeck</h1>
+  </div>
+
+  <div class="content">
+    <div id="error-box" class="error hidden"></div>
+    <div id="success-box" class="success hidden">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      Saved to bookmarks
+    </div>
+
+    <div id="preview-box" class="preview">
+      <div class="row" style="margin-bottom: 4px;">
+        <img id="favicon" class="favicon" src="" alt="" style="display:none" />
+        <div class="title" id="page-title">Loading...</div>
+      </div>
+      <div class="url" id="page-url"></div>
+    </div>
+
+    <div class="field">
+      <label for="tags">Tags</label>
+      <input type="text" id="tags" placeholder="optional, comma-separated" />
+    </div>
+
+    <button id="save-btn" class="btn-primary">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>
+      </svg>
+      Save to StartDeck
+    </button>
+
+    <button id="settings-toggle" class="settings-toggle">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9 18 15 12 9 6"/>
+      </svg>
+      Settings
+    </button>
+
+    <div id="settings-box" class="hidden">
+      <label for="app-url">App URL</label>
+      <input type="text" id="app-url" placeholder="http://localhost:5173/startpage/" />
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

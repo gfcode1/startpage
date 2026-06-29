@@ -2,25 +2,18 @@ import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
 import { getStorage } from '@/lib/storage/engine'
 
-interface ArticArtwork {
-  id: number
-  title: string
-  artist: string
-  imageId: string
-}
-
 interface BackgroundState {
   backgroundType: 'none' | 'solid' | 'image'
   backgroundColor: string
   backgroundImage: string
-  articArtwork: ArticArtwork | null
+  picsumSeed: string | null
 }
 
 interface BackgroundActions {
   setBackgroundType: (type: 'none' | 'solid' | 'image') => void
   setBackgroundColor: (color: string) => void
   setBackgroundImage: (url: string) => void
-  setArticArtwork: (artwork: ArticArtwork | null) => void
+  setPicsumSeed: (seed: string | null) => void
   resetBackground: () => void
 }
 
@@ -30,7 +23,7 @@ const initialState: BackgroundState = {
   backgroundType: 'none',
   backgroundColor: '#241d1a',
   backgroundImage: '',
-  articArtwork: null,
+  picsumSeed: null,
 }
 
 export const useBackgroundStore = create<BackgroundStore>()(
@@ -40,7 +33,7 @@ export const useBackgroundStore = create<BackgroundStore>()(
     setBackgroundType: (type) => set({ backgroundType: type }),
     setBackgroundColor: (color) => set({ backgroundColor: color }),
     setBackgroundImage: (url) => set({ backgroundImage: url }),
-    setArticArtwork: (artwork) => set({ articArtwork: artwork }),
+    setPicsumSeed: (seed) => set({ picsumSeed: seed }),
     resetBackground: () => set(initialState),
   })),
 )
@@ -50,27 +43,23 @@ useBackgroundStore.subscribe((state) => {
   getStorage().set('background', {
     backgroundType: state.backgroundType,
     backgroundColor: state.backgroundColor,
-    backgroundImage: state.backgroundImage,
-    articArtwork: state.articArtwork,
+    backgroundImage: state.backgroundImage?.startsWith('data:')
+      ? ''
+      : state.backgroundImage,
+    picsumSeed: state.picsumSeed,
   })
 })
-
-const ARTIC_IIIF_PREFIX = 'https://www.artic.edu/iiif/'
-function migrateArticUrl(url: string): string {
-  if (url.startsWith(ARTIC_IIIF_PREFIX)) {
-    return url.replace(ARTIC_IIIF_PREFIX, '/iiif-proxy/')
-  }
-  return url
-}
 
 import { getIsRehydrating, registerRehydrator } from '@/lib/sync/rehydrate'
 registerRehydrator((storage) => {
   const saved = storage.get<BackgroundState>('background')
-  if (saved) {
-    useBackgroundStore.setState({
-      ...initialState,
-      ...saved,
-      backgroundImage: migrateArticUrl(saved.backgroundImage),
-    })
+  if (!saved) return
+  const restored = { ...initialState, ...saved }
+  if (restored.backgroundType === 'image' && !restored.backgroundImage && restored.picsumSeed) {
+    restored.backgroundImage = `https://picsum.photos/seed/${restored.picsumSeed}/1920/1080`
   }
+  if (restored.backgroundType === 'image' && !restored.backgroundImage && !restored.picsumSeed) {
+    restored.backgroundType = 'none'
+  }
+  useBackgroundStore.setState(restored)
 })

@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { BarChart, Bar, ResponsiveContainer } from 'recharts'
 import { useWeatherLocation } from '@/stores/weather-location-store'
+import { useWidgetOptionsStore } from '@/stores/widget-options-store'
 import { WidgetLoading, WidgetEmpty } from '@/ui/widget-container'
 import { WEATHER_EMOJIS } from '../shared'
 
@@ -22,12 +23,14 @@ interface WidgetWeatherData {
   }
 }
 
-async function fetchWeather(lat: number, lon: number): Promise<WidgetWeatherData> {
+async function fetchWeather(lat: number, lon: number, unit: string): Promise<WidgetWeatherData> {
+  const tempUnit = unit === 'fahrenheit' ? 'fahrenheit' : 'celsius'
   const res = await fetch(
     `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
     `&current=temperature_2m,weather_code` +
     `&hourly=temperature_2m,weather_code&forecast_hours=8` +
-    `&daily=temperature_2m_max,temperature_2m_min&forecast_days=1`
+    `&daily=temperature_2m_max,temperature_2m_min&forecast_days=1` +
+    `&temperature_unit=${tempUnit}`
   )
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.json()
@@ -35,11 +38,12 @@ async function fetchWeather(lat: number, lon: number): Promise<WidgetWeatherData
 
 export default function WeatherWidget() {
   const { lat, lon, name } = useWeatherLocation()
+  const unit = useWidgetOptionsStore((s) => (s.options.weather?.unit as string) ?? 'celsius')
   const navigate = useNavigate()
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['weather-widget', lat, lon],
-    queryFn: () => fetchWeather(lat, lon),
+    queryKey: ['weather-widget', lat, lon, unit],
+    queryFn: () => fetchWeather(lat, lon, unit),
     staleTime: 1000 * 60 * 30,
     enabled: lat !== 0 && lon !== 0,
   })
@@ -50,6 +54,7 @@ export default function WeatherWidget() {
 
   const weatherCode = data.current.weather_code
   const emoji = WEATHER_EMOJIS[weatherCode] ?? '🌤️'
+  const tempUnit = unit === 'fahrenheit' ? '\u00B0F' : '\u00B0C'
 
   const hourlyData = data.hourly?.time.map((t, i) => ({
     hour: new Date(t).getHours(),
@@ -71,11 +76,11 @@ export default function WeatherWidget() {
         <Text style={{ fontSize: '1.6rem' }}>{emoji}</Text>
         <div>
           <Text fw={700} size="xl">
-            {Math.round(data.current.temperature_2m)}°C
+            {Math.round(data.current.temperature_2m)}{tempUnit}
           </Text>
           {data.daily && (
             <Text size="xs" c="dimmed">
-              H:{Math.round(data.daily.temperature_2m_max[0]!)}° L:{Math.round(data.daily.temperature_2m_min[0]!)}°
+              H:{Math.round(data.daily.temperature_2m_max[0]!)}{tempUnit} L:{Math.round(data.daily.temperature_2m_min[0]!)}{tempUnit}
             </Text>
           )}
         </div>

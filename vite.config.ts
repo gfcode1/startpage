@@ -64,22 +64,6 @@ export default defineConfig({
     alias: { '@': path.resolve(__dirname, 'src') },
   },
   base: '/startpage/',
-  server: {
-    proxy: {
-      '/iiif-proxy': {
-        target: 'https://www.artic.edu',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/iiif-proxy/, '/iiif'),
-        configure: (proxy) => {
-          proxy.on('proxyRes', (proxyRes) => {
-            delete proxyRes.headers['cross-origin-resource-policy']
-            delete proxyRes.headers['cross-origin-embedder-policy']
-            proxyRes.headers['access-control-allow-origin'] = '*'
-          })
-        },
-      },
-    },
-  },
   optimizeDeps: {
     include: ['prismjs'],
   },

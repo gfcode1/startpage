@@ -80,7 +80,9 @@ export function PlayerBar() {
                 }}
               />
               <div style={{ minWidth: 0 }}>
-                <Text size="sm" fw={600} truncate="end">{playingTitle || 'No track'}</Text>
+                <Tooltip label={playingTitle} disabled={!playingTitle || playingTitle.length < 30}>
+                  <Text size="sm" fw={600} truncate="end">{playingTitle || 'No track'}</Text>
+                </Tooltip>
                 {subtitle && <Text size="xs" c="dimmed" truncate="end">{subtitle}</Text>}
               </div>
             </Group>
@@ -109,8 +111,8 @@ export function PlayerBar() {
                 <Icon icon="lucide:square" width={14} />
               </ActionIcon>
 
-              <Group gap={4} wrap="nowrap" style={{ width: isMobile ? 60 : 100 }}>
-                <Icon icon="lucide:volume" width={14} />
+              <Group gap={4} wrap="nowrap" style={{ flex: isMobile ? '0 0 60px' : '0 0 120px' }}>
+                <Icon icon={volume === 0 ? 'lucide:volume-x' : 'lucide:volume'} width={16} />
                 <Slider
                   value={volume}
                   onChange={setVolume}
@@ -118,7 +120,9 @@ export function PlayerBar() {
                   max={1}
                   step={0.01}
                   style={{ flex: 1 }}
-                  size="xs"
+                  size={isMobile ? 'md' : 'sm'}
+                  aria-label="Volume"
+                  thumbLabel="Adjust volume"
                 />
               </Group>
             </Group>

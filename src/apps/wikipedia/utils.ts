@@ -1,14 +1,14 @@
 import type { WikiPage, WikiCategory, WikiLink } from './types'
 import { SEARCH_LIMIT } from './shared'
 
-const WIKI_API = 'https://en.wikipedia.org/w/api.php'
+const WIKI_API_BASE = (lang: string) => `https://${lang}.wikipedia.org/w/api.php`
 
 interface ApiParams {
   [key: string]: string
 }
 
-async function wikiFetch(params: ApiParams, signal?: AbortSignal): Promise<Record<string, unknown>> {
-  const url = new URL(WIKI_API)
+async function wikiFetch(params: ApiParams, signal?: AbortSignal, lang = 'en'): Promise<Record<string, unknown>> {
+  const url = new URL(WIKI_API_BASE(lang))
   Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v))
   url.searchParams.set('format', 'json')
   url.searchParams.set('origin', '*')
@@ -18,7 +18,7 @@ async function wikiFetch(params: ApiParams, signal?: AbortSignal): Promise<Recor
   return res.json()
 }
 
-export async function searchWiki(query: string, offset = 0, signal?: AbortSignal): Promise<{ results: WikiPage[]; total: number }> {
+export async function searchWiki(query: string, offset = 0, signal?: AbortSignal, lang = 'en'): Promise<{ results: WikiPage[]; total: number }> {
   const data = await wikiFetch({
     action: 'query',
     list: 'search',
@@ -27,14 +27,14 @@ export async function searchWiki(query: string, offset = 0, signal?: AbortSignal
     sroffset: String(offset),
     prop: 'pageimages',
     pithumbsize: '120',
-  }, signal)
+  }, signal, lang)
 
   const results: WikiPage[] = (data.query as { search?: WikiPage[] })?.search ?? []
   const total = (data.query as { searchinfo?: { totalhits?: number } })?.searchinfo?.totalhits ?? 0
   return { results, total }
 }
 
-export async function fetchPage(id: number, signal?: AbortSignal): Promise<WikiPage | null> {
+export async function fetchPage(id: number, signal?: AbortSignal, lang = 'en'): Promise<WikiPage | null> {
   const data = await wikiFetch({
     action: 'query',
     pageids: String(id),
@@ -44,7 +44,7 @@ export async function fetchPage(id: number, signal?: AbortSignal): Promise<WikiP
     cllimit: '10',
     pllimit: '10',
     plnamespace: '0',
-  }, signal)
+  }, signal, lang)
 
   const pages = (data.query as { pages?: Record<string, Record<string, unknown>> })?.pages
   if (!pages) return null
@@ -73,7 +73,7 @@ export async function fetchPage(id: number, signal?: AbortSignal): Promise<WikiP
   }
 }
 
-export async function fetchRandom(signal?: AbortSignal): Promise<WikiPage | null> {
+export async function fetchRandom(signal?: AbortSignal, lang = 'en'): Promise<WikiPage | null> {
   const data = await wikiFetch({
     action: 'query',
     list: 'random',
@@ -83,11 +83,11 @@ export async function fetchRandom(signal?: AbortSignal): Promise<WikiPage | null
     exintro: '1',
     explaintext: '1',
     pithumbsize: '200',
-  }, signal)
+  }, signal, lang)
 
   const pages = (data.query as { random?: WikiPage[] })?.random
   const page = pages?.[0]
   if (!page?.pageid) return null
 
-  return fetchPage(page.pageid, signal)
+  return fetchPage(page.pageid, signal, lang)
 }

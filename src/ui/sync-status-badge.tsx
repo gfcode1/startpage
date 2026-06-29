@@ -39,7 +39,7 @@ export function SyncStatusBadge() {
     }
   }
 
-  const icon = isSyncing ? 'lucide:loader' : syncError ? 'lucide:cloud-off' : 'lucide:cloud'
+  const icon = isSyncing ? 'lucide:cloud-sync' : syncError ? 'lucide:cloud-alert' : 'lucide:cloud-check'
   const color = syncError ? 'red' : isSyncing ? 'yellow' : 'green'
   const label = isSyncing ? 'Syncing...' : syncError ? 'Sync error' : `Synced ${formatLastSync(lastSyncAt)}`
 
@@ -51,7 +51,6 @@ export function SyncStatusBadge() {
             icon={icon}
             width={16}
             color={`var(--mantine-color-${color}-6)`}
-            className={isSyncing ? 'animate-spin' : ''}
             style={{ cursor: 'pointer', display: 'block' }}
           />
         </Tooltip>

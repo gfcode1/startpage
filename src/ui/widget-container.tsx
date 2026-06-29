@@ -1,4 +1,4 @@
-import { Stack, Center, Loader, Text, type StackProps } from '@mantine/core'
+import { Stack, Center, Loader, Text, Skeleton, type StackProps } from '@mantine/core'
 
 interface WidgetContainerProps extends StackProps {
   align?: 'center' | 'left'
@@ -21,6 +21,16 @@ export function WidgetLoading() {
     <Center py="md">
       <Loader size="sm" />
     </Center>
+  )
+}
+
+export function WidgetSkeleton({ lines = 3, py = 'md' as const }: { lines?: number; py?: string }) {
+  return (
+    <Stack gap="xs" py={py}>
+      {Array.from({ length: lines }).map((_, i) => (
+        <Skeleton key={i} height={14} width={i === lines - 1 ? '60%' : '100%'} radius="sm" />
+      ))}
+    </Stack>
   )
 }
 

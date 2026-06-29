@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Group, Text, ActionIcon, TextInput, Collapse } from '@mantine/core'
+import { Group, Text, ActionIcon, TextInput, Collapse, Tooltip } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import { Icon } from '@iconify/react'
 import { ReactNode } from 'react'
@@ -78,15 +78,15 @@ export function AppHeader({ title, subtitle, badge, actions, search }: AppHeader
           ) : null}
           {!searchOpen &&
             actions?.map((action) => (
-              <ActionIcon
-                key={action.id}
-                variant={action.variant === 'primary' ? 'filled' : 'subtle'}
-                onClick={action.onClick}
-                aria-label={action.label}
-                title={action.label}
-              >
-                <Icon icon={action.icon} width={18} />
-              </ActionIcon>
+              <Tooltip key={action.id} label={action.label}>
+                <ActionIcon
+                  variant={action.variant === 'primary' ? 'filled' : 'subtle'}
+                  onClick={action.onClick}
+                  aria-label={action.label}
+                >
+                  <Icon icon={action.icon} width={18} />
+                </ActionIcon>
+              </Tooltip>
             ))}
         </Group>
       </Group>
